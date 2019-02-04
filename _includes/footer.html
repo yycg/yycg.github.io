@@ -25,6 +25,18 @@
                     </li>
                     {% endif %}
 
+                    <!-- add Douban by yycg-->
+                    {% if site.douban_username %}
+                    <li>
+                        <a target="_blank" href="https://www.douban.com/people/{{ site.douban_username }}">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">豆</i>
+                            </span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
                     <!-- add Weibo, Zhihu by Hux, add target = "_blank" to <a> by Hux -->
                     {% if site.zhihu_username %}
                     <li>
