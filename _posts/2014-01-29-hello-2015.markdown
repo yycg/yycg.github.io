@@ -1,9 +1,9 @@
 ---
 layout:     post
 title:      "大学的一点流水账"
-subtitle:   "À la recherche du temps perdu"
+subtitle:   "一个人只要学会了回忆，就再不会孤独。——阿尔贝·加缪"
 date:       2019-02-03 12:00:00
-author:     "盈冲"
+author:     "盈盈冲哥"
 header-img: "img/post-bg-2015.jpg"
 tags:
     - 生活

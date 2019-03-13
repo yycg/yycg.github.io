@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>盈冲</title>
-    <description></description>
+    <title>盈盈冲哥的博客</title>
+    <description>没有对生活绝望，就不会爱生活。——阿尔贝·加缪</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 04 Feb 2019 15:59:21 +0800</pubDate>
-    <lastBuildDate>Mon, 04 Feb 2019 15:59:21 +0800</lastBuildDate>
+    <pubDate>Wed, 13 Mar 2019 22:08:32 +0800</pubDate>
+    <lastBuildDate>Wed, 13 Mar 2019 22:08:32 +0800</lastBuildDate>
     <generator>Jekyll v3.8.5</generator>
     
       <item>
