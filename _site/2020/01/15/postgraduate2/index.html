@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="没有对生活绝望，就不会爱生活。——阿尔贝·加缪">
+    <meta name="keywords"  content="">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="研二的流水账 - 盈盈冲哥的博客">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="电影
+20/1/3 首映日跟飞哥去电影院重温美丽人生，上次看还是六年前高三的寒假。电影里那首船歌首先出现在圭多和多拉定情之夜看的歌剧里，后来又在冰冷的集中营里通过广播播放。高中傍晚的校园里也常常响起这首歌，我的思绪不由地回到那个时代，虽然匆忙但是不乏纯真的友谊和轻松的时刻。据说斯皮尔伯格导演看这部电影时一度要怒而离场，身为犹太人固然格外敏感，认为纳粹题材须要严肃地演绎。但是今天重温还是使我泣...">
+    
+    <meta property="article:published_time" content="2020-01-15T20:00:00Z">
+    
+    
+    <meta property="article:author" content="盈盈冲哥">
+    
+    
+    <meta property="article:tag" content="生活">
+    
+    
+    <meta property="og:image" content="http://localhost:4000/img/a-perfect-world.jpg">
+    <meta property="og:url" content="http://localhost:4000/2020/01/15/postgraduate2/">
+    <meta property="og:site_name" content="盈盈冲哥的博客">
+    
+    <title>研二的流水账 - 盈盈冲哥的博客</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2020/01/15/postgraduate2/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">盈盈冲哥的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-2015.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/post-bg-2015.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=%E7%94%9F%E6%B4%BB" title="生活">生活</a>
+                        
+                    </div>
+                    <h1>研二的流水账</h1>
+                    
+                    <h2 class="subheading">人被迫自由；因为从他被投进这个世界的那一刻起，就要对自己的一切行为负责。——萨特</h2>
+                    <span class="meta">Posted by 盈盈冲哥 on January 15, 2020</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<h2 id="电影">电影</h2>
+<p><strong>20/1/3</strong> 首映日跟飞哥去电影院重温美丽人生，上次看还是六年前高三的寒假。电影里那首船歌首先出现在圭多和多拉定情之夜看的歌剧里，后来又在冰冷的集中营里通过广播播放。高中傍晚的校园里也常常响起这首歌，我的思绪不由地回到那个时代，虽然匆忙但是不乏纯真的友谊和轻松的时刻。据说斯皮尔伯格导演看这部电影时一度要怒而离场，身为犹太人固然格外敏感，认为纳粹题材须要严肃地演绎。但是今天重温还是使我泣不成声，尤其感动我的是抵抗荒谬时的勇气和父爱。多年前我甚至在回放中学会了早安、公主、谢谢这几个意大利语单词，知道圭多和多拉在现实中也是夫妻之后，一直想看另一部他们主演的电影爱你如诗美丽，现在是时候看一下了。</p>
+
+<p><strong>20/1/11</strong> 除了美丽人生，最近看了贝尼尼和他老婆主演的其他几部电影小恶魔、牙签乔尼、猎艳狂魔、爱你如诗美丽，荒诞的闹剧风格真是太搞笑了。</p>
+
+<p>爱你如诗美丽里贝尼尼在战火中守护垂危的前妻，让我联想到妈妈生病的时候。他每天都梦到他的前妻，前妻说继续跟他生活就像雪天看到老虎一样容易。我看完这部电影梦到我在阿拉伯骑摩托车迷路到了海岸，有一只很大的北极熊在追我，在高楼间跳跃时北极熊狰狞的面目不断闪现。</p>
+
+<h2 id="梦境">梦境</h2>
+<p><strong>19/10/27</strong> 昨晚看了基耶斯洛夫斯基的电影 La double vie de Véronique. 夜里梦到我在通往火车站候车室的扶梯上，和我平行的有几十条扶梯。每到一个平台就要安检一次，然后转身去更高的扶梯。到了月台，旁边停着一部火车，轮子上面铺着一层很密的金属网，人可以直接从月台走到金属网上去而不会塌陷。我问乘务员这是不是第八次火车，她指了指右边说 là-bas. 我沿着通道一路狂奔，在每个转弯处核对车次的信息，黄色墙壁的剥落显示了这个火车站所经历的岁月。通道往下直通到火车站外的地面，只见火车站建筑外层是红色和白色相间的金属，一层一层错落有致地排列，一直向上延伸高耸入云，最顶上是一个圆柱体，环绕地写着几个我看不懂的单词，窗户玻璃反射着落日的光辉。我本想用手机拍下来，但是无论是横放还是竖放都拍不下，只好作罢。我沿着树荫下的人行道走，路边按照编号顺序停着公共汽车，从一路开始递增，原来编号小的不是火车而是公共汽车。穿过马路，在一家饭店门口看到了第八路公共汽车站牌，很多乘客都在饭店里等。我突然意识我没有十三块公共汽车车票钱，于是走到一家报刊亭问道: Excusez-moi, do you have thirteen coins? 店家没说话，排出三块钱硬币…</p>
+
+<p><strong>19/10/12</strong> 黄昏时分，我在路上开车，看到路旁有一幢废弃的学校教学楼。墙壁被烟熏成了黑色，窗户的绿色边框锈迹斑斑，窗户玻璃大多已经破碎，里面是黑洞洞的房间，只有墙上悬挂的条幅还显示着往日的生机。这座楼却引起了我的好奇，停下车想进去一探究竟。</p>
+
+<p>我进到电梯里，电梯里挤满了人。随着楼层数字变大，电梯里的人逐渐减少，抵达顶楼时便只剩下我一个人。我走在通往楼顶的路上，前面是一扇玻璃门，门关上了，只留有一条缝，门外是楼顶的平台。我忽然感到有一股强风把我推向门外，我往玻璃门外看去，只见有两三个人拼命抓住楼顶平台边缘的扶手，身体在风中飘荡，但是最终还是没有支撑住，被风吹下了楼顶。我意识到外面正在刮龙卷风，于是连忙调转方向往回走。但是风透过两篇玻璃门中间的一条细缝，吸力仍旧强劲，我奋力走了好几分钟，才迈出了第一步。终于走到一个墙角，之后走路便如常了。下楼时，路人都展现出惊恐万分的神色。</p>
+
+<p><strong>19/12/21</strong> 昨天又做了个梦。有个人玩游戏，输了就会死。输了之后他哀求教父不要杀他，教父说：难道我会让你妻子变成寡妇吗？随后教父就把他捆起来，送进了高温炉。他妻子对着丈夫的灰哭泣。</p>
+
+<p><strong>20/1/2</strong> 清晨，我们走在乡村的小径，想找个地方吃早饭。路过一幢九层的高中教学楼，我在门口问管理员有没有早餐店，她说二四六八楼都有新丰小吃。教学楼里面有一个自动扶梯，我跑着上楼，但是每一家店都大门紧锁。我更加着急了，一不留神跑进了高中的教室，有的学生在默读课文，有的读得很响，老师用奇怪的眼神看着我这个不速之客。我尴尬地溜出教室，路过一段没有围栏的走廊，我看着楼下的地面，腿都在颤抖。这时一个人拍了我的肩膀，吓得我魂飞魄散。回头看时，却是一个同行的人。我问他吃过早饭了吗，他说在附近的一个小镇吃过了，距离这里有三十分钟步行的路程，说着指向楼下的一条小路。我跑得太快了，在楼下碰到了小路旁的灌木丛，衣服裤子上都是露水和泥。正好路旁有一条小溪，我用水稍微清洗了沾染到的泥…</p>
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/08/19/postgraduate1/" data-toggle="tooltip" data-placement="top" title="研一的流水账">
+                        Previous<br>
+                        <span>研一的流水账</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/01/16/leetcode/" data-toggle="tooltip" data-placement="top" title="leetcode整理">
+                        Next<br>
+                        <span>leetcode整理</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0001" 
+                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
+                    title="生活"
+                    rel="3">生活
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="https://github.com/thisaway">Tob</a></li>
+  
+  <li><a href="https://github.com/MMochii">Mochiii</a></li>
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'right',
+          // icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <!-- add Douban by yycg-->
+  
+  <li>
+      <a target="_blank" href="https://www.douban.com/people/154702906">
+          <span class="fa-stack fa-lg">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa  fa-stack-1x fa-inverse">豆</i>
+          </span>
+      </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="http://weibo.com/5674063334">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/yycg">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; 盈盈冲哥的博客 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-49627206-1';
+    var _gaDomain = 'huangxuan.me';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+<!-- Side Catalog -->
+
+<script type="text/javascript">
+    function generateCatalog (selector) {
+
+        // interop with multilangual 
+        if ('' == 'true') {
+            _containerSelector = 'div.post-container.active'
+        } else {
+            _containerSelector = 'div.post-container'
+        }
+
+        // init
+        var P = $(_containerSelector),a,n,t,l,i,c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        // clean
+        $(selector).html('')
+
+        // appending
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#"+$(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="'+i+'" rel="nofollow">'+t+'</a>');
+            l = $('<li class="'+n+'_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    // toggle side catalog
+    $(".catalog-toggle").click((function(e){
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    /*
+     * Doc: https://github.com/davist11/jQuery-One-Page-Nav
+     * Fork by Hux to support padding
+     */
+    async("/js/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
