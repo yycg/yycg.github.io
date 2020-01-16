@@ -4,7 +4,7 @@ title:      "研一的流水账"
 subtitle:   "世界上只有一种真正的英雄主义，就是认清了生活的真相后还依然热爱它。——罗曼·罗兰"
 date:       2019-08-19 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/godfather-talk.jpg"
 catalog: true
 tags:
     - 生活

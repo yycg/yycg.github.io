@@ -5,15 +5,64 @@
     <description>没有对生活绝望，就不会爱生活。——阿尔贝·加缪</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 16 Jan 2020 14:25:53 +0800</pubDate>
-    <lastBuildDate>Thu, 16 Jan 2020 14:25:53 +0800</lastBuildDate>
+    <pubDate>Thu, 16 Jan 2020 23:54:30 +0800</pubDate>
+    <lastBuildDate>Thu, 16 Jan 2020 23:54:30 +0800</lastBuildDate>
     <generator>Jekyll v4.0.0</generator>
     
       <item>
         <title>leetcode整理</title>
         <description>&lt;h2 id=&quot;目录&quot;&gt;目录&lt;/h2&gt;
 
-&lt;p&gt;$E=mc^2$&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;#基础&quot;&gt;基础&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;#分治&quot;&gt;分治&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;基础&quot;&gt;基础&lt;/h2&gt;
+
+&lt;h4 id=&quot;主方法&quot;&gt;主方法&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/post/the-master-method.PNG&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/post/the-master-method-2.PNG&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/post/the-master-method-2.PNG&quot; alt=&quot;img&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;对于形式$T(n)=aT(n/b)+f(n)$的递归，分为3种情况：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;$f(n)=O(n^{log_ba-\varepsilon})$&lt;/p&gt;
+
+    &lt;p&gt;$f(n)$增长多项式慢于$n^{log_ba}$（相差$n^\varepsilon$）&lt;/p&gt;
+
+    &lt;p&gt;结论：$T(n)=\Theta(n^{log_ba})$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;$f(n)=\Theta(n^{log_ba}log^k_n)$&lt;/p&gt;
+
+    &lt;p&gt;$f(n)$与$n^{log_ba}$相似速率增长&lt;/p&gt;
+
+    &lt;p&gt;结论：$T(n)=\Theta(n^{log_ba}log^{k+1}_n)$&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;$f(n)=\Omega(n^{log_ba+\varepsilon})$&lt;/p&gt;
+
+    &lt;p&gt;$f(n)$增长多项式快于$n^{log_ba}$（相差$n^\varepsilon$）&lt;/p&gt;
+
+    &lt;p&gt;结论：$T(n)=\Theta(f(n))$&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;分治&quot;&gt;分治&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://leetcode.com/problems/search-a-2d-matrix/&quot;&gt;leetcode 74&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 </description>
         <pubDate>Thu, 16 Jan 2020 20:00:00 +0800</pubDate>

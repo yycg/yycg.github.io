@@ -4,7 +4,7 @@ title:      "大学的流水账"
 subtitle:   "一个人只要学会了回忆，就再不会孤独。——阿尔贝·加缪"
 date:       2019-02-03 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/the-best-of-youth-2.jpg"
 catalog: true
 tags:
     - 生活

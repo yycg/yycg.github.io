@@ -4,7 +4,7 @@ title:      "研二的流水账"
 subtitle:   "人被迫自由；因为从他被投进这个世界的那一刻起，就要对自己的一切行为负责。——萨特"
 date:       2020-01-15 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/life-is-beautiful.jpg"
 catalog: true
 tags:
     - 生活
