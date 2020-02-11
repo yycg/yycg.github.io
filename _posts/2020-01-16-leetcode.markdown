@@ -16,7 +16,19 @@ tags:
 - [基础](#基础)
 - [分治](#分治)
 - [散列](#散列)
+- [数组](#数组)
 - [字符串](#字符串)
+- [双指针](#双指针)
+- [栈](#栈)
+- [堆](#堆)
+- [二叉树](#二叉树)
+- [链表](#链表)
+- [图](#图)
+- [动态规划](#动态规划)
+- [回溯](#回溯)
+- [BFS](#BFS)
+- [数学](#数学)
+- [并发](#并发)
 
 ## 基础
 
@@ -25,6 +37,8 @@ tags:
 [leetcode难度及面试频率](<https://blog.csdn.net/yutianzuijin/article/details/11477603>)
 
 #### 主方法
+
+> CLRS
 
 ![img](/img/post/the-master-method.PNG)
 
@@ -51,8 +65,6 @@ tags:
    $f(n)$多项式地快于$n^{\log_ba}$增长（相差$n^\varepsilon$）
 
    结论：$T(n)=\Theta(f(n))$
-
-## 分治
 
 #### 二分查找
 
@@ -88,6 +100,150 @@ tags:
       return lo;
   }
   ```
+
+#### 排序
+
+- 插入排序：时间$O(n^2)$，空间$O(1)$，稳定
+
+  ```java
+  void insetionSort(int[] a, int N) {
+      for(int i = 1; i < N; i++) {
+          for(int j = i; j > 0 && a[j] < a[j-1]; j--) {
+              exch(a, j, j-1);
+          }
+      }
+  }
+  ```
+
+- 选择排序：时间$O(n^2)$，空间$O(1)$，不稳定
+
+  ```java
+  void selectionSort(int[] a, int N) {
+      for(int i = 0; i < N; i++) {
+          int min = i;
+          for(int j = i+1; j < N; j++) {
+              if(a[j] < a[min]) min = j;
+          }
+          exch(a, i, min);
+      }
+  }
+  ```
+
+- 冒泡排序：时间$O(N^2)$，空间$O(1)$，稳定
+
+  ```java
+  void bubleSort(int a[], int N) {
+      for(int i = 0; i < N-1; i++) {
+          for(int j = N-1; j > i; j--) {
+              if(a[j-1] > a[j]) exch(a, j-1, j);
+          }
+      }
+  }
+  ```
+
+- 希尔排序（对比插入排序）：时间$O(n^1.3)$，最坏$O(n^2)$，空间$O(1)$，不稳定
+
+  ```java
+  void shellSort(int a[], int N) {
+      for(int h = N/2; h >= 1; h /= 2) {
+          for(int i = h; i < N; i++) {
+              for(int j = i; j >= h && a[j] < a[j-h]; j -= h) {
+                  exch(a, j, j-h);
+              }
+          }
+      }
+  }
+  ```
+
+- 归并排序：时间$O(n\log n)$，空间$O(n)$，稳定
+
+  ```java
+  int[] aux = new int[N];
+
+  void mergeSort(int a[], int lo, int hi) {
+      if(hi <= lo) return;
+      int mid = (lo + hi) / 2;
+      mergeSort(a, lo, mid);
+      mergeSort(a, mid+1, hi);
+      merge(a, lo, mid, hi);
+  }
+  
+  void merge(int a[], int lo, int mid, int hi) {
+      int i = lo, j = mid + 1;
+      for(int k = lo; k <= hi; k++) {
+          aux[k] = a[k];
+      }
+      for(int k = lo; k <= hi; k++) {
+          if(i > mid) a[k] = aux[j++];
+          else if(j > hi) a[k] = aux[i++];
+          else if(aux[j] < aux[i]) a[k] = aux[j++];
+          else a[k] = aux[i++];
+      }
+  }
+  ```
+
+- 快速排序：时间$O(n\logn)$，最坏$O(n^2)$，空间$O(\log n)$，最坏$O(n)$
+
+  ```java
+  void quickSort(int[] a, int lo, int hi) {
+      if(hi <= lo) return;
+      int j = partition(a, lo, hi);
+      quickSort(a, lo, j-1);
+      quickSort(a, j+1, hi);
+  }
+
+  int partition(int[] a, int lo, int hi) {
+      int i = lo, j = hi+1;
+      int pivot = a[lo];
+      while(true) {
+          while(a[++i] < pivot) if(i == hi) break;
+          while(pivot < a[--j]) if(j == lo) break;
+          if(i >= j) break;
+          exch(a, i, j);
+      }
+      exch(a, lo, j);
+      return j;
+  }
+  ```
+
+- 堆排序（大根堆）
+
+  删除堆顶元素：先将堆的最后一个元素与堆顶元素交换，再对此时的根结点进行sink操作。
+
+  插入：先将新结点放在堆的末端，再对这个新结点进行swam操作。
+
+  ```java
+  void heapSort(int[] a, int N) {
+      // 建堆
+      for(int k = N/2; k >= 1; k--) {
+          sink(a, k, N);
+      }
+      // 排序：不断删除堆顶元素，放到末尾
+      while(N > 1) {
+          exch(a, 1, N--);
+          sink(a, 1, N);
+      }
+  }
+
+  void swim(int[] a, int k) {
+      while(k > 1 && a[k/2] < a[k]) {
+          exch(a, k/2, k);
+          k /= 2;
+      }
+  }
+
+  void sink(int[] a, int k, int N) {
+      while(2*k <= N) {
+          int j = 2*k;
+          if(j < N && a[j] < a[j+1]) j++;
+          if(a[k] >= a[j]) break;
+          exch(a, k, j);
+          k = j;
+      }
+  }
+  ```
+
+## 分治
 
 #### [leetcode 74: 搜索二维矩阵](<https://leetcode.com/problems/search-a-2d-matrix/>)
 
@@ -263,13 +419,235 @@ tags:
     };
     ```
 
-#### [leetcode 4: 寻找两个有序数组的中位数](<https://leetcode.com/problems/median-of-two-sorted-arrays/>)
+<!-- #### [leetcode 4: 寻找两个有序数组的中位数](<https://leetcode.com/problems/median-of-two-sorted-arrays/>)
 
+- 时间：$O(\log (n+m))$ -->
 
+#### [leetcode 33: 搜索旋转排序数组](https://leetcode.com/problems/search-in-rotated-sorted-array/)
 
-#### [leetcode 378: 有序矩阵中第K小的数](<https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/>)
+- 题意：旋转数组无重复
 
+- 思路：分为左半边有序和右半边有序两种情况，左半边有序看target是否落入左半边，右半边有序看target是否落入右半边。
 
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int search(vector<int>& nums, int target) {
+          int lo = 0;
+          int hi = nums.size() - 1;
+
+          while(lo <= hi) {
+              int mid = (lo + hi) / 2;
+              if(nums[mid] == target) return mid;
+
+              // first half in order
+              if(nums[lo] <= nums[mid]) {
+                  // nums[lo] <= target < nums[mid]
+                  if(nums[lo] <= target && target < nums[mid]) hi = mid - 1;
+                  else lo = mid + 1;
+              // first half not in order
+              } else {
+                  // nums[mid] < target <= nums[hi]
+                  if(nums[mid] < target && target <= nums[hi]) lo = mid + 1;
+                  else hi = mid - 1;
+              }
+          }
+          return -1;
+      }
+  };
+  ```
+
+#### [leetcode 81: 搜索旋转排序数组II](https://leetcode.com/problems/search-in-rotated-sorted-array-ii)
+
+- 题意：旋转数组有重复
+
+- 思路：与33题类似，但是需要额外考虑旋转点有重复，造成lo, mid, hi相等的情况。
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int search(vector<int>& nums, int target) {
+          int lo = 0;
+          int hi = nums.size() - 1;
+
+          while(lo <= hi) {
+              int mid = (lo + hi) / 2;
+              if(nums[mid] == target) return true;
+
+              // nums[lo] == nums[mid] == nums[hi]
+              // [3 1 2 3 3 3 3]
+              if(nums[lo] == nums[mid] && nums[mid] == nums[hi]) {
+                  lo++;
+                  hi--;
+              // first half in order
+              } else if(nums[lo] <= nums[mid]) {
+                  // nums[lo] <= target < nums[mid]
+                  if(nums[lo] <= target && target < nums[mid]) hi = mid - 1;
+                  else lo = mid + 1;
+              // first half not in order
+              } else {
+                  // nums[mid] < target <= nums[hi]
+                  if(nums[mid] < target && target <= nums[hi]) lo = mid + 1;
+                  else hi = mid - 1;
+              }
+          }
+          return false;
+      }
+  };
+  ```
+
+#### [leetcode 34: 在排序数组中查找元素的第一个和最后一个位置](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<int> searchRange(vector<int>& nums, int target) {
+          vector<int> notFound;
+          notFound.push_back(-1);
+          notFound.push_back(-1);
+          if(nums.size() == 0) return notFound;
+          
+          int lo = binarySearch(nums, target);
+          int hi = binarySearch(nums, target + 1);
+          if(lo < nums.size() && nums[lo] == target) {
+              vector<int> result;
+              result.push_back(lo);
+              result.push_back(hi - 1);
+              return result;
+          }    
+          return notFound;
+      }
+      
+  private:
+      int binarySearch(vector<int>& nums, int target) {
+          int lo = 0;
+          int hi = nums.size() - 1;
+          while(lo <= hi) {
+              int mid = (lo + hi) / 2;
+              if(nums[mid] < target) lo = mid + 1;
+              else hi = mid - 1;
+          }
+          return lo;
+      }
+  };
+  ```
+
+  ```c++
+  class Solution {
+  public:
+      vector<int> searchRange(vector<int>& nums, int target) {
+          vector<int> notFound;
+          notFound.push_back(-1);
+          notFound.push_back(-1);
+          if(nums.size() == 0) return notFound;
+          
+          int lo = binarySearch(nums, target);
+          int hi = binarySearchRight(nums, target);
+          if(lo < nums.size() && nums[lo] == target) {
+              vector<int> result;
+              result.push_back(lo);
+              result.push_back(hi - 1);
+              return result;
+          }    
+          return notFound;
+      }
+      
+  private:
+      int binarySearch(vector<int>& nums, int target) {
+          int lo = 0;
+          int hi = nums.size() - 1;
+          while(lo <= hi) {
+              int mid = (lo + hi) / 2;
+              if(nums[mid] < target) lo = mid + 1;
+              else hi = mid - 1;
+          }
+          return lo;
+      }
+
+      int binarySearchRight(vector<int>& nums, int target) {
+          int lo = 0;
+          int hi = nums.size() - 1;
+          while(lo <= hi) {
+              int mid = (lo + hi) / 2;
+              if(nums[mid] <= target) lo = mid + 1;
+              else hi = mid - 1;
+          }
+          return lo;
+      }
+  };
+  ```
+
+#### [leetcode 35: 搜索插入位置](https://leetcode.com/problems/search-insert-position/)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int searchInsert(vector<int>& nums, int target) {
+          int lo = 0;
+          int hi = nums.size() - 1;
+          while(lo <= hi) {
+              int mid = (lo + hi) / 2;
+              if (nums[mid] < target) lo = mid+1;
+              else hi = mid-1;
+          }
+          return lo;
+      }
+  };
+  ```
+
+#### [leetcode 540: 有序数组中的单一元素](https://leetcode.com/problems/single-element-in-a-sorted-array/)
+
+- 代码
+
+  ```java
+  class Solution {
+      public int singleNonDuplicate(int[] nums) {
+          int lo = 0;
+          int hi = nums.length - 1;
+          while(lo <= hi) {
+              int mid = (lo + hi) / 2;
+              if(mid >= 1 && nums[mid-1] == nums[mid]) {
+                  if((mid-2-lo+1) % 2 == 1) hi = mid - 2;
+                  else lo = mid + 1;
+              } else if(mid < nums.length-1 && nums[mid+1] == nums[mid]) {
+                  if((mid-1-lo+1) % 2 == 1) hi = mid - 1;
+                  else lo = mid + 2;
+              } else {
+                  return nums[mid];
+              }
+          }
+          return -1;
+      }
+  }
+  ```
+
+#### [leetcode 162: 寻找峰值](https://leetcode.com/problems/find-peak-element)
+
+```c++
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+        int lo = 0;
+        int hi = nums.size() - 1;
+
+        while(lo < hi) {
+            int mid1 = (lo + hi) / 2;
+            int mid2 = mid1 + 1;
+            if(nums[mid1] < nums[mid2]) lo = mid2;
+            else hi = mid1;
+        }
+        return lo;
+    }
+};
+```
 
 ## 散列
 
@@ -302,8 +680,1152 @@ tags:
   };
   ```
 
+#### [leetcode 128: 最长连续序列](https://leetcode-cn.com/problems/longest-consecutive-sequence/)
+
+- 思路：对于每个数x，如果x-1不在集合里，就一直增长看最大能到多少。
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int longestConsecutive(vector<int>& nums) {
+          unordered_set<int> set;
+          for(int x: nums) {
+              set.insert(x);
+          }
+
+          int res = 0;
+          for(int x: nums) {
+              if(!set.count(x-1)) {
+                  int y = x + 1;
+                  while(set.count(y)) {
+                      y++;
+                  }
+                  res = max(res, y-x);
+              }
+          }
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 217: 存在重复元素](https://leetcode.com/problems/contains-duplicate)
+
+```c++
+class Solution {
+public:
+    bool containsDuplicate(vector<int>& nums) {
+        unordered_set<int> set;
+        for(int num: nums) {
+            if(set.count(num)) return true;
+            set.insert(num);
+        }
+        return false;
+    }
+};
+```
+
+#### [leetcode 242: 有效的字母异位词](https://leetcode.com/problems/valid-anagram)
+
+```c++
+class Solution {
+public:
+    bool isAnagram(string s, string t) {
+        if(s.length() != t.length()) return false;
+
+        unordered_map<char, int> map;
+        for(int i = 0; i < s.length(); i++) {
+            if(!map.count(s[i])) map[s[i]] = 0;
+            map[s[i]]++;
+        }
+        for(int i = 0; i < t.length(); i++) {
+            if(!map.count(t[i])) return false;
+            if(--map[t[i]] < 0) return false; 
+        }
+        return true;
+    }
+};
+```
+
+```c++
+class Solution {
+public:
+    bool isAnagram(string s, string t) {
+        if(s.length() != t.length()) return false;
+        sort(s.begin(), s.end());
+        sort(t.begin(), t.end());
+        return s == t;
+    }
+};
+```
+
+## 数组
+
+#### [leetcode 41: 缺失的第一个正数](https://leetcode.com/problems/first-missing-positive/)
+
+- 思路：扫描一遍尽量将每个数归位，然后再扫描一遍找出结果。
+
+- 时间：$O(n)$
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int firstMissingPositive(vector<int>& nums) {
+          int i = 1;
+          while(i <= nums.size()) {
+              // [1,1]
+              while(nums[i-1] > 0 && nums[i-1] <= nums.size() && nums[i-1] != i && nums[i-1] != nums[nums[i-1]-1]) {
+                  swap(nums[i-1], nums[nums[i-1]-1]);
+              }
+              i++;
+          }
+          for(i = 1; i <= nums.size(); i++) {
+              if(nums[i-1] != i) break;
+          }
+          return i;
+      }
+  };
+  ```
+
+#### [leetcode 45: 跳跃游戏II](https://leetcode.com/problems/jump-game-ii)
+
+- 方法一：动态规划
+
+  - 时间$O(n^2)$，超时
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        int jump(vector<int>& nums) {
+            vector<int> dp(nums.size(), -1);
+            dp[0] = 0;
+            for(int i = 0; i < nums.size(); i++) {
+                for(int j = i+1; j < nums.size() && j <= i+nums[i]; j++) {
+                    if(dp[i] != -1) {
+                        if(dp[j] == -1) dp[j] = dp[i] + 1;
+                        else dp[j] = min(dp[i] + 1, dp[j]);
+                    }
+                }
+            }
+            return dp[nums.size()-1];
+        }
+    };
+    ```
+
+- 方法2：greedy
+  
+  - 时间：$O(n)$
+
+  - 代码
+  
+    ```c++
+    class Solution {
+    public:
+        int jump(vector<int>& nums) {
+            int jumps = 0;
+            int curEnd = 0;
+            int curFarthest = 0;
+            for(int i = 0; i < nums.size()-1; i++) {
+                curFarthest = max(curFarthest, i+nums[i]);
+                if(i == curEnd) {
+                    curEnd = curFarthest;
+                    jumps++;
+                }
+            }
+            return jumps;
+        }
+    };
+    ```
+
+#### [leetcode 55: 跳跃游戏](https://leetcode.com/problems/jump-game)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      bool canJump(vector<int>& nums) {
+          int reach = 0;
+          int i = 0;
+          for(; i < nums.size() && i <= reach; i++) {
+              reach = max(reach, i+nums[i]);
+          }
+          return i == nums.size();
+      }
+  };
+  ```
+
+#### [leetcode 48: 旋转图像](https://leetcode.com/problems/rotate-image)
+
+- 代码
+  ```c++
+  /*
+  * clockwise rotate
+  * first reverse up to down, then swap the symmetry 
+  * 1 2 3     7 8 9     7 4 1
+  * 4 5 6  => 4 5 6  => 8 5 2
+  * 7 8 9     1 2 3     9 6 3
+  */
+  void rotate(vector<vector<int> > &matrix) {
+      reverse(matrix.begin(), matrix.end());
+      for (int i = 0; i < matrix.size(); ++i) {
+          for (int j = i + 1; j < matrix[i].size(); ++j)
+              swap(matrix[i][j], matrix[j][i]);
+      }
+  }
+
+  /*
+  * anticlockwise rotate
+  * first reverse left to right, then swap the symmetry
+  * 1 2 3     3 2 1     3 6 9
+  * 4 5 6  => 6 5 4  => 2 5 8
+  * 7 8 9     9 8 7     1 4 7
+  */
+  void anti_rotate(vector<vector<int> > &matrix) {
+      for (auto vi : matrix) reverse(vi.begin(), vi.end());
+      for (int i = 0; i < matrix.size(); ++i) {
+          for (int j = i + 1; j < matrix[i].size(); ++j)
+              swap(matrix[i][j], matrix[j][i]);
+      }
+  }
+  ```
+
+#### [leetcode 56: 合并分区](https://leetcode.com/problems/merge-intervals)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<int>> merge(vector<vector<int>>& intervals) {
+          vector<vector<int>> res;
+          if(intervals.empty()) return res;
+          sort(intervals.begin(), intervals.end(), [](vector<int> a, vector<int> b){return a[0] < b[0];});
+          res.push_back(intervals[0]);
+          for(int i = 1; i < intervals.size(); i++) {
+              if(intervals[i][0] <= res.back()[1]) {
+                  res.back()[1] = max(intervals[i][1], res.back()[1]);
+              } else {
+                  res.push_back(intervals[i]);
+              }
+          }
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 57: 插入区间](https://leetcode.com/problems/insert-interval)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+          vector<vector<int>> res;
+          int i = 0;
+          while(i < intervals.size() && intervals[i][1] < newInterval[0]) {
+              res.push_back(intervals[i++]);
+          }
+          while(i < intervals.size() && intervals[i][0] <= newInterval[1]) {
+              // newInterval = vector<int>{
+              //     min(newInterval[0], intervals[i][0]), 
+              //     max(newInterval[1], intervals[i][1])};
+              newInterval[0] = min(newInterval[0], intervals[i][0]);
+              newInterval[1] = max(newInterval[1], intervals[i][1]);
+              i++;
+          }
+          res.push_back(newInterval);
+          while(i < intervals.size()) {
+              res.push_back(intervals[i++]);
+          }
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 73: 矩阵置零](https://leetcode.com/problems/set-matrix-zeroes)
+
+- 思路：用第一行存每列是否有0，用第一列存每行是否有0，多用一个col0变量表示第0列是否有0.
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      void setZeroes(vector<vector<int>>& matrix) {
+          int rows = matrix.size();
+          int cols = matrix[0].size();
+          int col0 = 1;
+          for(int i = 0; i < rows; i++) {
+              if(matrix[i][0] == 0) col0 = 0;
+              for(int j = 1; j < cols; j++) {
+                  if(matrix[i][j] == 0) {
+                      matrix[i][0] = 0;
+                      matrix[0][j] = 0;
+                  }
+              }
+          }
+          for(int i = rows - 1; i >= 0; i--) {
+              for(int j = cols - 1; j >= 1; j--) {
+                  if(matrix[i][0] == 0 || matrix[0][j] == 0) {
+                      matrix[i][j] = 0;
+                  } 
+              }
+              if(col0 == 0) matrix[i][0] = 0;
+          }
+      }
+  };
+  ```
+
+#### [leetcode 89: 格雷编码](https://blog.csdn.net/yutianzuijin/article/details/11477603)
+
+- 思路：规律是第一位改变，后面的位倒序
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<int> grayCode(int n) {
+          vector<int> res;
+
+          res.push_back(0);
+          for(int j = 0; j < n; j++) {
+              int size = res.size();
+              for(int i = size-1; i >= 0; i--) {
+                  res.push_back(res[i] | 1<<j);
+              }
+          }
+
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 134: 加油站](https://leetcode.com/problems/gas-station)
+
+思路：如果加油间耗油小于0，则重当前点重新开始。如果总加油减耗油小于0，则不能开车一圈。
+
+```c++
+class Solution {
+public:
+    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+        int start = 0;
+        int total = 0;
+        int tank = 0;
+        for(int i = 0; i < gas.size(); i++) {
+            tank += gas[i] - cost[i];
+            total += gas[i] - cost[i];
+            if(tank < 0) {
+                start = i + 1;
+                tank = 0;
+            }
+        }
+        return total<0? -1:start;
+    }
+};
+```
+
+#### [leetcode 136: 只出现一次的数字](https://leetcode.com/problems/single-number)
+
+```c++
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int res = 0;
+        for(int i = 0; i < nums.size(); i++) {
+            res ^= nums[i];
+        }
+        return res;
+    }
+};
+```
+
+#### [leetcode 137: 只出现一次的数字II](https://leetcode.com/problems/single-number-ii)
+
+```c++
+/*
+n a b a b
+1 0 0 0 1
+1 0 1 1 0
+1 1 0 0 0
+0 0 0 0 0
+0 0 1 0 1
+0 1 0 1 0 
+a = a'bn + ab'n'
+b = a'b'n + a'bn'
+*/
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int a = 0;
+        int b = 0;
+        for(int i = 0; i < nums.size(); i++) {
+            int a_last = a;
+            int b_last = b;
+            a = (~a_last & b_last & nums[i]) | (a_last & ~b_last & ~nums[i]);
+            b = (~a_last & ~b_last & nums[i]) | (~a_last & b_last & ~nums[i]);
+        }
+        return b;
+    }
+};
+```
+
+#### [leetcode 169: 多数元素](https://leetcode.com/problems/majority-element)
+
+方法1：散列表
+
+```c++
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        unordered_map<int, int> map;
+        int n = nums.size();
+        for(int num: nums) {
+            if(!map.count(num)) map[num] = 0;
+            map[num]++;
+            if(map[num] > n/2) return num;
+        }
+        return 0;
+    }
+};
+```
+
+方法2：Boyer-Moore Majority Vote Algorithm
+
+不一样的数互相抵消，最后剩下没抵消的就是结果
+
+```c++
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int major = nums[0];
+        int count = 1;
+        int n = nums.size();
+        for(int i = 1; i < n; i++) {
+            if(count == 0) {
+                major = nums[i];
+                count++;
+            } else if(major == nums[i]) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+        return major;
+    }
+};
+```
+
+#### [leetcode 189: 旋转数组](https://leetcode.com/problems/rotate-array)
+
+```c++
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        k = k % nums.size();
+        reverse(nums.begin(), nums.end());
+        reverse(nums.begin(), nums.begin()+k);
+        reverse(nums.begin()+k, nums.end());
+    }
+};
+```
+
+#### [leetcode 268: 缺失数字](https://leetcode.com/problems/missing-number)
+
+方法1：xor
+
+```c++
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        int res = nums.size();
+        for(int i = 0; i < nums.size(); i++) {
+            res ^= i ^ nums[i];
+        }
+        return res;
+    }
+};
+```
+
+方法2：求和
+
+```c++
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        long sum = nums.size();
+        for(int i = 0; i < nums.size(); i++) {
+            sum += i - nums[i];
+        }
+        return sum;
+    }
+};
+```
+
 ## 字符串
 
+#### [leetcode 5: 最长回文子串](<https://leetcode.com/problems/longest-palindromic-substring/>)
+
+- 方法1：中心扩展
+
+  - 时间：$O(n^2)$，空间：$O(1)$
+  
+  - 代码
+  
+    ```c++
+    class Solution {
+    public:
+        string longestPalindrome(string s) {
+            if(s == "") return s;
+            
+            string longest = s.substr(0, 1);
+            for(int i = 0; i < s.length() - 1; i++) {
+                string s1 = expandAroundCenter(s, i, i);
+                if(s1.length() > longest.length()) longest = s1;
+                string s2 = expandAroundCenter(s, i, i + 1);
+                if(s2.length() > longest.length()) longest = s2;
+            }
+            return longest;
+        }
+        
+        string expandAroundCenter(string s, int l, int r) {
+            while(l >= 0 && r < s.length() && s[l] == s[r]) {
+                l--;
+                r++;
+            }
+            l++;
+            r--;
+            return s.substr(l, r - l + 1);
+        }
+    };
+    ```
+
+- 方法2：动态规划
+
+  - 思路：二维数组存起点到终点是否回文
+  
+  - 时间$O(n^2)$，空间$O(n^2)$
+
+#### [leetcode 10: 正则表达式匹配](https://leetcode.com/problems/regular-expression-matching/)
+
+- 题意：'.' 匹配任意单个字符，'*' 匹配零个或多个前面的那一个元素
+
+- 方法1：动态规划
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        bool isMatch(string s, string p) {
+            int m = s.length();
+            int n = p.length();
+            bool dp[m+1][n+1];
+            dp[0][0] = true;
+            for(int i = 1; i <= m; i++) {
+                dp[i][0] = false;
+            }
+            for(int j = 1; j <= n; j++) {
+                if(p[j-1] == '*' && j-2 >= 0 && dp[0][j-2] == true) dp[0][j] = true;
+                else dp[0][j] = false;
+            }
+            for(int i = 1; i <= m; i++) {
+                for(int j = 1; j <= n; j++) {
+                    if(s[i-1] == p[j-1] || p[j-1] == '.') dp[i][j] = dp[i-1][j-1];
+                    else if(p[j-1] == '*') {
+                        if(s[i-1] == p[j-2] || p[j-2] == '.') 
+                            dp[i][j] = dp[i-1][j]   // in this case, a* counts as multiple a 
+                                // || dp[i][j-1]       // in this case, a* counts as single a
+                                || dp[i][j-2];      // in this case, a* counts as empty
+                        else dp[i][j] = dp[i][j-2]; // in this case, a* only counts as empty
+                    }
+                    else dp[i][j] = false;
+                }
+            }
+            for(int i = 0; i <= m; i++) {
+                for(int j = 0; j <= n; j++) {
+                    cout << dp[i][j] << ' ';
+                }
+                cout << endl;
+            }
+            return dp[m][n];
+        }
+    };
+    ```
+
+- 方法2：递归（不太容易理解）
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        bool isMatch(string s, string p) {
+            return isMatch(s, p, 0, 0);
+        }
+    private:
+        bool isMatch(string& s, string& p, int cur1, int cur2) {
+            if(cur1 == s.length() && cur2 == p.length()) return true;
+            if(cur1 > s.length() || cur2 > p.length()) return false;
+            
+            if(cur2+1 < p.length() && p[cur2+1] == '*') {
+                if(isMatch(s, p, cur1, cur2+2)) return true;
+                if(cur1 != s.length() && cur2 != p.length() && (s[cur1] == p[cur2] || p[cur2] == '.') && isMatch(s, p, cur1+1, cur2)) return true;
+            } else {
+                if(cur1 != s.length() && cur2 != p.length() && (s[cur1] == p[cur2] || p[cur2] == '.') && isMatch(s, p, cur1+1, cur2+1)) return true;
+            }
+            return false;
+        }
+    };
+    ```
+
+#### [leetcode 44: 通配符匹配](https://leetcode-cn.com/problems/wildcard-matching/)
+
+- 题意：'?' 可以匹配任何单个字符，'*' 可以匹配任意字符串（包括空字符串）。
+
+- 方法1：迭代
+
+  ```c++
+  class Solution {
+  public:
+      bool isMatch(string s, string p) {
+          int cur1 = 0;
+          int cur2 = 0;
+          int match;
+          int star = -1;
+          while(cur1 < s.length()) {
+              if(cur2 < p.length() && (s[cur1] == p[cur2] || p[cur2] == '?')) {
+                  cur1++;
+                  cur2++;
+              } else if(cur2 < p.length() && p[cur2] == '*') {
+                  match = cur1;
+                  star = cur2++;
+              } else if(star >= 0) {
+                  cur1 = ++match;
+                  cur2 = star + 1;
+              } else return false;
+          }
+          while(cur2 < p.length() && p[cur2] == '*') cur2++;
+          return cur2 == p.length();
+      }
+  };
+  ```
+
+- 方法2：递归（不太容易理解）
+
+  ```c++
+  class Solution {
+  public:
+      bool isMatch(string s, string p) {
+          int numStar = 0;
+          return isMatch(s, p, 0, 0, numStar);
+      }
+  private:
+      bool isMatch(string s, string p, int cur1, int cur2, int& numStar) {
+          if(cur1 == s.length() && cur2 == p.length()) return true;
+
+          int curNumStar = numStar;
+          if(s[cur1] == p[cur2] || p[cur2] == '?') {
+              if(isMatch(s, p, cur1+1, cur2+1, numStar)) return true;
+          } else if(p[cur2] == '*') {
+              for(int i = 0; cur1+i <= s.length(); i++) {
+                  if(i == 0) numStar++;
+                  if(isMatch(s, p, cur1+i, cur2+1, numStar)) return true;
+                  if(numStar > curNumStar+1) return false;
+              }
+          }
+          return false;
+      }
+  };
+  ```
+
+- 方法3：动态规划
+
+  ```c++
+  class Solution {
+  public:
+      bool isMatch(string s, string p) {
+          int m = s.length();
+          int n = p.length();
+          bool dp[m+1][n+1];
+          dp[0][0] = true;
+          for(int i = 1; i <= m; i++) {
+              dp[i][0] = false;
+          }
+          for(int j = 1; j <= n; j++) {
+              dp[0][j] = false;
+          }
+          for(int j = 1; j <= n; j++) {
+              if(p[j-1] == '*') dp[0][j] = true;
+              else break;
+          }
+          for(int i = 1; i <= m; i++) {
+              for(int j = 1; j <= n; j++) {
+                  // if(p[j-1] != '*') dp[i][j] == dp[i-1][j-1] && (s[i-1] == p[j-1] || p[j-1] == '?');
+                  // else dp[i][j] = dp[i-1][j] || dp[i][j-1];
+                  if(s[i-1] == p[j-1] || p[j-1] == '?') dp[i][j] = dp[i-1][j-1];
+                  // p[j-1] == '*', s[i-1], p[j-1]
+                  else if(p[j-1] == '*') dp[i][j] = dp[i-1][j] || dp[i][j-1];
+                  else dp[i][j] = false;
+              }
+          }
+          return dp[m][n];
+      }
+  };
+  ```
+
+#### [leetcode 28: 子字符串查找](https://leetcode.com/problems/implement-strstr/)
+
+- 时间：最坏情况$O(NM)$，但是实际运行时间一般为$O(N+M)$，KMP为$O(N+M)$
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int strStr(string haystack, string needle) {     
+          if(needle == "") return 0;
+          int N = haystack.length();
+          int M = needle.length();
+          for(int i = 0; i <= N - M; i++) {
+              int j;
+              for(j = 0; j < M; j++)
+                  if(haystack[i+j] != needle[j]) break;
+              if(j == M) return i;
+          }
+          return -1;
+      }
+  };
+  ```
+
+#### [leetcode 97: 交错字符串](https://leetcode.com/problems/interleaving-string)
+
+- 方法1：带缓存的dfs
+
+  ```c++
+  class Solution {
+  public:
+      bool isInterleave(string s1, string s2, string s3) {
+          if(s3.length() != s1.length() + s2.length()) return false;
+          vector<vector<bool>> valid = vector<vector<bool>>(s1.length()+1, vector<bool>(s2.length()+1, true));
+          return isInterleave(s1, s2, s3, 0, 0, 0, valid);
+      }
+  private:
+      bool isInterleave(string& s1, string& s2, string& s3, int cur1, int cur2, int cur3, vector<vector<bool>>& valid) {
+          if(cur3 == s3.length()) return true;
+          if(valid[cur1][cur2] == false) return false;
+          
+          if(cur1 < s1.length() && s3[cur3] == s1[cur1]) {
+              if(isInterleave(s1, s2, s3, cur1+1, cur2, cur3+1, valid)) return true;
+          }
+          if(cur2 < s2.length() && s3[cur3] == s2[cur2]) {
+              if(isInterleave(s1, s2, s3, cur1, cur2+1, cur3+1, valid)) return true;
+          }
+          valid[cur1][cur2] = false;
+          return false;
+      }
+  };
+  ```
+
+- 方法2：动态规划
+
+  ```c++
+  class Solution {
+  public:
+      bool isInterleave(string s1, string s2, string s3) {
+          if(s1.length() + s2.length() != s3.length()) return false;
+
+          bool dp[s1.length()+1][s2.length()+1];
+          for(int i = 0; i < s1.length()+1; i++) {
+              for(int j = 0; j < s2.length()+1; j++) {
+                  if(i==0 && j==0)
+                      dp[i][j] = true;
+                  else if(i == 0)
+                      dp[i][j] = (dp[i][j-1] && s2[j-1] == s3[i+j-1]);
+                  else if(j == 0)
+                      dp[i][j] = (dp[i-1][j] && s1[i-1] == s3[i+j-1]);
+                  else
+                      dp[i][j] = (dp[i-1][j] && s1[i-1] == s3[i+j-1] ) || (dp[i][j-1] && s2[j-1] == s3[i+j-1] );
+              }
+          }
+          return dp[s1.length()][s2.length()];
+      }
+  };
+  ```
+
+- 方法3：bfs（不推荐）
+
+  ```c++
+  class Solution {
+  public:
+      bool isInterleave(string s1, string s2, string s3) {
+          if(s1.length() + s2.length() != s3.length()) return false;
+
+          bool marked[s1.length()+1][s2.length()+1];
+          for(int i = 0; i < s1.length()+1; i++) {
+              for(int j = 0; j < s2.length()+1; j++) {
+                  marked[i][j] = false;
+              }
+          }
+          queue<vector<int>> q;
+          marked[0][0] = true;
+          q.push(vector<int>{0, 0});
+          while(!q.empty()) { 
+              vector<int> v = q.front();
+              q.pop();
+              int x = v[0];
+              int y = v[1];
+              if(x == s1.length() && y == s2.length()) return true; // return here
+              if(s3[x+y] == s1[x]) {
+                  if(x+1 < s1.length()+1 && marked[x+1][y] == false) {
+                      marked[x+1][y] = true;
+                      q.push(vector<int>{x+1, y});
+                      // if(x+1 == s1.length() && y == s2.length()) return true;
+                  }
+              }
+              if(s3[x+y] == s2[y]) {
+                  if(y+1 < s2.length()+1 && marked[x][y+1] == false) {
+                      marked[x][y+1] = true;
+                      q.push(vector<int>{x, y+1});
+                      // if(x == s1.length() && y+1 == s2.length()) return true;
+                  }
+              }
+          }
+          return false;
+      }
+  };
+  ```
+
+#### [leetcode 131: 分割回文数](https://leetcode.com/problems/palindrome-partitioning)
+
+- 方法1：回溯法
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<string>> partition(string s) {
+          vector<vector<string>> res;
+          vector<string> cur;
+          backtrack(s, 0, cur, res);
+          return res;
+      }
+
+  private:
+      void backtrack(string s, int start, vector<string>& cur, vector<vector<string>>& res) {
+          if(start == s.length()) {
+              res.push_back(cur);
+              return;
+          }
+          
+          for(int i = start+1; i <= s.length(); i++) {
+              if(isPalindrome(s, start, i)) {
+                  string word = s.substr(start, i-start);
+                  cur.push_back(word);
+                  backtrack(s, i, cur, res);
+                  cur.pop_back();
+              }
+          }
+      }
+
+      bool isPalindrome(string& s, int start, int end) {        
+          end--;
+          while(start < end) {
+              if(s[start] != s[end]) return false;
+              start++;
+              end--;
+          }
+          return true;
+      }
+  };
+  ```
+
+- 方法2：带缓存的dfs
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<string>> partition(string s) {
+          if(map.count(s)) return map[s];
+          if(s.length() == 0) return vector(1, vector<string>());
+
+          vector<vector<string>> res;
+          for(int i = 0; i < s.length(); i++) {
+              string word = s.substr(i);
+              if(isPalindrome(word)) {
+                  string left = s.substr(0, i);
+                  vector<vector<string>> leftPatition = partition(left);
+                  for(vector<string> vec: leftPatition) {
+                      vec.push_back(word);
+                      res.push_back(vec);
+                  }
+              }
+          }
+          map[s] = res;
+          return res;
+      }
+
+  private:
+      bool isPalindrome(string s) {
+          for(int i = 0; i < s.length()/2; i++) {
+              if(s[i] != s[s.length()-i-1]) {
+                  return false;
+              }
+          }
+          return true;
+      }
+
+      unordered_map<string, vector<vector<string>>> map;
+  };
+  ```
+
+- 方法3：动态规划
+
+  思路：第一重循环记录字符串每个索引位置的结果，第二重循环遍历每个结果。
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<string>> partition(string s) {
+          unordered_map<int, vector<vector<string>>> dp;
+          dp[0] = vector(1, vector<string>());
+          for(int i = 1; i <= s.length(); i++) {
+              vector<vector<string>> res;
+              for(int j = 0; j < i; j++) {
+                  if(dp.count(j) && isPalindrome(s, j, i)) {
+                      vector<vector<string>> memo = dp[j];
+                      for(vector<string> vec: memo) {
+                          vec.push_back(s.substr(j, i-j));
+                          res.push_back(vec);
+                      }
+                  }
+              }
+              if(!res.empty()) dp[i] = res;
+          }
+          return dp.count(s.length())? dp[s.length()]: vector<vector<string>>();
+      }
+
+  private:
+      bool isPalindrome(string& s, int start, int end) {        
+          end--;
+          while(start < end) {
+              if(s[start] != s[end]) return false;
+              start++;
+              end--;
+          }
+          return true;
+      }
+  };
+  ```
+
+#### [leetcode 132: 分割回文串II](https://leetcode.com/problems/palindrome-partitioning-ii)
+
+思路：长度为n的字符串最多需要n-1次分割。i为中心，j为半径，分回文串长度为奇偶两种情况。
+
+```c++
+class Solution {
+public:
+    int minCut(string s) {
+        vector<int> dp(s.length()+1, 0);
+        for(int i = 0; i < s.length()+1; i++) {
+            dp[i] = i-1;
+        }
+        for(int i = 0; i < s.length(); i++) {
+            for(int j = 0; i-j >= 0 && i+j < s.length() && s[i-j] == s[i+j]; j++) {
+                dp[i+j+1] = min(dp[i+j+1], dp[i-j]+1);
+            }
+            for(int j = 0; i-j+1 >= 0 && i+j < s.length() && s[i-j+1] == s[i+j]; j++) {
+                dp[i+j+1] = min(dp[i+j+1], dp[i-j+1]+1);
+            }
+        }
+        return dp[s.length()];
+    }
+};
+```
+
+#### [leetcode 139: 单词拆分](https://leetcode.com/problems/word-break)
+
+- 方法1：回溯法（超时）
+
+  ```c++
+  class Solution {
+  public:
+      bool wordBreak(string s, vector<string>& wordDict) {
+          return backtrack(0, s, wordDict);
+      }
+
+  private:
+      bool backtrack(int cur, string& s, vector<string>& wordDict) {
+          if(cur == s.length()) return true;
+          
+          for(string word: wordDict) {
+              if(s.substr(cur, word.length()) == word) {
+                  if(backtrack(cur+word.length(), s, wordDict)) return true;
+              }
+          }
+          return false;
+      }
+  };
+  ```
+
+- 方法2：动态规划
+
+  ```c++
+  // DP (better)
+  // O(m*n) m=s.length() n=wordDict.length()
+  class Solution {
+  public:
+      bool wordBreak(string s, vector<string>& wordDict) {
+          vector<bool> dp(s.length()+1, false);
+          dp[0] = true;
+          for(int i = 1; i <= s.length(); i++) {
+              for(string word: wordDict) {
+                  // i-word.length() overflow
+                  int j = i - word.length();
+                  if(j >= 0 && dp[j] && s.substr(j, word.length()) == word) {
+                      dp[i] = true;
+                  }
+              }
+          }
+          return dp[s.length()];
+      }
+  };
+  ```
+
+- 方法3：动态规划
+
+  ```c++
+  // DP
+  // O(m^2) m=s.length() n=wordDict.length()
+  class Solution {
+  public:
+      bool wordBreak(string s, vector<string>& wordDict) {
+          unordered_set<string> dict;
+          for(string word: wordDict) {
+              dict.insert(word);
+          }
+
+          vector<bool> dp(s.length()+1, false);
+          dp[0] = true;
+          for(int i = 1; i <= s.length(); i++) {
+              for(int j = i-1; j >= 0; j--) {
+                  if(dp[j] && dict.find(s.substr(j, i-j)) != dict.end()) {
+                      dp[i] = true;
+                      break;
+                  }
+              }
+          }
+          return dp[s.length()];
+      }
+  };
+  ```
+
+#### [leetcode 140: 单词拆分II](https://leetcode.com/problems/word-break-ii)
+
+- 方法1：回溯法（超时）
+
+  ```c++
+  class Solution {
+  public:
+      vector<string> wordBreak(string s, vector<string>& wordDict) {
+          vector<string> results;
+          backtrack(0, s, wordDict, "", results);
+          return results;
+      }
+
+  private:
+      void backtrack(int cur, string& s, vector<string>& wordDict, string res, vector<string>& results) {
+          if(cur == s.length()) {
+              results.push_back(res);
+              return;
+          }
+          
+          for(string word: wordDict) {
+              if(s.substr(cur, word.length()) == word) {
+                  backtrack(cur+word.length(), s, wordDict, res.empty()? word:res+' '+word, results);
+              }
+          }
+      }
+  };
+  ```
+
+- 方法2：带缓存的dfs
+
+  ```c++
+  class Solution {
+  public:
+      vector<string> wordBreak(string s, vector<string>& wordDict) {
+          unordered_set<string> dict;
+          for(string word: wordDict) {
+              dict.insert(word);
+          }
+
+          unordered_map<string, vector<string>> map;
+          return dfs(s, dict, map);
+      }
+
+  private:
+      vector<string> dfs(string s, unordered_set<string>& dict, unordered_map<string, vector<string>>& map) {
+          if(map.find(s) != map.end()) return map[s];
+
+          vector<string> res;
+          if(s.empty()) {
+              res.push_back("");
+              return res;
+          }
+          for(int i = 0; i < s.length(); i++) {
+              string word = s.substr(i);
+              if(dict.find(word) != dict.end()) {
+                  string left = s.substr(0, i);
+                  vector<string> v = dfs(left, dict, map);
+                  for(string str: v) {
+                      res.push_back(str.empty()? word: str+" "+word);
+                  }
+              }
+          }
+          map[s] = res;
+          return res;
+      } 
+  };
+  ```
+
+- 动态规划（超时）
+
+  ```c++
+  class Solution {
+  public:
+      vector<string> wordBreak(string s, vector<string>& wordDict) {
+          unordered_map<int, vector<string>> map;
+          map[0] = vector<string>{ "" };
+
+          for(int i = 1; i <= s.length(); i++) {
+              vector<string> res;
+              for(string word: wordDict) {
+                  int j = i - word.length();
+                  if(j >= 0 && map.find(j) != map.end() && s.substr(j, word.length()) == word) {
+                      vector<string> mem = map[j];
+                      for(string str: mem) {
+                          res.push_back(str.empty()? word: str+' '+word);
+                      }
+                  }
+              }
+              if(!res.empty()) map[i] = res;
+          }
+
+          return (map.find(s.length())==map.end())? vector<string>(): map[s.length()];
+      }
+  };
+  ```
+
+#### [leetcode 395: 至少有K个重复字符的最长子串](<https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters/>)
+
+## 双指针
 #### [leetcode 3: 无重复字符的最长子字符串](<https://leetcode.com/problems/longest-substring-without-repeating-characters/>)
 
 - 思路：双指针。
@@ -334,21 +1856,5419 @@ tags:
   };
   ```
 
-#### [leetcode 5: 最长回文子串](<https://leetcode.com/problems/longest-palindromic-substring/>)
+#### [leetcode 11: 盛最多水的容器](https://leetcode.com/problems/container-with-most-water/)
 
-#### [leetcode 395: 至少有K个重复字符的最长子串](<https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters/>)
+- 思路：双指针
 
-## 双指针
+  ```c++
+  class Solution {
+  public:
+      int maxArea(vector<int>& height) {
+          int max = 0;
+          int l =0;
+          int r = height.size() - 1;
+          while(l < r) {
+              int area = (r - l) * std::min(height[l], height[r]);
+              max = std::max(max, area);
+              if(height[l] < height[r]) l++;
+              else r--;
+          }
+          return max;
+      }
+  };
+  ```
 
-#### [leetcode 43: 接雨水](<https://leetcode.com/problems/trapping-rain-water/>)
+#### [leetcode 15: 三数之和](https://leetcode.com/problems/3sum/)
+
+- 思路：双指针
+
+  首先排序，然后对于每一个数，利用双指针找到另两个数。
+
+- 时间：$O(n^2)$，空间：$O(1)$（如果用散列表记录需要$O(n)$）
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<int>> threeSum(vector<int>& nums) {
+          std::sort(nums.begin(), nums.end());
+          vector<vector<int>> result;
+          if(nums.size() < 3) return result;
+          for(int i = 0; i < nums.size() - 2; i++) {
+              if(i != 0 && nums[i] == nums[i-1]) continue;
+              int left = i + 1;
+              int right = nums.size() - 1;
+              int sum = - nums[i];
+              while(left < right) {
+                  if(nums[left] + nums[right] == sum) {
+                      vector<int> v = { nums[i], nums[left], nums[right] };
+                      result.push_back(v);
+                      while(left < right && nums[left] == nums[left + 1]) left++;
+                      while(left < right && nums[right] == nums[right - 1]) right--;
+                      left++;
+                      right--;
+                  } else if (nums[left] + nums[right] > sum) {
+                      right--;
+                  } else { //nums[left] + nums[right] < sum
+                      left++;
+                  }
+              }
+          }
+          return result;
+      }
+  };
+  ```
+
+#### [leetcode 16: 最接近的三数之和](https://leetcode.com/problems/3sum-closest/)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int threeSumClosest(vector<int>& nums, int target) {
+          int closest = 0;
+          if(nums.size() < 3) return closest;
+          std::sort(nums.begin(), nums.end());
+          closest = nums[0] + nums[1] + nums[2];
+          for(int i = 0; i < nums.size() - 2; i++) {
+              int left = i + 1;
+              int right = nums.size() - 1;
+              while(left < right) {
+                  int sum = nums[i] + nums[left] + nums[right];
+                  if(target == sum) {
+                      return target;
+                  } else if(target > sum) {
+                      if(std::abs(target - closest) > std::abs(target - sum)) closest = sum;
+                      left++;
+                  } else { //target < sum
+                      if(std::abs(target - closest) > std::abs(target - sum)) closest = sum;
+                      right--;
+                  }
+              }
+          }
+          return closest;
+      }
+  };
+  ```
+
+#### [leetcode 18: 四数之和](https://leetcode.com/problems/4sum/)
+
+- 时间：$O(n^3)$，空间：$O(1)$（如果用散列表记录需要$O(n)$）
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<int>> fourSum(vector<int>& nums, int target) {
+          vector<vector<int>> result;
+          if(nums.size() < 4) return result;
+          std::sort(nums.begin(), nums.end());
+          for(int i = 0; i < nums.size() - 3; i++) {
+              if(i != 0 && nums[i] == nums[i - 1]) continue;
+              for(int j = i + 1; j < nums.size() - 2; j++) {
+                  if(j != i + 1 && nums[j] == nums[j - 1]) continue;
+                  int left = j + 1;
+                  int right = nums.size() - 1;
+                  int sum = target - nums[i] - nums[j];
+                  while(left < right) {
+                      if(sum == nums[left] + nums[right]) {
+                          vector<int> v = { nums[i], nums[j], nums[left], nums[right] };
+                          result.push_back(v);
+                          while(left < right && nums[left] == nums[left + 1]) left++;
+                          while(left < right && nums[right] == nums[right - 1]) right--;
+                          left++;
+                          right--;
+                      } else if(sum > nums[left] + nums[right]) {
+                          left++;
+                      } else { //sum < nums[left] + nums[right]
+                          right--;
+                      }
+                  }
+              }
+          }
+          return result;
+      }
+  };
+  ```
+
+#### [leetcode 26: 删除排序数组中的重复项](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
+
+- 思路：双指针。
+
+- 时间：$O(n)$
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int removeDuplicates(vector<int>& nums) {
+          int count = 0;
+          int n = nums.size();
+          for(int i = 1; i < n; i++){
+              if(nums[i] == nums[i-1]) count++;
+              else nums[i-count] = nums[i];
+          }
+          return n-count;
+      }
+  };
+  ```
+
+#### [leetcode 27: 移除元素](https://leetcode.com/problems/remove-element/)
+
+- 思路：跟26题类似，双指针。
+
+<!-- #### [leetcode 30: 串联所有单词的子串](https://leetcode.com/problems/substring-with-concatenation-of-all-words) -->
+
+#### [leetcode 42: 接雨水](<https://leetcode.com/problems/trapping-rain-water/>)
+
+- 思路：双指针
+
+- 时间：$O(n)$
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int trap(vector<int>& height) {
+          int left = 0;
+          int right = height.size() - 1;
+          int maxLeft = 0;
+          int maxRight = 0;
+          int res = 0;
+          while(left <= right) {
+              if(maxLeft <= maxRight) {
+                  if(height[left] > maxLeft) maxLeft = height[left];
+                  else res += maxLeft - height[left];
+                  left++;
+              } else {
+                  if(height[right] > maxRight) maxRight = height[right];
+                  else res += maxRight - height[right];
+                  right--;
+              }
+          }
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 75: 颜色分类](https://leetcode.com/problems/sort-colors)
+
+- 思路：双指针
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      void sortColors(vector<int>& nums) {
+          int left = 0;
+          int right = nums.size() - 1;
+          // for(int i = 0; i < nums.size(); i++) {
+          for(int i = 0; i <= right; i++) {
+              // swapping following 2 lines causes errors
+              // [1,2,0] => [1,0,2]
+              while(nums[i] == 2 && i < right) swap(nums[i], nums[right--]);
+              while(nums[i] == 0 && i > left) swap(nums[i], nums[left++]);
+          }
+      }
+  };
+
+  // another solution, more clear
+  class Solution {
+  public:
+      void sortColors(vector<int>& nums) {
+          int left = 0;
+          int right = nums.size() - 1;
+          for(int i = 0; i <= right; i++) {
+              // there is no need of mutiple oprations here
+              // because nums[left] == 1 unless i == left
+              if (nums[i] == 0) swap(nums[i], nums[left++]);
+              else if (nums[i] == 2) swap(nums[i--], nums[right--]);
+          }
+      }
+  };
+  ```
+
+#### [leetcode 76: 最小覆盖子串](https://leetcode.com/problems/minimum-window-substring)
+
+- 思路
+
+  双指针，左右指针归零，右指针往右找到一个可行解，左指针往右减少长度直到不可行。
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      string minWindow(string s, string t) {
+          vector<int> map(128, 0);
+          for(auto c: t) map[c]++;
+          int counter = t.length();
+          int begin = 0, end = 0;
+          int dist = INT_MAX;
+          int head = 0;
+          while(end < s.length()) {
+              if(map[s[end++]]-- > 0) counter--;
+              while(counter == 0) {
+                  if(end - begin < dist) dist = end - (head = begin);
+                  if(map[s[begin++]]++ == 0) counter++;
+              }
+          }
+          return dist == INT_MAX ? "" : s.substr(head, dist);
+      }
+  };
+  ```
+
+#### [leetcode 80: 删除排序数组中的重复项II](https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii)
+
+- 思路：双指针
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int removeDuplicates(vector<int>& nums) {
+          if(nums.size() == 0) return 0;
+          
+          int idx = 1;
+          int cnt = 1;
+          int lastNum = nums[0];
+          for(int i = 1; i < nums.size(); i++) {
+              if(nums[i] == lastNum) {
+                  if(++cnt <= 2) nums[idx++] = nums[i];
+              } else {
+                  cnt = 1;
+                  lastNum = nums[i];
+                  nums[idx++] = nums[i];
+              }
+          }
+          return idx;
+      }
+  };
+  ```
+
+#### [leetcode 283: 移动零](https://leetcode.com/problems/move-zeroes)
+
+```c++
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+        int count = 0;
+        for(int i = 0; i < nums.size(); i++) {
+            if(nums[i] != 0) {
+                nums[count++] = nums[i];
+            }
+        }
+        for(; count < nums.size(); count++) {
+            nums[count] = 0;
+        }
+    }
+};
+```
 
 ## 栈
 
+#### [leetcode 20: 有效的括号](https://leetcode.com/problems/valid-parentheses/)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      bool isValid(string s) {
+          stack<int> st;
+          int length = s.length();
+          for(int i = 0; i < length; i++) {
+              switch(s[i]) {
+              case'(': st.push(0); break;
+              case')':
+                  if(st.empty() || st.top() != 0) return false;
+                  st.pop(); break;
+              case'{': st.push(1); break;
+              case'}':
+                  if(st.empty() || st.top() != 1) return false;
+                  st.pop(); break;
+              case'[': st.push(2); break;
+              case']':
+                  if(st.empty() || st.top() != 2) return false;
+                  st.pop(); break;
+              }
+          }
+          if(!st.empty()) return false;
+          return true;
+      }
+  };
+  ```
+
+#### [leetcode 32: 最长有效括号](https://leetcode-cn.com/problems/longest-valid-parentheses/)
+
+- 方法1：暴力
+
+  - 时间：$O(n^2)$
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        int longestValidParentheses(string s) {        
+            if(s == "") return 0;
+
+            int res = 0;
+            for(int i = 0; i < s.length()-1; i++) {
+                int parentheses = 0;
+                for(int j = i; j < s.length(); j++) {
+                    if(s[j] == '(') parentheses++;
+                    else parentheses--;
+                    if(parentheses < 0) break;
+                    else if(parentheses == 0) res = max(res, j-i+1);
+                }
+            }
+            return res;
+        }
+    };
+    ```
+
+- 方法2：栈
+
+  - 思路：如果遇到右括号匹配错误，将右括号索引入栈，最后出栈时计算两次匹配错误间的长度。
+  
+  - 时间：$O(n)$
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        int longestValidParentheses(string s) {        
+            stack<int> st;
+            for(int i = 0; i < s.length(); i++) {
+                if(s[i] == '(') st.push(i);
+                else if(!st.empty() && s[st.top()] == '(') st.pop();
+                else st.push(i);
+            }
+            int res = 0;
+            int last = s.length();
+            while(!st.empty()) {
+                res = max(res, last-st.top()-1);
+                last = st.top();
+                st.pop();
+            }
+            res = max(res, last);
+            return res;
+        }
+    };
+    ```
+
 #### [leetcode 84: 柱状图中最大矩形](<https://leetcode.com/problems/largest-rectangle-in-histogram>)
 
+- 方法1：分治
+
+  ```c++
+  // devide and conquer
+  // two pointers
+  // O(nlogn)
+  // T(n) = 2T(n/2) + O(n)
+  class Solution {
+  public:
+      int largestRectangleArea(vector<int>& heights) {
+          if(heights.empty()) return 0;
+          
+          return largestRectangleArea(heights, 0, heights.size() - 1);
+      }
+  private:
+      int largestRectangleArea(vector<int>& heights, int lo, int hi) {
+          if(lo == hi) return heights[lo];
+
+          int mid = (lo + hi) / 2;
+          // left part, right part or combine 2 parts
+          int area = largestRectangleArea(heights, lo, mid);
+          area = max(area, largestRectangleArea(heights, mid+1, hi));
+          area = max(area, largestCombineArea(heights, lo, mid, hi));
+          return area;
+      }
+
+      int largestCombineArea(vector<int>& heights, int lo, int mid, int hi) {
+          int left = mid;
+          int right = mid + 1;
+          int area = 0;
+          int h = INT_MAX;
+          while(left >= lo && right <= hi) {
+              h = min(h, min(heights[left], heights[right]));
+              area = max(area, h * (right - left + 1));
+              if(left == lo) right++;
+              else if(right == hi) left--;
+              else if(heights[left-1] > heights[right+1]) left--;
+              else right++;
+          }
+          return area;
+      }
+  };
+  ```
+
+- 方法2
+
+  ```c++
+  class Solution {
+  public:
+      int largestRectangleArea(vector<int>& heights) {
+          if(heights.empty()) return 0;
+
+          vector<int> lessFromLeft(heights.size(), -1);
+          for(int i = 1; i < heights.size(); i++) {
+              int p = i - 1;
+              while(p >= 0 && heights[p] >= heights[i]) {
+                  p = lessFromLeft[p];
+              }
+              lessFromLeft[i] = p;
+          }
+
+          vector<int> lessFromRight(heights.size(), heights.size());
+          for(int i = heights.size() - 2; i >= 0; i--) {
+              int p = i + 1;
+              while(p < heights.size() && heights[p] >= heights[i]) {
+                  p = lessFromRight[p];
+              }
+              lessFromRight[i] = p;
+          }
+          
+          int maxArea = 0;
+          for(int i = 0; i < heights.size(); i++) {
+              // cout << heights[i] << " " << (lessFromRight[i]-lessFromLeft[i]-1) << endl;
+              maxArea = max(maxArea, heights[i] * (lessFromRight[i]-lessFromLeft[i]-1));
+          }
+          return maxArea;
+      }
+  };
+  ```
+
+- 方法3：栈
+
+  ```c++
+  // stack O(n)
+  // 2 1 5 6 2 3
+  class Solution {
+  public:
+      int largestRectangleArea(vector<int>& heights) {
+          if(heights.empty()) return 0;
+          
+          int res = 0;
+          heights.push_back(0);
+          stack<int> s;
+          for(int i = 0; i < heights.size(); i++) {
+              while(!s.empty() && heights[i] < heights[s.top()]) {
+                  int h = heights[s.top()];
+                  s.pop();
+                  int w = s.empty()? i: i - s.top() - 1; // (i - 1) - (s.top + 1) + 1
+                  res = max(res, h * w);
+              }
+              s.push(i);
+          }
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 150: 逆波兰表达式](https://leetcode.com/problems/evaluate-reverse-polish-notation)
+
+```c++
+class Solution {
+public:
+    int evalRPN(vector<string>& tokens) {
+        stack<int> st;
+        
+        for(int i = 0; i < tokens.size(); i++) {
+            string s = tokens[i];
+            if(isdigit(s[0])) {
+                st.push(stoi(s));
+            } else if(s.size() > 1 && s[0] == '-') {
+                st.push(-stoi(s.substr(1)));
+            } else {
+                int operand2 = st.top();
+                st.pop();
+                int operand1 = st.top();
+                st.pop();
+                switch(s[0]) {
+                case '+': 
+                    st.push(operand1 + operand2);
+                    break;
+                case '-': 
+                    st.push(operand1 - operand2);
+                    break;
+                case '*': 
+                    st.push(operand1 * operand2);
+                    break;
+                case '/': 
+                    st.push(operand1 / operand2);
+                    break;
+                }
+            }
+        }
+
+        return st.top();
+    }
+};
+```
+
+#### [leetcode 227: 基本计算器II](https://leetcode.com/problems/basic-calculator-ii)
+
+```c++
+class Solution {
+public:
+    int calculate(string s) {
+        stringstream ss('+'+s);
+        char oprt;
+        int opnd;
+        int res = 0;
+        int last = 0;
+        while(ss >> oprt >> opnd) {
+            if(oprt == '+' || oprt == '-') {
+                res += last;
+                last = 0;
+                last += oprt=='+'? opnd: -opnd;
+            } else {
+                last = oprt=='*'? last*opnd: last/opnd;
+            }
+        }
+        res += last;
+        return res;
+    }
+};
+```
+
+#### [leetcode 155: 最小栈](https://leetcode.com/problems/min-stack)
+
+```c++
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    MinStack() {
+        
+    }
+    
+    void push(int x) {
+        if(minNumStack.empty() || x <= minNumStack.top()) minNumStack.push(x);
+        numStack.push(x);
+    }
+    
+    void pop() {
+        if(numStack.top() == minNumStack.top()) minNumStack.pop();
+        numStack.pop();
+    }
+    
+    int top() {
+        return numStack.top();
+    }
+    
+    int getMin() {
+        return minNumStack.top();
+    }
+
+private:
+    stack<int> numStack;
+    stack<int> minNumStack;
+};
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack* obj = new MinStack();
+ * obj->push(x);
+ * obj->pop();
+ * int param_3 = obj->top();
+ * int param_4 = obj->getMin();
+ */
+```
+
+## 堆
+
+#### [leetcode 23: 归并K个排序链表](https://leetcode.com/problems/merge-k-sorted-lists/)
+
+- 方法1：堆（优先队列）
+
+  - 时间：$O(N\log K)$，空间：$O(\log K)$
+
+  - 代码
+
+    ```c++
+    /**
+    * Definition for singly-linked list.
+    * struct ListNode {
+    *     int val;
+    *     ListNode *next;
+    *     ListNode(int x) : val(x), next(NULL) {}
+    * };
+    */
+    class Solution {
+    public:
+        ListNode* mergeKLists(vector<ListNode*>& lists) {
+            priority_queue<ListNode*, vector<ListNode*>, compare> q;
+            for(auto item: lists) {
+                if(item) q.push(item);
+            }
+            ListNode* dummy = new ListNode(0);
+            ListNode* tail = dummy;
+            while(!q.empty()) {
+                tail->next = q.top();
+                tail = tail->next;
+                q.pop();
+                if(tail->next) q.push(tail->next);
+            }
+            return dummy->next;
+        }
+        
+    private:
+        struct compare {
+            bool operator()(const ListNode* l, const ListNode* r) {
+                return l->val > r->val;
+            }
+        };
+    };
+    ```
+
+- 方法2：分治
+
+  - 思路：两两合并链表
+
+  - 时间：$O(N\log K)$，空间：$O(1)$
+
+#### [leetcode 378: 有序矩阵中第K小的数](<https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/>)
+
+- 思路：和23题类似，用堆（优先队列）
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int kthSmallest(vector<vector<int>>& matrix, int k) {
+          int rows = matrix.size();
+          int cols = matrix[0].size();
+
+          priority_queue<Position> pq;
+          for(int i = 0; i < rows; i++) {
+              
+          }
+      }
+
+  private:
+      struct Position {
+          int i;
+          int j;
+          int val;
+          
+          bool operator < (const Position& p) const {
+              return val > p.val;
+          }
+      }
+  };
+  ```
+
+#### [leetcode 215: 数组中的第K个最大元素](https://leetcode.com/problems/kth-largest-element-in-an-array)
+
+方法1：优先队列，时间$O(N \log K)$，空间$O(\log K)$
+
+```c++
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        priority_queue<int, vector<int>, greater<int>> pq; // 数字小的优先级大
+        for(int num: nums) {
+            pq.push(num);
+            if(pq.size() > k) {
+                pq.pop();
+            }
+        }
+        return pq.top();
+    }
+};
+```
+
+方法2：快速排序，时间$O(N \log N)$，空间$O(\log N)$
+
+```c++
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        sort(nums.begin(), nums.end());
+        return nums[nums.size()-k];
+    }
+};
+```
+
+方法3：快速选择，时间$O(\log N * \log N)=O(N)$，空间$O(1)$
+
+```c++
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        random_shuffle(nums.begin(), nums.end());
+        k = nums.size() - k;
+        int lo = 0;
+        int hi = nums.size() - 1;
+        while(lo < hi) {
+            int j = partition(lo, hi, nums);
+            if(j > k) hi = j - 1;
+            else if(j < k) lo = j + 1;
+            else break;
+        }
+        return nums[k];
+    }
+
+private:
+    int partition(int lo, int hi, vector<int>& nums) {
+        int i = lo;
+        int j = hi + 1;
+        int pivot = nums[lo];
+        while(true) {
+            while(nums[++i] < pivot) if(i == hi) break;
+            while(pivot < nums[--j]) if(j == lo) break;
+            if(i >= j) break;
+            swap(nums[i], nums[j]);
+        }
+        swap(nums[lo], nums[j]);
+        return j;
+    }
+};
+```
+
+## 二叉树
+
+#### [leetcode 98: 验证二叉搜索树](https://leetcode.com/problems/validate-binary-search-tree)
+
+- 中序遍历
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      bool isValidBST(TreeNode* root) {
+          vector<int> result;
+          inorderTraversal(root, result);
+          for(int i = 1; i < result.size(); i++) {
+              if(result[i-1] >= result[i]) return false;
+          }
+          return true;
+      }
+      
+  private:
+      void inorderTraversal(TreeNode *root, vector<int>& result) {
+          if(root == NULL) return;
+          inorderTraversal(root->left, result);
+          result.push_back(root->val);
+          inorderTraversal(root->right, result);
+      }
+  };
+  ```
+
+- 中序遍历2
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      bool isValidBST(TreeNode* root) {
+          TreeNode* prev = NULL;
+          return validate(root, prev);
+      }
+      
+  private:
+      bool validate(TreeNode* root, TreeNode*& prev) {
+          if(root == NULL) return true;
+          if(!validate(root->left, prev)) return false;
+          if(prev && prev->val >= root->val) return false;
+          prev = root;
+          return validate(root->right, prev);
+      }
+  };
+  ```
+
+- 递归
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      bool isValidBST(TreeNode* root) {
+          return isValidBST(root, LONG_MIN, LONG_MAX);
+      }
+      
+  private:
+      bool isValidBST(TreeNode* root, long min, long max) {
+          if(root == NULL) return true;
+          if(root->val <= min) return false;
+          if(root->val >= max) return false;
+          if(!isValidBST(root->left, min, root->val)) return false;
+          return isValidBST(root->right, root->val, max);
+      }
+  };
+  ```
+
+#### [leetcode 99: 恢复二叉排序树](https://leetcode.com/problems/recover-binary-search-tree)
+
+- 思路：中序遍历
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      void recoverTree(TreeNode* root) {
+          TreeNode* prev = NULL;
+          TreeNode* first = NULL;
+          TreeNode* second = NULL;
+          
+          traverse(root, prev, first, second);
+          
+          int temp = first->val;
+          first->val = second->val;
+          second->val = temp;
+      }
+      
+  private:
+      void traverse(TreeNode* root, TreeNode*& prev, TreeNode*& first, TreeNode*& second) {
+          if(root == NULL) return;
+          
+          traverse(root->left, prev, first, second);
+          if(first == NULL && prev != NULL && prev->val > root->val)
+              first = prev;
+          if(first != NULL && prev != NULL && prev->val > root->val)
+              second = root;
+          prev = root;
+          traverse(root->right, prev, first, second);
+      }
+  };
+  ```
+
+#### [leetcode 100: 相同的树](https://leetcode.com/problems/same-tree)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      bool isSameTree(TreeNode* p, TreeNode* q) {
+          if(p == NULL && q == NULL) return true;
+          if(p == NULL || q == NULL) return false;
+          if(p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right)) return true;
+          return false;
+      }
+  };
+  ```
+
+#### [leetcode 101: 对称二叉树](https://leetcode.com/problems/symmetric-tree)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      bool isSymmetric(TreeNode* root) {
+          if(root == NULL) return true;
+          return isSymmetric(root->left, root->right);
+      }
+  private:
+      bool isSymmetric(TreeNode* left, TreeNode* right) {
+          if(left == NULL && right == NULL) return true;
+          if(left == NULL || right == NULL) return false;
+
+          if(left->val == right->val && isSymmetric(left->left, right->right) && isSymmetric(left->right, right->left)) 
+              return true;
+          return false;
+      }
+  };
+  ```
+
+#### [leetcode 103: 二叉树的锯齿形层次遍历]
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+          vector<vector<int>> res;
+          if(root == NULL) return res;
+          
+          queue<TreeNode*> q;
+          q.push(root);
+          bool inOrder = true;
+          while(!q.empty()) {
+              vector<int> levelNodes;
+              int queueSize = q.size();
+              while(queueSize--) {
+                  TreeNode* root = q.front();
+                  q.pop();
+                  levelNodes.push_back(root->val);
+                  if(root->left != NULL) q.push(root->left);
+                  if(root->right != NULL) q.push(root->right);
+              }
+              if(!inOrder) reverse(levelNodes.begin(), levelNodes.end());
+              inOrder = !inOrder;
+              res.push_back(levelNodes);
+          }
+
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 104: 二叉数的最大深度](https://leetcode.com/problems/maximum-depth-of-binary-tree)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      int maxDepth(TreeNode* root) {
+          if(root == NULL) return 0;
+          return 1+max(maxDepth(root->left), maxDepth(root->right));
+      }
+  };
+  ```
+
+#### [leetcode 105: 从前序与中序遍历序列构造二叉树](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+          return buildTree(0, preorder.size(), 0, inorder.size(), preorder, inorder);
+      }
+  private:
+      TreeNode* buildTree(int preBegin, int preEnd, int inBegin, int inEnd, vector<int>& preorder, vector<int>& inorder) {
+          if(preEnd - preBegin == 0) return NULL;
+          if(preEnd - preBegin == 1) return new TreeNode(preorder[preBegin]);
+
+          int rootVal = preorder[preBegin];
+          int rootIdx;
+          for(int i = inBegin; i < inEnd; i++) {
+              if(inorder[i] == rootVal) {
+                  rootIdx = i;
+                  break;
+              }
+          }
+          TreeNode* root = new TreeNode(rootVal);
+          root->left = buildTree(preBegin+1, preBegin+1+rootIdx-inBegin, inBegin, rootIdx, preorder, inorder);
+          root->right = buildTree(preBegin+1+rootIdx-inBegin, preEnd, rootIdx+1, inEnd, preorder, inorder);
+          return root;
+      }
+  };
+  ```
+
+#### [leetcode 106: 从后序与中序遍历序列构造二叉树](https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+          return buildTree(0, inorder.size(), 0, postorder.size(), inorder, postorder);
+      }
+  private:
+      TreeNode* buildTree(int inBegin, int inEnd, int postBegin, int postEnd, vector<int>& inorder, vector<int>& postorder) {
+          if(postEnd - postBegin == 0) return NULL;
+          if(postEnd - postBegin == 1) return new TreeNode(postorder[postEnd-1]);
+
+          int rootVal = postorder[postEnd-1];
+          int rootIdx;
+          for(int i = inBegin; i < inEnd; i++) {
+              if(inorder[i] == rootVal) {
+                  rootIdx = i;
+                  break;
+              }
+          }
+          TreeNode* root = new TreeNode(rootVal);
+          root->left = buildTree(inBegin, rootIdx, postBegin, rootIdx+postBegin-inBegin, inorder, postorder);
+          root->right = buildTree(rootIdx+1, inEnd, rootIdx+postBegin-inBegin, postEnd-1, inorder, postorder);
+          return root;
+      }
+  };
+  ```
+
+#### [leetcode 108: 将有序数组转换为二叉搜索树](https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      TreeNode* sortedArrayToBST(vector<int>& nums) {
+          return sortedArrayToBST(nums, 0, nums.size());
+      }
+  private:
+      TreeNode* sortedArrayToBST(vector<int>& nums, int lo, int hi) {
+          if(lo == hi) return NULL;
+          
+          int mid = (lo + hi) / 2;
+          TreeNode* root = new TreeNode(nums[mid]);
+          root->left = sortedArrayToBST(nums, lo, mid);
+          root->right = sortedArrayToBST(nums, mid+1, hi);
+          return root;
+      }
+  };
+  ```
+
+#### [leetcode 109: 有序链表转换二叉搜索树]
+
+- 时间：$O(n \log n)$
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for singly-linked list.
+  * struct ListNode {
+  *     int val;
+  *     ListNode *next;
+  *     ListNode(int x) : val(x), next(NULL) {}
+  * };
+  */
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      TreeNode* sortedListToBST(ListNode* head) {
+          return sortedListToBST(head, NULL);
+      }
+  private:
+      TreeNode* sortedListToBST(ListNode* head, ListNode* tail) {
+          if(head == tail) return NULL;
+          
+          ListNode* fast = head;
+          ListNode* slow = head;
+          while(fast != tail && fast->next != tail) {
+              fast = fast->next->next;
+              slow = slow->next;
+          }
+          TreeNode* root = new TreeNode(slow->val);
+          root->left = sortedListToBST(head, slow);
+          root->right = sortedListToBST(slow->next, tail);
+          return root;
+      }
+  };
+  ```
+
+#### [leetcode 110: 二叉数的最大深度](https://leetcode.com/problems/balanced-binary-tree)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      bool isBalanced(TreeNode* root) {
+          bool res = true;
+          maxDepth(root, res);
+          return res;
+      }
+  private:
+      int maxDepth(TreeNode* root, bool& res) {
+          if(root == NULL) return 0;
+
+          int leftMaxDepth = maxDepth(root->left, res);
+          int rightMaxDepth = maxDepth(root->right, res);
+          if(abs(leftMaxDepth-rightMaxDepth) > 1) res = false;
+          return 1 + max(leftMaxDepth, rightMaxDepth);
+      }
+  };
+  ```
+
+#### [leetcode 111: 二叉树的最小深度](https://leetcode.com/problems/minimum-depth-of-binary-tree)
+
+- 方法1
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      int minDepth(TreeNode* root) {
+          if(root == NULL) return 0;
+          
+          int res = INT_MAX;
+          minDepth(root, 1, res);
+          return res;
+      }
+  private:
+      void minDepth(TreeNode* root, int depth, int& res) {
+          if(root == NULL) return;
+
+          if(root->left == NULL && root->right == NULL) res = min(res, depth);
+          minDepth(root->left, depth+1, res);
+          minDepth(root->right, depth+1, res);
+      } 
+  };
+  ```
+
+- 方法2
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      int minDepth(TreeNode* root) {
+          if(root == NULL) return 0;
+          
+          if(root->left == NULL) return 1 + minDepth(root->right);
+          if(root->right == NULL) return 1 + minDepth(root->left);
+          return 1 + min(minDepth(root->left), minDepth(root->right));
+      }
+  };
+  ```
+
+#### [leetcode 112: 路径总和](https://leetcode.com/problems/path-sum)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      bool hasPathSum(TreeNode* root, int sum) {
+          if(root == NULL) return false;
+          return traverse(root, sum);
+      }
+
+  private:
+      bool traverse(TreeNode* root, int sum) {
+          sum -= root->val;
+          if(root->left == NULL && root->right == NULL && sum == 0) return true;
+          if(root->left != NULL && traverse(root->left, sum)) return true;
+          if(root->right != NULL && traverse(root->right, sum)) return true;
+          return false;
+      }
+  };
+
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      bool hasPathSum(TreeNode* root, int sum) {
+          if(root == NULL) return false;
+          if(root->left == NULL && root->right == NULL && sum-root->val == 0) return true;
+          return (hasPathSum(root->left, sum-root->val) || hasPathSum(root->right, sum-root->val));
+      }
+  };
+  ```
+
+#### [leetcode 113: 路径总和II](https://leetcode.com/problems/path-sum-ii)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      vector<vector<int>> pathSum(TreeNode* root, int sum) {
+          vector<vector<int>> res;
+          vector<int> path;
+          pathSum(root, sum, path, res);
+          return res;
+      }
+  private:
+      void pathSum(TreeNode* root, int sum, vector<int>& path, vector<vector<int>>& res) {
+          if(root == NULL) return;
+
+          path.push_back(root->val);
+          if(root->left == NULL && root->right == NULL && sum-root->val == 0) {
+              res.push_back(path);
+              path.pop_back(); //don't forget to remove the last integer
+              return;
+          }
+
+          pathSum(root->left, sum-root->val, path, res);
+          pathSum(root->right, sum-root->val, path, res);
+          path.pop_back();
+      }
+  };
+  ```
+
+#### [leetcode 114: 二叉树展开为链表](https://leetcode.com/problems/flatten-binary-tree-to-linked-list)
+
+- 方法1：先序遍历，但是展开为链表会破坏结点的右子树，所以递归过程中要把左右子树的指针先保存起来
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      void flatten(TreeNode* root) {        
+          TreeNode* dummy = new TreeNode(0);
+          TreeNode* prev = dummy;
+          traverse(root, prev);
+      }
+
+  private:
+      void traverse(TreeNode* root, TreeNode*& prev) {
+          if(root == NULL) return;
+
+          TreeNode* left = root->left;
+          TreeNode* right = root->right;
+          prev->left = NULL;
+          prev->right = root;
+          prev = root;
+          traverse(left, prev);
+          traverse(right, prev);
+      }
+  };
+  ```
+
+- 方法2：先序遍历翻转
+
+  ```java
+  private TreeNode prev = null;
+
+  public void flatten(TreeNode root) {
+      if (root == null)
+          return;
+      flatten(root.right);
+      flatten(root.left);
+      root.right = prev;
+      root.left = null;
+      prev = root;
+  }
+  ```
+
+#### [leetcode 116: 填充每个节点的下一个右侧节点指针](https://leetcode.com/problems/populating-next-right-pointers-in-each-node)
+
+- 方法1：层次遍历
+
+  ```c++
+  /*
+  // Definition for a Node.
+  class Node {
+  public:
+      int val;
+      Node* left;
+      Node* right;
+      Node* next;
+
+      Node() {}
+
+      Node(int _val, Node* _left, Node* _right, Node* _next) {
+          val = _val;
+          left = _left;
+          right = _right;
+          next = _next;
+      }
+  };
+  */
+  class Solution {
+  public:
+      Node* connect(Node* root) {
+          if(root == NULL) return NULL;
+
+          queue<Node*> q;
+          q.push(root);
+          while(!q.empty()) {
+              vector<Node*> levelNodes;
+              int levelSize = q.size();
+              while(levelSize--) {
+                  Node* root = q.front();
+                  q.pop();
+                  levelNodes.push_back(root);
+                  if(root->left != NULL) q.push(root->left);
+                  if(root->right != NULL) q.push(root->right);
+              }
+              for(int i = 0; i < levelNodes.size()-1; i++) {
+                  levelNodes[i]->next = levelNodes[i+1];
+              }
+              levelNodes[levelNodes.size()-1] = NULL;
+          }
+          return root;
+      }
+  };
+  ```
+
+- 方法2
+
+  ```c++
+  // https://leetcode.com/problems/populating-next-right-pointers-in-each-node/discuss/37472/A-simple-accepted-solution
+  void connect(TreeLinkNode *root) {
+      if (root == NULL) return;
+      TreeLinkNode *pre = root;
+      TreeLinkNode *cur = NULL;
+      while(pre->left) {
+          cur = pre;
+          while(cur) {
+              cur->left->next = cur->right;
+              if(cur->next) cur->right->next = cur->next->left;
+              cur = cur->next;
+          }
+          pre = pre->left;
+      }
+  }
+  ```
+
+#### [leetcode 117: 填充每个节点的下一个右侧节点指针II](https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii)
+
+- 方法1：层次遍历
+
+  ```c++
+  /*
+  // Definition for a Node.
+  class Node {
+  public:
+      int val;
+      Node* left;
+      Node* right;
+      Node* next;
+
+      Node() {}
+
+      Node(int _val, Node* _left, Node* _right, Node* _next) {
+          val = _val;
+          left = _left;
+          right = _right;
+          next = _next;
+      }
+  };
+  */
+  class Solution {
+  public:
+      Node* connect(Node* root) {
+          if(root == NULL) return NULL;
+
+          queue<Node*> q;
+          q.push(root);
+          while(!q.empty()) {
+              int levelSize = q.size();
+              vector<Node*> levelNodes;
+              while(levelSize--) {
+                  Node* node = q.front();
+                  q.pop();
+                  levelNodes.push_back(node);
+                  if(node->left != NULL) q.push(node->left);
+                  if(node->right != NULL) q.push(node->right);
+              }
+              for(int i = 0; i < levelNodes.size()-1; i++) {
+                  levelNodes[i]->next = levelNodes[i+1];
+              }
+              levelNodes[levelNodes.size()-1]->next = NULL;
+          }
+          return root;
+      }
+  };
+  ```
+
+#### [leetcode 124: 二叉树中的最大路径和](https://leetcode.com/problems/binary-tree-maximum-path-sum)
+
+- 思路：迭代过程中，得到每个结点的左子树最大路径和与右子树最大路径和，更新结果，返回这个结点为根节点的子树的最大路径和。
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      int maxPathSum(TreeNode* root) {
+          int res = INT_MIN;
+          maxPathSum(root, res);
+          return res;
+      }
+
+      int maxPathSum(TreeNode* root, int& res) {
+          if(root == NULL) return 0;
+          
+          int left = max(0, maxPathSum(root->left, res));
+          int right = max(0, maxPathSum(root->right, res));
+          int sum = root->val + left + right;
+          res = max(sum, res);
+          return root->val + max(left, right);
+      }
+
+  };
+  ```
+
+#### [leetcode 208: 实现 Trie (前缀树)](https://leetcode.com/problems/implement-trie-prefix-tree)
+
+方法1：迭代
+
+```c++
+class Trie {
+public:
+    /** Initialize your data structure here. */
+    Trie() {
+        root = new TrieNode(' ');
+    }
+    
+    /** Inserts a word into the trie. */
+    void insert(string word) {
+        insert(root, 0, word);
+    }
+    
+    /** Returns if the word is in the trie. */
+    bool search(string word) {
+        return search(root, 0, word);
+    }
+    
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) {
+        return startsWith(root, 0, prefix);
+    }
+
+private:
+    // https://zh.wikipedia.org/wiki/Trie
+    struct TrieNode {
+        char val;
+        bool end;
+        unordered_map<char, TrieNode*> neighbours;
+
+        TrieNode(char _val): val(val), end(false) {};
+    };
+
+    TrieNode* root;
+
+    void insert(TrieNode* root, int cur, string& word) {
+        if(cur == word.length()) {
+            root->end = true;
+            return;
+        }
+        
+        if(!root->neighbours.count(word[cur])) {
+            root->neighbours[word[cur]] = new TrieNode(word[cur]);
+        }
+        insert(root->neighbours[word[cur]], cur+1, word);
+    }
+    
+    bool search(TrieNode* root, int cur, string& word) {
+        if(cur == word.length() && root->end) return true;
+        
+        if(root->neighbours.count(word[cur])) {
+            return search(root->neighbours[word[cur]], cur+1, word);
+        }
+        return false;
+    }
+
+    bool startsWith(TrieNode* root, int cur, string& word) {
+        if(cur == word.length()) return true;
+        
+        if(root->neighbours.count(word[cur])) {
+            return startsWith(root->neighbours[word[cur]], cur+1, word);
+        }
+        return false;
+    }
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */
+```
+
+方法2：迭代
+
+```c++
+class Trie {
+public:
+    /** Initialize your data structure here. */
+    Trie() {
+        root = new TrieNode(' ');
+    }
+    
+    /** Inserts a word into the trie. */
+    void insert(string word) {
+        TrieNode* node = root;
+        for(int i = 0; i < word.length(); i++) {
+            if(!node->neighbours.count(word[i])) {
+                node->neighbours[word[i]] = new TrieNode(word[i]);
+            }
+            node = node->neighbours[word[i]];
+        }
+        node->end = true;
+    }
+    
+    /** Returns if the word is in the trie. */
+    bool search(string word) {
+        TrieNode* node = root;
+        for(int i = 0; i < word.length(); i++) {
+            if(!node->neighbours.count(word[i])) return false;
+            node = node->neighbours[word[i]];
+        }
+        return node->end == true;
+    }
+    
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) {
+        TrieNode* node = root;
+        for(int i = 0; i < prefix.length(); i++) {
+            if(!node->neighbours.count(prefix[i])) return false;
+            node = node->neighbours[prefix[i]];
+        }
+        return true;
+    }
+
+private:
+    // https://zh.wikipedia.org/wiki/Trie
+    struct TrieNode {
+        char val;
+        bool end;
+        map<char, TrieNode*> neighbours;
+
+        TrieNode(char _val): val(val), end(false) {};
+    };
+
+    TrieNode* root;
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */
+```
+
+#### [leetcode 212: 单词搜索II](https://leetcode.com/problems/word-search-ii)
+
+方法1：dfs
+
+```c++
+class Solution {
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        int rows = board.size();
+        if(rows == 0) return vector<string>();
+        int cols = board[0].size();
+        if(cols == 0) return vector<string>();
+        
+        unordered_set<string> res;
+        vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < cols; j++) {
+                for(string word: words) {
+                    dfs(i, j, rows, cols, board, visited, 0, word, res);
+                }
+            }
+        }
+        
+        vector<string> vec;
+        for(string s: res) {
+            vec.push_back(s);
+        }
+        return vec;
+    }
+
+private:
+    void dfs(int i, int j, int rows, int cols, vector<vector<char>>& board, vector<vector<bool>>& visited, int cur, string& word, unordered_set<string>& res) {
+        if(board[i][j] != word[cur]) return;
+        if(cur == word.length()-1) {
+            res.insert(word);
+            return;
+        }
+
+        visited[i][j] = true;
+        if(i-1 >= 0 && !visited[i-1][j]) dfs(i-1, j, rows, cols, board, visited, cur+1, word, res);
+        if(i+1 < rows && !visited[i+1][j]) dfs(i+1, j, rows, cols, board, visited, cur+1, word, res);
+        if(j-1 >= 0 && !visited[i][j-1]) dfs(i, j-1, rows, cols, board, visited, cur+1, word, res);
+        if(j+1 < cols && !visited[i][j+1]) dfs(i, j+1, rows, cols, board, visited, cur+1, word, res);
+        visited[i][j] = false;
+    }
+};
+```
+
+方法2：dfs+trie
+
+```c++
+class Solution {
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        // build trie
+        TrieNode* root = new TrieNode(' ');
+        for(string word: words) {
+            TrieNode* node = root;
+            for(int i = 0; i < word.length(); i++) {
+                if(!node->neighbours.count(word[i])) {
+                    node->neighbours[word[i]] = new TrieNode(word[i]);
+                }
+                node = node->neighbours[word[i]];
+            }
+            node->wordEnd = true;
+        }
+
+        // backtrack
+        int rows = board.size();
+        int cols = board[0].size();
+        vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+        unordered_set<string> res;
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < cols; j++) {
+                dfs(i, j, rows, cols, board, visited, root, "", res);
+            }
+        }
+        
+        vector<string> vec;
+        for(string s: res) {
+            vec.push_back(s);
+        }
+        return vec;
+    }
+
+private:
+    struct TrieNode {
+        char val;
+        unordered_map<char, TrieNode*> neighbours;
+        bool wordEnd;
+
+        TrieNode(char _val): val(_val), wordEnd(false) {};
+    };
+
+    void dfs(int i, int j, int rows, int cols, vector<vector<char>>& board, vector<vector<bool>>& visited, TrieNode* root, string word, unordered_set<string>& res) {
+        if(!root->neighbours.count(board[i][j])) return;
+        TrieNode* child = root->neighbours[board[i][j]];
+        word += board[i][j];
+        if(child->wordEnd) {
+            res.insert(word);
+            // cannot return
+        }
+
+        visited[i][j] = true;
+        if(i-1 >= 0 && !visited[i-1][j]) dfs(i-1, j, rows, cols, board, visited, child, word, res);
+        if(i+1 < rows && !visited[i+1][j]) dfs(i+1, j, rows, cols, board, visited, child, word, res);
+        if(j-1 >= 0 && !visited[i][j-1]) dfs(i, j-1, rows, cols, board, visited, child, word, res);
+        if(j+1 < cols && !visited[i][j+1]) dfs(i, j+1, rows, cols, board, visited, child, word, res);
+        visited[i][j] = false;
+    }
+};
+```
+
+#### [leetcode 236: 二叉树的最近公共祖先](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree)
+
+这个函数的功能有三个：给定两个节点 p 和 q
+
+1. 如果 p 和 q 都存在，则返回它们的公共祖先；
+2. 如果只存在一个，则返回存在的一个；
+3. 如果 p 和 q 都不存在，则返回NULL
+
+如果left是NULL返回right，如果right是NULL返回left，如果都不是NULL返回root。
+
+```c++
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root == NULL)
+            return NULL;
+        if(root == p || root == q) 
+            return root;
+            
+        TreeNode* left =  lowestCommonAncestor(root->left, p, q);
+        TreeNode* right = lowestCommonAncestor(root->right, p, q);
+       
+        if(left == NULL)
+            return right;
+        if(right == NULL)
+            return left;      
+        if(left && right) // p和q在两侧
+            return root;
+        
+        return NULL; // 必须有返回值
+    }
+};
+```
+
+```c++
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    if (!root || root == p || root == q) return root;
+    TreeNode* left = lowestCommonAncestor(root->left, p, q);
+    TreeNode* right = lowestCommonAncestor(root->right, p, q);
+    return !left ? right : !right ? left : root;
+}   
+```
+
+---
+
+#### [leetcode 144: 二叉树的先序遍历](https://leetcode.com/problems/binary-tree-preorder-traversal/description/)
+
+- 思路：先向左子树追溯，访问结点，将右子树入栈；然后出栈
+
+- 代码
+
+  ```c++
+  void preOrder(TreeNode* root) {
+      stack<TreeNode*> s;
+      while(true) {
+          while(root) {
+              visit(root->val);
+              s.push(root->right);
+              root = root->left;
+          }
+          if(s.empty()) break;
+          root = s.pop();
+      }
+  }
+  ```
+
+#### [leetcode 94: 二叉树的中序遍历](https://leetcode.com/problems/binary-tree-inorder-traversal/description/)
+
+- 思路：先入栈并往左子树追溯；然后出栈，访问结点，转入右子树
+
+- 代码
+
+  ```c++
+  void inOrder(TreeNode* root) {
+      stack<TreeNode*> s;
+      while(true) {
+          while(root) {
+            s.push(root);
+            root = root->left;
+          }
+          if(s.empty()) break;
+          root = s.pop();
+          visit(root->val);
+          root = root->right;
+      }
+  }
+  ```
+
+#### [leetcode 145: 二叉树的后序遍历](https://leetcode.com/problems/binary-tree-postorder-traversal/description/)
+
+Here I summarize the iterative implementation for preorder, inorder, and postorder traverse.
+
+Pre Order Traverse
+
+```java
+public List<Integer> preorderTraversal(TreeNode root) {
+    List<Integer> result = new ArrayList<>();
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    TreeNode p = root;
+    while(!stack.isEmpty() || p != null) {
+        if(p != null) {
+            stack.push(p);
+            result.add(p.val);  // Add before going to children
+            p = p.left;
+        } else {
+            TreeNode node = stack.pop();
+            p = node.right;   
+        }
+    }
+    return result;
+}
+```
+
+In Order Traverse
+
+```java
+public List<Integer> inorderTraversal(TreeNode root) {
+    List<Integer> result = new ArrayList<>();
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    TreeNode p = root;
+    while(!stack.isEmpty() || p != null) {
+        if(p != null) {
+            stack.push(p);
+            p = p.left;
+        } else {
+            TreeNode node = stack.pop();
+            result.add(node.val);  // Add after all left children
+            p = node.right;   
+        }
+    }
+    return result;
+}
+```
+
+Post Order Traverse
+
+```java
+public List<Integer> postorderTraversal(TreeNode root) {
+    LinkedList<Integer> result = new LinkedList<>();
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    TreeNode p = root;
+    while(!stack.isEmpty() || p != null) {
+        if(p != null) {
+            stack.push(p);
+            result.addFirst(p.val);  // Reverse the process of preorder
+            p = p.right;             // Reverse the process of preorder
+        } else {
+            TreeNode node = stack.pop();
+            p = node.left;           // Reverse the process of preorder
+        }
+    }
+    return result;
+}
+```
+
+#### [leetcode 230: 二叉搜索树中的第K小的元素](https://leetcode-cn.com/problems/kth-smallest-element-in-a-bst/)
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int kthSmallest(TreeNode* root, int k) {
+        int res;
+        inOrderTraverse(root, k, res);
+        return res;
+    }
+
+private:
+    bool inOrderTraverse(TreeNode* root, int& k, int& res) {
+        if(root == NULL) return false;
+
+        if(inOrderTraverse(root->left, k, res)) return true;
+        if(--k == 0) {
+            res = root->val;
+            return true;
+        }
+        if(inOrderTraverse(root->right, k, res)) return true;
+        return false;
+    }
+
+};
+```
+
+## 链表
+
+#### [leetcode 19: 删除链表的倒数第N个节点](https://leetcode.com/problems/remove-nth-node-from-end-of-list/)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for singly-linked list.
+  * struct ListNode {
+  *     int val;
+  *     ListNode *next;
+  *     ListNode(int x) : val(x), next(NULL) {}
+  * };
+  */
+  /**
+  *  0     1     2     3     4     5
+  *  dummy head
+  *  left        right
+  *                    left        right
+  *
+  *  0     1
+  *  dummy head
+  *  left  right
+  */
+  class Solution {
+  public:
+      ListNode* removeNthFromEnd(ListNode* head, int n) {
+          ListNode* dummy = new ListNode(0);
+          dummy->next = head;
+          ListNode* left = dummy;
+          ListNode* right = dummy;
+          for(int i = 0; i < n; i++) {
+              right = right->next;
+          }
+          while(right->next != NULL) {
+              left = left->next;
+              right = right->next;
+          }
+          ListNode* p = left->next;
+          left->next = p->next;
+          delete(p);
+          return dummy->next;
+      }
+  };
+  ```
+
+#### [leetcode 24: 两两交换链表中的节点](https://leetcode.com/problems/swap-nodes-in-pairs/)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for singly-linked list.
+  * struct ListNode {
+  *     int val;
+  *     ListNode *next;
+  *     ListNode(int x) : val(x), next(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      ListNode* swapPairs(ListNode* head) {
+          ListNode* dummy = new ListNode(0);
+          dummy->next = head;
+          ListNode* prev = dummy;
+          ListNode* tail = dummy;
+          for(int i = 0; i < 2; i++) {
+              tail = tail->next;
+              if(tail == NULL) return dummy->next;
+          }
+          while(true) {
+              ListNode* temp = prev->next;
+              prev->next = tail;
+              temp->next = tail->next;
+              tail->next = temp;
+              for(int i = 0; i < 3; i++) {
+                  tail = tail->next;
+                  if(tail == NULL) return dummy->next;
+              }
+              for(int i = 0; i < 2; i++) {
+                  prev = prev->next;
+              }
+          }
+          return dummy->next;
+      }
+  };
+  ```
+
+#### [leetcode 25: K个一组翻转链表](https://leetcode.com/problems/reverse-nodes-in-k-group/)
+
+- 思路：先往后遍历K个结点，如果中途链表没有结束，就翻转这些结点。
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for singly-linked list.
+  * struct ListNode {
+  *     int val;
+  *     ListNode *next;
+  *     ListNode(int x) : val(x), next(NULL) {}
+  * };
+  */
+
+  /*
+  * 0     1     2     3     4     5     6     7     8     9
+  * dummy head
+  * prev
+  * tail
+  * 
+  * 0     1     2     3     4     5     6     7     8     9
+  * dummy                   tail
+  * prev
+  *
+  * 0     1     2     3     4     5     6     7     8     9
+  * dummy temp              tail
+  * prev
+  *
+  * 0     2     3     4     1     5     6     7     8     9
+  * dummy             tail  temp
+  * prev
+  *
+  * 0     4     3     2     1     5     6     7     8     9
+  * dummy tail
+  * prev
+  */
+  class Solution {
+  public:
+      ListNode* reverseKGroup(ListNode* head, int k) {
+          ListNode* dummy = new ListNode(0);
+          dummy->next = head;
+          ListNode* prev = dummy;
+          ListNode* tail = dummy;
+          for(int i = 0; i < k; i++) {
+              tail = tail->next;
+              if(tail == NULL) return dummy->next;
+          }
+          while(true) {
+              for(int i = 0; i < k-1; i++) {
+                  ListNode* temp = prev->next;
+                  prev->next = temp->next;
+                  temp->next = tail->next;
+                  tail->next = temp;
+              }
+              for(int i = 0; i < 2*k-1; i++) {
+                  tail = tail->next;
+                  if(tail == NULL) return dummy->next;
+              }
+              for(int i = 0; i < k; i++) {
+                  prev = prev->next;
+              }
+          }
+          return dummy->next;
+      }
+  };
+  ```
+
+#### [leetcode 61: 旋转链表](https://leetcode.com/problems/rotate-list)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for singly-linked list.
+  * struct ListNode {
+  *     int val;
+  *     ListNode *next;
+  *     ListNode(int x) : val(x), next(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      ListNode* rotateRight(ListNode* head, int k) {
+          if(head == NULL) return head;
+
+          // find tail pointer
+          int numNode = 1;
+          ListNode* tail = head;
+          while(tail->next != NULL) {
+              tail = tail->next;
+              numNode++;
+          }
+          cout << numNode;
+          
+          // find pointer
+          int step = numNode - 1 - k % numNode;
+          ListNode* p = head;
+          for(int i = 0; i < step; i++) {
+              p = p->next;
+          }
+          ListNode* next = p->next;
+          
+          if(next == NULL) { // do not change
+              return head;
+          } else { // rotate
+              tail->next = head;
+              p->next = NULL;
+              return next;
+          }
+      }
+  };
+  ```
+
+#### [leetcode 82: 删除排序链表中的重复元素II](https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for singly-linked list.
+  * struct ListNode {
+  *     int val;
+  *     ListNode *next;
+  *     ListNode(int x) : val(x), next(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      ListNode* deleteDuplicates(ListNode* head) {        
+          ListNode* dummy = new ListNode(0);
+          dummy->next = head;
+          
+          ListNode* pre = dummy;
+          ListNode* p = head;
+          while(p != NULL) {
+              if(p->next != NULL && p->val == p->next->val) {
+                  // delete this number
+                  int val = p->val;
+                  while(p != NULL && p->val == val) {
+                      pre->next = p->next;
+                      delete(p);
+                      p = pre->next;
+                  }
+              } else {
+                  pre = p;
+                  p = p->next;
+              }
+          }
+
+          return dummy->next;
+      }
+  };
+  ```
+
+#### [leetcode 83: 删除排序链表中的重复元素](https://leetcode.com/problems/remove-duplicates-from-sorted-list)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for singly-linked list.
+  * struct ListNode {
+  *     int val;
+  *     ListNode *next;
+  *     ListNode(int x) : val(x), next(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      ListNode* deleteDuplicates(ListNode* head) {
+          if(head == NULL) return NULL;
+
+          ListNode* cur = head;
+          int lastVal = cur->val;
+          while(cur->next != NULL) {
+              ListNode* tmp = cur->next;
+              if(tmp->val == lastVal) {
+                  cur->next = tmp->next;
+                  delete(tmp);
+              } else {
+                  lastVal = tmp->val;
+                  cur = cur->next;
+              }
+          }
+          return head;
+      }
+  };
+  ```
+
+#### [leetcode 92: 翻转链表](https://leetcode.com/problems/reverse-linked-list-ii)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for singly-linked list.
+  * struct ListNode {
+  *     int val;
+  *     ListNode *next;
+  *     ListNode(int x) : val(x), next(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      ListNode* reverseBetween(ListNode* head, int m, int n) {
+          if(m == n) return head;
+          
+          ListNode* dummy = new ListNode(0);
+          dummy->next = head;
+
+          // 1->2->3->4->5->NULL, m = 2, n = 4
+          // left: 1, p: 2
+          ListNode* left = dummy;
+          ListNode* p = head;
+          for(int i = 0; i < m-1; i++) {
+              left = p;
+              p = p->next;
+          }
+          // reverse list
+          // left: 1, start: 2, p: 4, right: 5
+          ListNode* start = p;
+          ListNode* pre = p;
+          p = p->next;
+          for(int i = 0; i < n-m-1; i++) {
+              ListNode* next = p->next;
+              p->next = pre;
+              pre = p;
+              p = next;
+          }
+          ListNode* right = p->next;
+          p->next = pre;
+          // connect together
+          left->next = p;
+          start->next = right;
+
+          return dummy->next;
+      }
+  };
+  ```
+
+#### [leetcode 138: 复制带随机指针的链表](https://leetcode.com/problems/copy-list-with-random-pointer)
+
+- 方法1：用散列表记录原链表结点到新链表结点
+
+  ```c++
+  /*
+  // Definition for a Node.
+  class Node {
+  public:
+      int val;
+      Node* next;
+      Node* random;
+
+      Node() {}
+
+      Node(int _val, Node* _next, Node* _random) {
+          val = _val;
+          next = _next;
+          random = _random;
+      }
+  };
+  */
+  class Solution {
+  public:
+      Node* copyRandomList(Node* head) {
+          Node* cur = head;
+          Node* copyDummy = new Node(0, NULL, NULL);
+          Node* copyPrev = copyDummy;
+          unordered_map<Node*, Node*> map;
+          while(cur != NULL) {
+              Node* p = new Node(cur->val, NULL, NULL);
+              copyPrev->next = p;
+              copyPrev = p;
+
+              map[cur] = p;
+
+              cur = cur->next;
+          }
+
+          cur = head;
+          Node* copyCur = copyDummy->next;
+          while(cur != NULL) {
+              copyCur->random = map[cur->random];
+
+              cur = cur->next;
+              copyCur = copyCur->next;
+          }
+
+          return copyDummy->next;
+      }
+  };
+  ```
+
+- 方法2：原结点和新节点交替，更新新节点的random指针，分开两个链表
+
+  ```java
+  /*
+  // Definition for a Node.
+  class Node {
+      public int val;
+      public Node next;
+      public Node random;
+
+      public Node() {}
+
+      public Node(int _val,Node _next,Node _random) {
+          val = _val;
+          next = _next;
+          random = _random;
+      }
+  };
+  */
+  public class Solution {
+    public Node copyRandomList(Node head) {
+
+      if (head == null) {
+        return null;
+      }
+
+      // Creating a new weaved list of original and copied nodes.
+      Node ptr = head;
+      while (ptr != null) {
+
+        // Cloned node
+        Node newNode = new Node(ptr.val);
+
+        // Inserting the cloned node just next to the original node.
+        // If A->B->C is the original linked list,
+        // Linked list after weaving cloned nodes would be A->A'->B->B'->C->C'
+        newNode.next = ptr.next;
+        ptr.next = newNode;
+        ptr = newNode.next;
+      }
+
+      ptr = head;
+
+      // Now link the random pointers of the new nodes created.
+      // Iterate the newly created list and use the original nodes' random pointers,
+      // to assign references to random pointers for cloned nodes.
+      while (ptr != null) {
+        ptr.next.random = (ptr.random != null) ? ptr.random.next : null;
+        ptr = ptr.next.next;
+      }
+
+      // Unweave the linked list to get back the original linked list and the cloned list.
+      // i.e. A->A'->B->B'->C->C' would be broken to A->B->C and A'->B'->C'
+      Node ptr_old_list = head; // A->B->C
+      Node ptr_new_list = head.next; // A'->B'->C'
+      Node head_old = head.next;
+      while (ptr_old_list != null) {
+        ptr_old_list.next = ptr_old_list.next.next;
+        ptr_new_list.next = (ptr_new_list.next != null) ? ptr_new_list.next.next : null;
+        ptr_old_list = ptr_old_list.next;
+        ptr_new_list = ptr_new_list.next;
+      }
+      return head_old;
+    }
+  }
+  ```
+
+#### [leetcode 141: 环形链表](https://leetcode.com/problems/linked-list-cycle)
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        if(head == NULL) return false;
+
+        ListNode* walker = head;
+        ListNode* runner = head;
+        while(runner != NULL && runner->next != NULL) {
+            walker = walker->next;
+            runner = runner->next->next;
+            if(walker == runner) return true;
+        }
+        return false;
+    }
+};
+```
+
+#### [leetcode 142: 环形链表](https://leetcode.com/problems/linked-list-cycle-ii)
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        ListNode* fast = head;
+        ListNode* slow = head;
+        while(fast != NULL && fast->next != NULL) {
+            slow = slow->next;
+            fast = fast->next->next;
+            if(slow == fast) { 
+                ListNode* p = head;
+                while(p != slow) {
+                    p = p->next;
+                    slow = slow->next;
+                }
+                return p;
+            }
+        }
+        return NULL;
+    }
+};
+```
+
+#### [leetcode 143: 翻转链表](https://leetcode.com/problems/reorder-list)
+
+思路：翻转后半个链表。
+
+#### [leetcode 146: LRU缓存机制](https://leetcode.com/problems/lru-cache)
+
+方法1：双向链表+hashmap，自己实现双向链表。
+
+```c++
+class LRUCache {
+public:
+    LRUCache(int capacity) {
+        headDummy = new ListNode(0, 0);
+        tailDummy = new ListNode(0, 0);
+        headDummy->prev = tailDummy;
+        tailDummy->next = headDummy;
+
+        size = 0;
+        this->capacity = capacity;
+    }
+    
+    int get(int key) {
+        if(map.find(key) != map.end()) {
+            ListNode* node = map[key];
+            int value = node->val;
+
+            deleteKey(key);
+            push(key, value);
+
+            return value;
+        }
+        return -1;        
+    }
+    
+    void put(int key, int value) {
+        if(map.find(key) != map.end()) {
+            deleteKey(key);
+            push(key, value);
+        } else {
+            if(size < capacity) {
+                size++;   
+            } else {
+                pop();
+            }
+            push(key, value);
+        }
+    }
+
+private:
+    struct ListNode {
+        int key;
+        int val;
+        ListNode* next;
+        ListNode* prev;
+
+        ListNode(int x, int y): key(x), val(y), next(NULL), prev(NULL) {}
+    };
+
+    unordered_map<int, ListNode*> map;
+
+    ListNode* headDummy;
+    ListNode* tailDummy;
+
+    int size;
+    int capacity;
+
+    void push(int key, int value) {
+        ListNode* node = new ListNode(key, value);
+        map[key] = node;
+
+        ListNode* next = tailDummy->next;
+        tailDummy->next = node;
+        node->next = next;
+        next->prev = node;
+        node->prev = tailDummy;
+    }
+
+    void pop() {
+        ListNode* node = headDummy->prev;
+        int key = node->key;
+        map.erase(key);
+        
+        ListNode* prev = node->prev;
+        prev->next = headDummy;
+        headDummy->prev = prev;
+        delete(node);
+    }
+    
+    void deleteKey(int key) {
+        ListNode* node = map[key];
+        map.erase(key);
+
+        ListNode* prev = node->prev;
+        ListNode* next = node->next;
+        prev->next = next;
+        next->prev = prev;
+        delete(node);
+    }
+};
+```
+
+方法2：LinkedHashMap
+
+```java
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
+
+class LRUCache {
+    public LRUCache(int capacity) {
+        this.capacity = capacity;
+        map = new LinkedHashMap<Integer, Integer>(capacity, 0.75f, true) {
+            protected boolean removeEldestEntry(Map.Entry eldest) {
+                return size() > capacity;
+            }
+        };
+    }
+
+    public int get(int key) {
+        return map.getOrDefault(key, -1);
+    }
+
+    public void put(int key, int value) {
+        map.put(key, value);
+    }
+
+    private int capacity;
+    private LinkedHashMap<Integer, Integer> map;
+}
+```
+
+#### [leetcode 147: 对链表进行插入排序](https://leetcode.com/problems/insertion-sort-list)
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* insertionSortList(ListNode* head) {
+        if(head == NULL) return head;
+
+        ListNode* dummy = new ListNode(0);
+        ListNode* insert = head;
+
+        while(insert != NULL) {
+            ListNode* prev = dummy;
+            ListNode* next = insert->next;
+            while(prev->next != NULL && prev->next->val <= insert->val) {
+                prev = prev->next;
+            }
+            insert->next = prev->next;
+            prev->next = insert;
+            insert = next;
+        }
+
+        return dummy->next;
+    }
+};
+```
+
+#### [leetcode 148: 排序链表](https://leetcode.com/problems/sort-list)
+
+方法1：快速排序
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* sortList(ListNode* head) {
+        return quickSort(head, NULL);
+    }
+
+private:
+    ListNode* quickSort(ListNode* head, ListNode* tail) {
+        if(head == tail) return head;
+
+        ListNode* leftDummy = new ListNode(0);
+        ListNode* leftPrev = leftDummy;
+        ListNode* prev = head;
+        ListNode* p = head->next;
+        while(p != tail) {
+            ListNode* next = p->next;
+            if(p->val < head->val) {
+                leftPrev->next = p;
+                leftPrev = p;
+                prev->next = next;
+                p = next;
+            } else {
+                prev = prev->next;
+                p = next;
+            }
+        }
+
+        leftPrev->next = head;
+        leftDummy->next = quickSort(leftDummy->next, head);
+        head->next = quickSort(head->next, tail);
+        return leftDummy->next;
+    }
+};
+```
+
+方法2：归并排序
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* sortList(ListNode* head) {
+        if(head == NULL || head->next == NULL) return head;
+        
+        ListNode* slow = head;
+        ListNode* fast = head;
+        ListNode* prev = NULL;
+        while(fast != NULL && fast->next != NULL) {
+            prev = slow;
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        prev->next = NULL;
+        ListNode* l1 = sortList(head);
+        ListNode* l2 = sortList(slow);
+        return merge(l1, l2);
+    }
+
+private:
+    ListNode* merge(ListNode* l1, ListNode* l2) {
+        ListNode* dummy = new ListNode(0);
+        ListNode* prev = dummy;
+        while(l1 != NULL && l2 != NULL) {
+            if(l1->val <= l2->val) {
+                prev->next = l1;
+                prev = l1;
+                l1 = l1->next;
+            } else {
+                prev->next = l2;
+                prev = l2;
+                l2 = l2->next;
+            }
+        }
+        if(l1 != NULL) {
+            prev->next = l1;
+        }
+        if(l2 != NULL) {
+            prev->next = l2;
+        }
+        return dummy->next;
+    }
+};
+```
+
+方法3：自底向上的归并排序
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* sortList(ListNode* head) {
+        if(head == NULL || head->next == NULL) return head;
+        
+        int length = 0;
+        ListNode* cur = head;
+        while(cur != NULL) {
+            length++;
+            cur = cur->next;
+        }
+
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        for(int step = 1; step < length; step *= 2) {
+            ListNode* prev = dummy;
+            ListNode* cur = dummy->next;
+            while(cur != NULL) {
+                ListNode* left = cur;
+                ListNode* right = split(left, step);
+                cur = split(right, step);
+                prev = merge(left, right, prev);
+            }
+
+        }
+        return dummy->next;
+    }
+
+private:
+    ListNode* split(ListNode* head, int step) {
+        ListNode* cur = head;
+        for(int i = 0; i < step-1 && cur != NULL; i++) {
+            cur = cur->next;
+        }
+
+        if(cur == NULL) return NULL;
+        ListNode* second = cur->next;
+        cur->next = NULL;
+        return second;
+    }
+
+    ListNode* merge(ListNode* left, ListNode* right, ListNode* prev) {
+        while(left != NULL && right != NULL) {
+            if(left->val < right->val) {
+                prev->next = left;
+                prev = left;
+                left = left->next;
+            } else {
+                prev->next = right;
+                prev = right;
+                right = right->next;
+            }
+        }
+        if(left != NULL) {
+            prev->next = left;
+        }
+        if(right != NULL) {
+            prev->next = right;
+        }
+
+        while(prev->next != NULL) {
+            prev = prev->next;
+        }
+        return prev;
+    }
+};
+```
+
+#### [leetcode 160: 相交链表](https://leetcode.com/problems/intersection-of-two-linked-lists)
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode* a = headA;
+        ListNode* b = headB;
+        while(a != b) {
+            a = a == NULL? headB: a->next;
+            b = b == NULL? headA: b->next;
+        }
+        return a;
+    }
+};
+```
+
+#### [leetcode 206: 反转链表](https://leetcode.com/problems/reverse-linked-list)
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* dummy = new ListNode(0);
+        ListNode* cur = head;
+        while(cur) {
+            ListNode* next = cur->next;
+            cur->next = dummy->next;
+            dummy->next = cur;
+            cur = next;
+        }
+        return dummy->next;
+    }
+};
+```
+
+```java
+public ListNode reverseList(ListNode head) {
+    if (head == null || head.next == null) return head;
+    ListNode p = reverseList(head.next);
+    head.next.next = head;
+    head.next = null;
+    return p;
+}
+```
+
+#### [leetcode 234: 回文链表](https://leetcode.com/problems/palindrome-linked-list)
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        ListNode* slow = head;
+        ListNode* fast = head;
+        ListNode* dummy = new ListNode(0);
+        while(fast != NULL && fast->next != NULL) {
+            fast = fast->next->next;
+            ListNode* slowNext = slow->next;
+            slow->next = dummy->next;
+            dummy->next = slow;
+            slow = slowNext;
+        }
+
+        ListNode* left = dummy->next;
+        ListNode* right = fast==NULL? slow: slow->next;
+        while(left != NULL && right != NULL) {
+            if(left->val != right->val) return false;
+            left = left->next;
+            right = right->next;
+        }
+        return true;
+    }
+};
+```
+
+#### [leetcode 237: 删除链表中的节点](https://leetcode.com/problems/delete-node-in-a-linked-list)
+
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void deleteNode(ListNode* node) {
+        node->val = node->next->val;
+        node->next = node->next->next;
+    }
+};
+```
+
+## 图
+
+#### [leetcode 79: 单词搜索](https://leetcode.com/problems/word-search)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      bool exist(vector<vector<char>>& board, string word) {
+          int m = board.size();
+          int n = board[0].size();
+          vector<vector<bool>> used(m, vector<bool>(n, false));
+          for(int i = 0; i < m; i++) {
+              for(int j = 0; j < n; j++) {
+                  used[i][j] = true;
+                  if(backtrack(i, j, 0, m, n, used, board, word)) return true;
+                  used[i][j] = false;
+              }
+          }
+          return false;
+      }
+  private:
+      bool backtrack(int i, int j, int cur, int m, int n, vector<vector<bool>>& used, vector<vector<char>>& board, string word) {
+          if(word[cur] != board[i][j]) return false;
+          if(cur == word.length()-1) return true;
+
+          // go left
+          if(i-1 >= 0 && used[i-1][j] == false) {
+              used[i-1][j] = true;
+              if(backtrack(i-1, j, cur+1, m, n, used, board, word)) return true;
+              used[i-1][j] = false;
+          }
+          // go right
+          if(i+1 < m && used[i+1][j] == false) {
+              used[i+1][j] = true;
+              if(backtrack(i+1, j, cur+1, m, n, used, board, word)) return true;
+              used[i+1][j] = false;
+          }
+          // go down
+          if(j-1 >= 0 && used[i][j-1] == false) {
+              used[i][j-1] = true;
+              if(backtrack(i, j-1, cur+1, m, n, used, board, word)) return true;
+              used[i][j-1] = false;
+          }
+          // go up
+          if(j+1 < n && used[i][j+1] == false) {
+              used[i][j+1] = true;
+              if(backtrack(i, j+1, cur+1, m, n, used, board, word)) return true;
+              used[i][j+1] = false;
+          }
+          return false;
+      }
+  };
+  ```
+
+#### [leetcode 130: 被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)
+
+  ```c++
+  class Solution {
+  public:
+      void solve(vector<vector<char>>& board) {
+          int row = board.size();
+          if(row == 0) return;
+          int col = board[0].size();
+          if(col == 0) return;
+
+          // 'O' on edge => '@'
+          vector<vector<bool>> visited(row, vector(col, false));
+          for(int i = 0; i < row; i++) {
+              if(!visited[i][0] && board[i][0] == 'O') {
+                  dfs(i, 0, row, col, board, visited);
+              }
+              if(board[i][col-1] == 'O') {
+                  dfs(i, col-1, row, col, board, visited);
+              }
+          }
+          for(int j = 1; j < col-1; j++) {
+              if(board[0][j] == 'O') {
+                  dfs(0, j, row, col, board, visited);
+              }
+              if(board[row-1][j] == 'O') {
+                  dfs(row-1, j, row, col, board, visited);
+              }
+          }
+          // 'O' => 'X'
+          for(int i = 0; i < row; i++) {
+              for(int j = 0; j < col; j++) {
+                  if(board[i][j] == 'O') {
+                      board[i][j] = 'X';
+                  }
+              }
+          }
+          // '@' => 'O'
+          for(int i = 0; i < row; i++) {
+              for(int j = 0; j < col; j++) {
+                  if(board[i][j] == '@') {
+                      board[i][j] = 'O';
+                  }
+              }
+          }
+      }
+
+  private:
+      void dfs(int i, int j, int row, int col, vector<vector<char>>& board, vector<vector<bool>>& visited) {
+          // cout << i << " " << j << endl;
+          
+          board[i][j] = '@';
+          visited[i][j] = true;
+
+          if(i-1 >= 0 && !visited[i-1][j] && board[i-1][j] == 'O') {
+              dfs(i-1, j, row, col, board, visited);
+          }
+          if(i+1 < row && !visited[i+1][j] && board[i+1][j] == 'O') {
+              dfs(i+1, j, row, col, board, visited);
+          }
+          if(j-1 >= 0 && !visited[i][j-1] && board[i][j-1] == 'O') {
+              dfs(i, j-1, row, col, board, visited);
+          }
+          if(j+1 < col && !visited[i][j+1] && board[i][j+1] == 'O') {
+              dfs(i, j+1, row, col, board, visited);
+          }
+      }
+  };
+  ```
+
+#### [leetcode 133: 克隆图](https://leetcode.com/problems/clone-graph)
+
+思路：用散列表存储原始图到克隆图结点的映射。DFS过程中，如果克隆结点存在直接返回克隆结点；如果克隆结点不存在，新建克隆结点，递归地得到临界点并连接。
+
+```c++
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> neighbors;
+
+    Node() {}
+
+    Node(int _val, vector<Node*> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+*/
+class Solution {
+public:
+    Node* cloneGraph(Node* node) {
+        unordered_map<Node*, Node*> map;
+        return dfs(node, map);
+    }
+
+private:
+    Node* dfs(Node* node, unordered_map<Node*, Node*>& map) {
+        if(map.find(node) != map.end()) return map[node];
+
+        Node* cloneNode = new Node(node->val, *(new vector<Node*>));
+        map[node] = cloneNode;
+        for(Node* neighbor : node->neighbors) {
+            cloneNode->neighbors.push_back(dfs(neighbor, map));
+        }
+        return cloneNode;
+    }
+};
+```
+
+#### [leetcode 200: 岛屿数量](https://leetcode.com/problems/number-of-islands)
+
+```c++
+class Solution {
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        int rows = grid.size();
+        if(rows == 0) return 0;
+        int cols = grid[0].size();
+        if(cols == 0) return 0;
+        vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+        int res = 0;
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < cols; j++) {
+                if(grid[i][j] == '1' && !visited[i][j]) {
+                    dfs(i, j, rows, cols, grid, visited);
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+
+private:
+    void dfs(int i, int j, int rows, int cols, vector<vector<char>>& grid, vector<vector<bool>>& visited) {
+        visited[i][j] = true;
+        if(i-1 >= 0 && grid[i-1][j] == '1' && !visited[i-1][j]) dfs(i-1, j, rows, cols, grid, visited);
+        if(i+1 < rows && grid[i+1][j] == '1' && !visited[i+1][j]) dfs(i+1, j, rows, cols, grid, visited);
+        if(j-1 >= 0 && grid[i][j-1] == '1' && !visited[i][j-1]) dfs(i, j-1, rows, cols, grid, visited);
+        if(j+1 < cols && grid[i][j+1] == '1' && !visited[i][j+1]) dfs(i, j+1, rows, cols, grid, visited);
+    }
+};
+```
+
+#### [leetcode 207: 课程表](https://leetcode.com/problems/course-schedule)
+
+```c++
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> graph(numCourses, vector<int>());
+        vector<int> indegree(numCourses, 0);
+        for(vector<int> prerequisite: prerequisites) {
+            int start = prerequisite[0];
+            int end = prerequisite[1];
+            graph[start].push_back(end);
+            indegree[end]++;
+        }
+
+        queue<int> q;
+        for(int i = 0; i < numCourses; i++) {
+            if(indegree[i] == 0) {
+                q.push(i);
+            }
+        }
+        int cnt = 0;
+        while(!q.empty()) {
+            int node = q.front();
+            q.pop();
+            cnt++;
+            for(int neighbour: graph[node]) {
+                indegree[neighbour]--;
+                if(indegree[neighbour] == 0) {
+                    q.push(neighbour);
+                }
+            }
+        }
+        return cnt == numCourses;
+    }
+};
+```
+
+#### [leetcode 210: 课程表II](https://leetcode.com/problems/course-schedule-ii)
+
+```c++
+class Solution {
+public:
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> graph(numCourses, vector<int>());
+        vector<int> indegree(numCourses, 0);
+        for(vector<int> prerequisite: prerequisites) {
+            int start = prerequisite[1];
+            int end = prerequisite[0];
+            graph[start].push_back(end);
+            indegree[end]++;
+        }
+        vector<int> res;
+        queue<int> q;
+        for(int i = 0; i < numCourses; i++) {
+            if(indegree[i] == 0) {
+                q.push(i);
+            }
+        }
+        while(!q.empty()) {
+            int node = q.front();
+            res.push_back(node);
+            q.pop();
+            for(int neighbour: graph[node]) {
+                indegree[neighbour]--;
+                if(indegree[neighbour] == 0) {
+                    q.push(neighbour);
+                }
+            }
+        }
+        return res.size()==numCourses? res: vector<int>();
+    }
+};
+```
+
 ## 动态规划
+
+#### [leetcode 53: 最大连续子序列和](https://leetcode.com/problems/maximum-subarray)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int maxSubArray(vector<int>& nums) {
+          if(nums.empty()) return 0;
+          
+          int maxSum = nums[0];
+          int maxHere = nums[0];
+          for(int i = 1; i < nums.size(); i++) {
+              if(maxHere < 0) maxHere = 0;
+              maxHere += nums[i];
+              maxSum = max(maxSum, maxHere);
+          }
+          return maxSum;
+      }
+  };
+  ```
+
+#### [leetcode 62: 不同路径](https://leetcode.com/problems/unique-paths)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int uniquePaths(int m, int n) {
+          vector<vector<int>> dp(m, vector<int>(n, 1));
+          for(int i = 1; i < m; i++) {
+              for(int j = 1; j < n; j++) {
+                  dp[i][j] = dp[i-1][j] + dp[i][j-1];
+              }
+          }
+          return dp[m-1][n-1];
+      }
+  };
+  ```
+
+#### [leetcode 63: 不同路径II](https://leetcode.com/problems/unique-paths-ii)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+          int m = obstacleGrid.size();
+          int n = obstacleGrid[0].size();
+          vector<vector<long>> dp(m, vector<long>(n, 1)); // int causes overflow
+          if(obstacleGrid[0][0] == 1) {
+              dp[0][0] = 0;
+          }
+          for(int i = 1; i < m; i++) {
+              if(obstacleGrid[i][0] == 0) {
+                  dp[i][0] = dp[i-1][0];
+              } else {
+                  dp[i][0] = 0;
+              }
+          }
+          for(int j = 1; j < n; j++) {
+              if(obstacleGrid[0][j] == 0) {
+                  dp[0][j] = dp[0][j-1];
+              } else {
+                  dp[0][j] = 0;
+              }
+          }
+
+          for(int i = 1; i < m; i++) {
+              for(int j = 1; j < n; j++) {
+                  if(obstacleGrid[i][j] == 0) {
+                      dp[i][j] = dp[i-1][j] + dp[i][j-1];
+                  } else {
+                      dp[i][j] = 0;
+                  }
+              }
+          }
+          return dp[m-1][n-1];
+      }
+  };
+  ```
+
+#### [leetcode 64: 最小路径和](https://leetcode.com/problems/minimum-path-sum)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int minPathSum(vector<vector<int>>& grid) {
+          int m = grid.size();
+          int n = grid[0].size();
+          vector<vector<int>> dp(m, vector<int>(n, 0));
+          dp[0][0] = grid[0][0];
+          for(int i = 1; i < m; i++) {
+              dp[i][0] = grid[i][0] + dp[i-1][0];
+          }
+          for(int j = 1; j < n; j++) {
+              dp[0][j] = grid[0][j] + dp[0][j-1];
+          }
+          for(int i = 1; i < m; i++) {
+              for(int j = 1; j < n; j++) {
+                  dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1]);
+              }
+          }
+          return dp[m-1][n-1];
+      }
+  };
+  ```
+
+#### [leetcode 72: 编辑距离](https://leetcode.com/problems/edit-distance)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int minDistance(string word1, string word2) {
+          int m = word1.length();
+          int n = word2.length();
+          int dp[m+1][n+1];
+          for(int i = 0; i <= m; i++) {
+              dp[i][0] = i;
+          }
+          for(int j = 0; j <= n; j++) {
+              dp[0][j] = j;
+          }
+          for(int i = 1; i <= m; i++) {
+              for(int j = 1; j <= n; j++) {
+                  if(word1[i-1] == word2[j-1]) dp[i][j] = min(min(dp[i-1][j-1], dp[i-1][j]+1), dp[i][j-1]+1);
+                  else dp[i][j] = min(min(dp[i-1][j-1]+1, dp[i-1][j]+1), dp[i][j-1]+1);
+              }
+          }
+          for(int i = 0; i <= m; i++) {
+              for(int j = 0; j <= n; j++) {
+                  cout << dp[i][j] << ' ';
+              }
+              cout << '\n';
+          }
+          return dp[m][n];
+      }
+  };
+  ```
+
+#### [leetcode 91: 解码方法](https://leetcode.com/problems/decode-ways)
+
+- 代码
+
+  ```java
+  public class Solution {
+      public int numDecodings(String s) {
+          if(s == null || s.length() == 0) {
+              return 0;
+          }
+          int n = s.length();
+          int[] dp = new int[n+1];
+          dp[0] = 1;
+          dp[1] = s.charAt(0) != '0' ? 1 : 0;
+          for(int i = 2; i <= n; i++) {
+              int first = Integer.valueOf(s.substring(i-1, i));
+              int second = Integer.valueOf(s.substring(i-2, i));
+              if(first >= 1 && first <= 9) {
+                dp[i] += dp[i-1];  
+              }
+              if(second >= 10 && second <= 26) {
+                  dp[i] += dp[i-2];
+              }
+          }
+          return dp[n];
+      }
+  }
+  ```
+
+#### [leetcode 120: 三角形最小路径和](https://leetcode.com/problems/triangle)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int minimumTotal(vector<vector<int>>& triangle) {
+          int numRow = triangle.size();
+          vector<int> last(numRow, 0);
+          vector<int> now(numRow, 0);
+          now[0] = triangle[0][0];
+          for(int i = 1; i < numRow; i++) {
+              last.swap(now);
+              for(int j = 0; j < i+1; j++) {
+                  if(j == 0) {
+                      now[j] = last[j] + triangle[i][j];
+                  } else if(j == i) {
+                      now[j] = last[j-1] + triangle[i][j];
+                  } else {
+                      now[j] = min(last[j-1], last[j]) + triangle[i][j];
+                  }
+              }
+              for(int i = 0; i < now.size(); i++) {
+                  cout<<now[i]<<" ";
+              }
+              cout<<endl;
+          }
+          int res = INT_MAX;
+          for(int i = 0; i < now.size(); i++) {
+              res = min(res, now[i]);
+          }
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 152: 乘积最大子序列](https://leetcode.com/problems/maximum-product-subarray)
+
+思路：类似最大连续子序列和
+
+```c++
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {        
+        int res = nums[0];
+        int maxHere = res;
+        int minHere = res;
+        for(int i = 1; i < nums.size(); i++) {
+            if(nums[i] < 0) swap(maxHere, minHere);
+            maxHere = max(nums[i], nums[i] * maxHere);
+            minHere = min(nums[i], nums[i] * minHere);
+            res = max(res, maxHere);
+        }
+        return res;
+    }
+};
+```
+
+#### [leetcode 121: 买卖股票的最佳时机](https://leetcode.com/problems/best-time-to-buy-and-sell-stock)
+
+- 方法1: 记录当前最小值
+
+  ```c++
+  int maxProfit(vector<int> &prices) {
+      int maxPro = 0;
+      int minPrice = INT_MAX;
+      for(int i = 0; i < prices.size(); i++){
+          minPrice = min(minPrice, prices[i]);
+          maxPro = max(maxPro, prices[i] - minPrice);
+      }
+      return maxPro;
+  }
+  ```
+
+- 方法2: 最大连续子序列和
+
+  ```c++
+  class Solution {
+  public:
+      int maxProfit(vector<int>& prices) {
+          int maxHere = 0;
+          int maxSoFar = 0;
+          for(int i = 1; i < prices.size(); i++) {
+              if(maxHere < 0) maxHere = 0;
+              maxHere += prices[i] - prices[i-1];
+              maxSoFar = max(maxSoFar, maxHere);
+          }
+          return maxSoFar;
+      }
+  };
+  ```
+
+#### [leetcode 122: 买卖股票的最佳时机II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii)
+
+- 思路：只要涨就买
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int maxProfit(vector<int>& prices) {
+          int res = 0;
+          for(int i = 1; i < prices.size(); i++) {
+              int profit = prices[i] - prices[i-1];
+              if(profit > 0) {
+                  res += profit;
+              }
+          }
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 135: 分发糖果](https://leetcode.com/problems/candy)
+
+```c++
+class Solution {
+public:
+    int candy(vector<int>& ratings) {
+        vector<int> dpFromLeft(ratings.size(), 0);
+        vector<int> dpFromRight(ratings.size(), 0);
+        int cur;
+        for(int i = 0; i < ratings.size(); i++) {
+            if(i > 0 && ratings[i] > ratings[i-1]) cur++;
+            else cur = 1;
+            dpFromLeft[i] = cur;
+        }
+        for(int i = ratings.size()-1; i >= 0; i--) {
+            if(i < ratings.size()-1 && ratings[i] > ratings[i+1]) cur++;
+            else cur = 1;
+            dpFromRight[i] = cur;
+        }
+
+        int res = 0;
+        for(int i = 0; i < ratings.size(); i++) {
+            res += max(dpFromLeft[i], dpFromRight[i]);
+        }
+        return res;
+    }
+};
+```
+
+#### [leetcode 238: 除自身以外数组的乘积]
+
+```c++
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) {
+        vector<int> left(nums.size(), 1);
+        vector<int> right(nums.size(), 1);
+        int product = 1;
+        for(int i = 0; i < nums.size(); i++) {
+            left[i] = product;
+            product *= nums[i];
+        }
+        product = 1;
+        for(int i = nums.size()-1; i >= 0; i--) {
+            right[i] = product;
+            product *= nums[i];
+        }
+
+        vector<int> res(nums.size(), 0);
+        for(int i = 0; i < nums.size(); i++) {
+            res[i] = left[i] * right[i];
+        }
+        return res;
+    }
+};
+```
+
+#### [leetcode 198: 打家劫舍](https://leetcode.com/problems/house-robber)
+
+```c++
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        if(nums.empty()) return 0;
+        
+        vector<int> dp(nums.size()+1, 0);
+        dp[1] = nums[0];
+        for(int i = 1; i < nums.size(); i++) {
+            dp[i+1] = max(dp[i], dp[i-1]+nums[i]);
+        }
+        return dp[nums.size()];
+    }
+};
+```
+
+#### [leetcode 279: 完全平方数](https://leetcode.com/problems/perfect-squares)
+
+时间：$O(n \log n)$
+
+```c++
+class Solution {
+public:
+    int numSquares(int n) {
+        vector<int> dp(n+1, INT_MAX);
+        vector<int> square;
+        for(long i = 1; i*i <= n; i++) {
+            dp[i*i] = 1;
+            square.push_back(i*i);
+        }
+        for(int i = 1; i <= n; i++) {
+            if(dp[i] == INT_MAX) {
+                for(int s: square) {
+                    if(s >= i) break;
+                    dp[i] = min(dp[i], dp[s]+dp[i-s]);
+                }
+            }
+        }
+        return dp[n];
+    }
+};
+```
 
 #### [leetcode 221: 最大正方形](<https://leetcode.com/problems/maximal-square/>)
 
 #### [leetcode 85: 最大矩形](<https://leetcode.com/problems/maximal-rectangle/>)
 
+## 回溯
+
+#### [leetcode 17: 电话号码的字母组合](https://leetcode.com/problems/letter-combinations-of-a-phone-number/)
+
+- 方法1：迭代器
+  - 时间：$O(4^nn)$
+
+  - 代码
+    ```c++
+    #include <cstdio>
+    #include <algorithm>
+    #include <iostream>
+    #include <string>
+    using namespace std;
+
+    bool iterate(const vector<string>& key_vec, vector<int>& key_index) {
+        int i = key_index.size() - 1;
+        while(i >= 0 && ++key_index[i] >= key_vec[i].length()) {
+            key_index[i] = 0;
+            i--;
+        }
+
+        if(i < 0) return false;
+        return true;
+    }
+
+    vector<string> combine(string s) {
+        vector<string> keys{
+            "", // 0
+            "", // 1
+            "abc", // 2
+            "def", // 3
+            "ghi", // 4
+            "jkl", // 5
+            "mno", // 6
+            "pqrs", // 7
+            "tuv", // 8
+            "wxyz" }; // 9
+
+        vector<string> keys_vec;
+        for(char c: s) {
+            keys_vec.push_back(keys[c - '0']);
+        }
+        //for(string s: keys_vec) {
+        //    cout << s << endl;
+        //}
+        vector<int> keys_index(s.size(), 0);
+
+        vector<string> res;
+        do {
+            string cur;
+            int i = 0;
+            for(int index: keys_index) {
+                cur += keys_vec[i++][index];
+            }
+            res.push_back(cur);
+        } while(iterate(keys_vec, keys_index));
+        return res;
+    }
+
+    int main() {
+        string s = "234";
+        vector<string> res = combine(s);
+        for(string s: res) {
+            cout << s << endl;
+        }
+
+        return 0;
+    }
+    ```
+- 方法2：回溯
+  - 时间：$O(4^n)$
+
+  - 代码
+    ```c++
+    class Solution {
+    public:
+        vector<string> letterCombinations(string digits) {        
+            vector<string> res;
+            if(digits == "") return res;
+            string comb;
+            letterCombinations(digits, 0, comb, res);
+            return res;
+        }
+
+    private:
+        void letterCombinations(string digits, int cur, string comb, vector<string>& res) {
+            if(cur == digits.length()) {
+                res.push_back(comb);
+                return;
+            }
+
+            vector<string> keys = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+            for(char c: keys[digits[cur] - '0']) {
+                letterCombinations(digits, cur+1, comb+c, res);
+            }
+        }
+    };
+    ```
+
+- 方法3：队列
+  - 时间：$O(4^n)$
+
+  - 代码
+    ```c++
+    class Solution {
+    public:
+        vector<string> letterCombinations(string digits) {        
+            vector<string> res;
+            if(digits == "") return res;
+            
+            vector<string> keys = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+            queue<string> q;
+            q.push("");
+            for(int i = 0; i < digits.size(); i++) {
+                while(q.front().length() == i) {
+                    for(char c: keys[digits[i]-'0']) {
+                        q.push(q.front()+c);
+                    }
+                    q.pop();
+                }
+            }
+            
+            while(!q.empty()) {
+                res.push_back(q.front());
+                q.pop();
+            }
+            return res;
+        }
+    };
+    ```
+
+#### [leetcode 22: 括号生成](https://leetcode.com/problems/generate-parentheses/)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<string> generateParenthesis(int n) {
+          vector<string> ans;
+          generateParenthesis(n, 0, "", ans);
+          return ans;
+      }
+      
+      void generateParenthesis(int open, int close, string res, vector<string> &ans) {
+          if(open == 0 && close == 0) {
+              ans.push_back(res);
+              return;
+          }
+          if(open > 0) generateParenthesis(open - 1, close + 1, res + "(", ans);
+          if(close > 0) generateParenthesis(open, close - 1, res + ")", ans);
+      }
+  };
+  ```
+
+#### [leetcode 31: 下一个排列](https://leetcode.com/problems/next-permutation/)
+
+- 方法1
+
+  - 从右往左扫描应该是先上升再下降，找到转折点left和right，将left指向的数与比它稍大的数交换，然后再将right后面的数排序。
+  
+  - 时间：$O(n\log n)$
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        void nextPermutation(vector<int>& nums) {
+            int size = nums.size();
+            if(size <= 1) return;
+
+            int left = size-2;
+            int right = size-1;
+            while(left >= 0 && nums[left] >= nums[right]) {
+                left--;
+                right--;
+            }
+            if(left < 0) {
+                sort(nums.begin(), nums.end());
+            } else {
+                int i = size-1;
+                while(i > right && nums[i] <= nums[left]) i--;
+                swap(nums[left], nums[i]);
+                sort(nums.begin()+right, nums.end());
+            }
+        }
+    };
+    ```
+
+- 方法2
+
+  - 思路：与上述方法相似，区别是排序改成翻转，因为最后一段总是逆序的，翻转后为顺序。
+
+  - 时间：$O(n)$
+  
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        void nextPermutation(vector<int>& nums) {
+            int size = nums.size();
+            if(size <= 1) return;
+
+            int left = size-2;
+            int right = size-1;
+            while(left >= 0 && nums[left] >= nums[right]) {
+                left--;
+                right--;
+            }
+            if(left < 0) {
+                reverse(nums.begin(), nums.end());
+            } else {
+                int i = size-1;
+                while(i > right && nums[i] <= nums[left]) i--;
+                swap(nums[left], nums[i]);
+                reverse(nums.begin()+right, nums.end());
+            }
+        }
+    };
+    ```
+
+#### [leetcode 36: 有效的数独](https://leetcode.com/problems/valid-sudoku/)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      bool isValidSudoku(vector<vector<char>>& board) {
+          //row
+          for(int i = 0; i < 9; i++) {
+              int time[9] = {0};
+              for(int j = 0; j < 9; j++) {
+                  char c = board[i][j];
+                  if(c != '.') {
+                      time[c - '1']++;
+                      if(time[c - '1'] >= 2)
+                          return false;
+                  }
+              }
+          }
+          //column
+          for(int i = 0; i < 9; i++) {
+              int time[9] = {0};
+              for(int j = 0; j < 9; j++) {
+                  char c = board[j][i];
+                  if(c != '.') {
+                      time[c - '1']++;
+                      if(time[c - '1'] >= 2)
+                          return false;
+                  }
+              }
+          }
+          //sub-box
+          int start[3] = {0, 3, 6};
+          for(int i = 0; i < 3; i++)
+              for(int j = 0; j < 3; j++) {
+                  int startRow = start[i];
+                  int startColumn = start[j];
+                  int time[9] = {0};
+                  for(int k = startRow; k < startRow + 3; k++)
+                      for(int l = startColumn; l < startColumn + 3; l++) {
+                          char c = board[k][l];
+                          if(c != '.') {
+                              time[c - '1']++;
+                              if(time[c - '1'] >= 2)
+                                  return false;
+                          }
+                      }
+              }
+          return true;
+                  
+      }
+  };
+  ```
+
+#### [leetcode 37: 解数独](https://leetcode.com/problems/sudoku-solver/)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      void solveSudoku(vector<vector<char>>& board) {
+          solve(board);
+      }
+      
+  private:
+      bool solve(vector<vector<char>>& board) {
+          int row, column;
+          if(!findEmptyCell(board, row, column)) return true;
+          for(int num = 1; num <= 9; num++) {
+              if(noConflicts(board, row, column, num)) {
+                  board[row][column] = num + '0';
+                  if(solve(board)) return true;
+                  board[row][column] = '.';
+              }
+          }
+          return false;
+      }
+      
+      bool findEmptyCell(vector<vector<char>>& board, int& row, int& column) {
+          for(int i = 0; i < 9; i++)
+              for(int j = 0; j < 9; j++)
+                  if(board[i][j] == '.') {
+                      row = i;
+                      column = j;
+                      return true;
+                  }
+          return false;
+      }
+      
+      bool noConflicts(vector<vector<char>>& board, int row, int column, int num) {
+          //row
+          for(int i = 0; i < 9; i++)
+              if(board[row][i] == num + '0') return false;
+          //column
+          for(int i = 0; i < 9; i++)
+              if(board[i][column] == num + '0') return false;
+          //sub-box
+          int rowStart = row / 3 * 3;
+          int columnStart = column / 3 * 3;
+          for(int i = rowStart; i < rowStart + 3; i++)
+              for(int j = columnStart; j < columnStart + 3; j++) {
+                  if(board[i][j] == num + '0') return false;
+              }
+          
+          return true;
+      }
+  };
+  ```
+
+#### [leetcode 51: N皇后](https://leetcode.com/problems/n-queens)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<string>> solveNQueens(int n) {
+          vector<vector<string>> res;
+          
+          vector<string> puzzle;
+          for(int i = 0; i < n; i++) {
+              string row(n, '.');
+              puzzle.push_back(row);
+          }
+          backtrack(0, n, puzzle, res);
+
+          return res;
+      }
+
+  private:
+      void backtrack(int row, int n, vector<string>& puzzle, vector<vector<string>>& res) {
+          if(row == n) {
+              res.push_back(puzzle);
+              return;
+          }
+
+          for(int col = 0; col < n; col++) {
+              if(noConflicts(row, col, n, puzzle)) {
+                  puzzle[row][col] = 'Q';
+                  backtrack(row+1, n, puzzle, res);
+                  puzzle[row][col] = '.';
+              }
+          }
+      }
+
+      bool noConflicts(int row, int col, int n, vector<string>& puzzle) {
+          for(int i = 0; i < n; i++) {
+              if(puzzle[row][i] == 'Q') return false;
+              if(puzzle[i][col] == 'Q') return false;
+              if(puzzle[i][row+col-i] == 'Q') return false;
+              if(puzzle[i][i-row+col] == 'Q') return false;
+          }
+
+          return true;
+      }
+  };
+  ```
+
+#### [leetcode 52: N皇后II](https://leetcode.com/problems/n-queens-ii)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int totalNQueens(int n) {
+          int res = 0;
+          
+          vector<string> puzzle;
+          for(int i = 0; i < n; i++) {
+              string row(n, '.');
+              puzzle.push_back(row);
+          }
+          backtrack(0, n, puzzle, res);
+
+          return res;
+      }
+
+  private:
+      void backtrack(int row, int n, vector<string>& puzzle, int& res) {
+          if(row == n) {
+              res++;
+              return;
+          }
+
+          for(int col = 0; col < n; col++) {
+              if(noConflicts(row, col, n, puzzle)) {
+                  puzzle[row][col] = 'Q';
+                  backtrack(row+1, n, puzzle, res);
+                  puzzle[row][col] = '.';
+              }
+          }
+      }
+
+      bool noConflicts(int row, int col, int n, vector<string>& puzzle) {
+          for(int i = 0; i < n; i++) {
+              if(puzzle[row][i] == 'Q') return false;
+              if(puzzle[i][col] == 'Q') return false;
+              if(puzzle[i][row+col-i] == 'Q') return false;
+              if(puzzle[i][i-row+col] == 'Q') return false;
+          }
+
+          return true;
+      }
+  };
+  ```
+
+#### [leetcode 60: 第k个排列](https://leetcode.com/problems/permutation-sequence)
+
+- 思路：https://leetcode-cn.com/problems/permutation-sequence/solution/kang-tuo-bian-ma-by-rayyi-2/
+
+- 代码
+
+  ```c++
+  public class Solution {
+      public String getPermutation(int n, int k) {
+          int pos = 0;
+          List<Integer> numbers = new ArrayList<>();
+          int[] factorial = new int[n+1];
+          StringBuilder sb = new StringBuilder();
+          
+          // create an array of factorial lookup
+          int sum = 1;
+          factorial[0] = 1;
+          for(int i=1; i<=n; i++){
+              sum *= i;
+              factorial[i] = sum;
+          }
+          // factorial[] = {1, 1, 2, 6, 24, ... n!}
+          
+          // create a list of numbers to get indices
+          for(int i=1; i<=n; i++){
+              numbers.add(i);
+          }
+          // numbers = {1, 2, 3, 4}
+          
+          k--;
+          
+          for(int i = 1; i <= n; i++){
+              int index = k/factorial[n-i];
+              sb.append(String.valueOf(numbers.get(index)));
+              numbers.remove(index);
+              k-=index*factorial[n-i];
+          }
+          
+          return String.valueOf(sb);
+      }
+  }
+  ```
+
+---
+
+#### [leetcode 39: 组合总和](https://leetcode.com/problems/combination-sum/)
+
+- 题意：数组中数无重复，可以无限次使用。
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+          vector<vector<int>> res;
+          vector<int> combination;
+          solve(candidates, target, 0, 0, combination, res);
+          return res;
+      }
+
+      void solve(vector<int>& candidates, int target, int sum, int cur, vector<int>& combination, vector<vector<int>>& res) {
+          if(sum == target) {
+              res.push_back(combination);
+              return;
+          }
+          if(sum > target) return;
+
+          for(int i = cur; i < candidates.size(); i++) {
+              combination.push_back(candidates[i]);
+              solve(candidates, target, sum+candidates[i], i, combination, res);
+              combination.pop_back();
+          }
+      }
+  };
+  ```
+
+#### [leetcode 40: 组合总和II](https://leetcode.com/problems/combination-sum-ii/)
+
+- 题意：数组中数有重复，每个数只能用一次。结果中不能有重复。
+
+- 思路：首次只能进入重复数字的第一个，用过第一个后才能进入第二个。
+
+  ```
+  cur 
+  1 1 1 2 3
+  i     i i
+  ```
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+          sort(candidates.begin(), candidates.end());
+          vector<vector<int>> res;
+          vector<int> combination;
+          solve(candidates, target, 0, 0, combination, res);
+          return res;
+      }
+
+      void solve(vector<int>& candidates, int target, int sum, int cur, vector<int>& combination, vector<vector<int>>& res) {
+          if(sum == target) {
+              res.push_back(combination);
+              return;
+          }
+          if(sum > target) return;
+
+          for(int i = cur; i < candidates.size(); i++) {
+              if(i > cur && candidates[i] == candidates[i-1]) continue; // avoid duplicates
+              combination.push_back(candidates[i]);
+              solve(candidates, target, sum+candidates[i], i+1, combination, res);
+              combination.pop_back();
+          }
+      }
+  };
+  ```
+
+#### [leetcode 46: 全排列](https://leetcode.com/problems/permutations/)
+
+- 方法1：类似31题，next permutation
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        vector<vector<int>> permute(vector<int>& nums) {
+            vector<vector<int>> res;
+            if(nums.size() <= 0) return res;
+            
+            sort(nums.begin(), nums.end());
+            res.push_back(nums);
+            while(nextPermutation(nums)) {
+                res.push_back(nums);
+            }
+            return res;
+        }
+
+    private:
+        bool nextPermutation(vector<int>& nums) {
+            int size = nums.size();
+            if(size <= 1) return false;
+
+            int left = size-2;
+            int right = size-1;
+            while(left >= 0 && nums[left] >= nums[right]) {
+                left--;
+                right--;
+            }
+            if(left < 0) {
+                reverse(nums.begin(), nums.end());
+                return false;
+            } else {
+                int i = size-1;
+                while(i > right && nums[i] <= nums[left]) i--;
+                swap(nums[left], nums[i]);
+                reverse(nums.begin()+right, nums.end());
+            }
+            return true;
+        }
+    };
+    ```
+
+- 方法2：回溯
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        vector<vector<int>> permute(vector<int>& nums) {
+            vector<vector<int>> res;
+            if(nums.size() <= 0) return res;
+            
+            vector<int> combination;
+            vector<bool> available;
+            for(int i = 0; i < nums.size(); i++) {
+                available.push_back(true);
+            }
+            backtrack(0, nums.size(), nums, available, combination, res);
+            return res;
+        }
+
+    private:
+        void backtrack(int cur, int size, vector<int>& nums, vector<bool>& available, vector<int>& combination, vector<vector<int>>& res) {
+            if(cur == size) {
+                res.push_back(combination);
+                return;
+            }
+            for(int i = 0; i < size; i++) {
+                if(available[i]) {
+                    combination.push_back(nums[i]);
+                    available[i] = false;
+                    backtrack(cur+1, size, nums, available, combination, res);
+                    combination.pop_back();
+                    available[i] = true;
+                }
+            }
+        }
+    };
+    ```
+
+#### [leetcode 47: 全排列II](https://leetcode.com/problems/permutations-ii/)
+
+- 题意：跟前面一题的区别是给的数有重复，但是结果不能有重复。
+
+- 方法1：与前一题方法1相同。
+
+- 方法2：回溯
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        vector<vector<int>> permuteUnique(vector<int>& nums) {
+            vector<vector<int>> res;
+            if(nums.size() <= 0) return res;
+            
+            vector<int> combination;
+            vector<bool> available;
+            for(int i = 0; i < nums.size(); i++) {
+                available.push_back(true);
+            }
+            sort(nums.begin(), nums.end());
+            backtrack(0, nums.size(), nums, available, combination, res);
+            return res;
+        }
+
+    private:
+        void backtrack(int cur, int size, vector<int>& nums, vector<bool>& available, vector<int>& combination, vector<vector<int>>& res) {
+            if(cur == size) {
+                res.push_back(combination);
+                return;
+            }
+            for(int i = 0; i < size; i++) {
+                if(i >= 1 && nums[i] == nums[i-1] && available[i-1]) continue; // avoid duplicates
+                if(available[i]) {
+                    combination.push_back(nums[i]);
+                    available[i] = false;
+                    backtrack(cur+1, size, nums, available, combination, res);
+                    combination.pop_back();
+                    available[i] = true;
+                }
+            }
+        }
+    };
+    ```
+
+#### [leetcode 78: 子集](https://leetcode.com/problems/subsets)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<int>> subsets(vector<int>& nums) {
+          vector<vector<int>> res;
+
+          vector<int> combination;
+          vector<bool> available;
+          for(int i = 0; i < nums.size(); i++) {
+              available.push_back(true);
+          }
+          backtrack(0, nums.size(), nums, combination, available, res);
+          
+          return res;
+      }
+
+  private:
+      void backtrack(int cur, int size, vector<int>& nums, vector<int>& combination, vector<bool>& available, vector<vector<int>>& res) {
+          res.push_back(combination);
+
+          for(int i = cur; i < size; i++) {
+              if(available[i]) {
+                  combination.push_back(nums[i]);
+                  available[i] = false;
+                  backtrack(i+1, size, nums, combination, available, res);
+                  combination.pop_back();
+                  available[i] = true;
+              }
+          }
+      }
+  };
+  ```
+
+#### [leetcode 90: 子集II](https://leetcode.com/problems/subsets-ii/)
+
+- 题意：跟前面一题的区别是给的数有重复，但是结果不能有重复。
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+          vector<vector<int>> res;
+
+          vector<int> combination;
+          vector<bool> available;
+          for(int i = 0; i < nums.size(); i++) {
+              available.push_back(true);
+          }
+          sort(nums.begin(), nums.end());
+          backtrack(0, nums.size(), nums, combination, available, res);
+          
+          return res;
+      }
+
+  private:
+      void backtrack(int cur, int size, vector<int>& nums, vector<int>& combination, vector<bool>& available, vector<vector<int>>& res) {
+          res.push_back(combination);
+
+          for(int i = cur; i < size; i++) {
+              if(i >= 1 && nums[i] == nums[i-1] && available[i-1]) continue;
+              if(available[i]) {
+                  combination.push_back(nums[i]);
+                  available[i] = false;
+                  backtrack(i+1, size, nums, combination, available, res);
+                  combination.pop_back();
+                  available[i] = true;
+              }
+          }
+      }
+  };
+  ```
+
+#### [leetcode 93: 复原IP地址](https://leetcode.com/problems/restore-ip-addresses)
+
+- 方法1
+
+  ```c++
+  class Solution {
+  public:
+      vector<string> restoreIpAddresses(string s) {
+          vector<string> res;
+          vector<int> pos;
+          backtrack(0, pos, s, res);
+          return res;
+      }
+
+  private:
+      void backtrack(int cur, vector<int>& pos, string& s, vector<string>& res) {
+          if(pos.size() == 3 && s.length()-cur >= 1 && s.length()-cur <= 3 
+              && atoi(s.substr(cur, s.length()-cur).c_str()) < 256
+              && !(s.length()-cur > 1 && s[cur] == '0')) {
+              string ip = s.substr(0, pos[0]) + '.';
+              ip += s.substr(pos[0], pos[1]-pos[0]) + '.';
+              ip += s.substr(pos[1], pos[2]-pos[1]) + '.';
+              ip += s.substr(pos[2], s.length()-pos[2]+1);
+              res.push_back(ip);
+              return;
+          }
+          if(cur >= s.length() || pos.size() > 3) {
+              return;
+          }
+
+          for(int i = 1; i <= 3; i++) {
+              if(atoi(s.substr(cur, i).c_str()) < 256 && !(i > 1 && s[cur] == '0')) {
+                  pos.push_back(cur+i);
+                  backtrack(cur+i, pos, s, res);
+                  pos.pop_back();
+              }
+          }
+      }
+  };
+  ```
+
+- 方法2
+
+  ```c++
+  // https://leetcode.com/problems/restore-ip-addresses/discuss/30972/WHO-CAN-BEAT-THIS-CODE
+  vector<string> restoreIpAddresses(string s) {
+      vector<string> ret;
+      string ans;
+      
+      for (int a=1; a<=3; a++) {
+          for (int b=1; b<=3; b++) {
+              for (int c=1; c<=3; c++) {
+                  for (int d=1; d<=3; d++) {
+                      if (a+b+c+d == s.length()) {
+                          int A = stoi(s.substr(0, a));
+                          int B = stoi(s.substr(a, b));
+                          int C = stoi(s.substr(a+b, c));
+                          int D = stoi(s.substr(a+b+c, d));
+                          if (A<=255 && B<=255 && C<=255 && D<=255)
+                              if ( (ans=to_string(A)+"."+to_string(B)+"."+to_string(C)+"."+to_string(D)).length() == s.length()+3)
+                                  ret.push_back(ans);
+                      }
+                  }
+              }
+          }
+      }  
+      
+      return ret;
+  }
+  ```
+
+#### [leetcode 95: 不同的二叉排序树II](https://leetcode.com/problems/unique-binary-search-trees-ii)
+
+- 代码
+
+  ```c++
+  /**
+  * Definition for a binary tree node.
+  * struct TreeNode {
+  *     int val;
+  *     TreeNode *left;
+  *     TreeNode *right;
+  *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+  * };
+  */
+  class Solution {
+  public:
+      vector<TreeNode*> generateTrees(int n) {
+          vector<TreeNode*> result;
+          if(n <= 0) return result;
+          return genTrees(1, n);
+      }
+      
+  private:
+      vector<TreeNode*> genTrees(int start, int end) {
+          vector<TreeNode*> v;
+          if(start > end) {
+              v.push_back(NULL);
+              return v;
+          }
+          for(int i = start; i <= end; i++) {
+              vector<TreeNode*> left = genTrees(start, i-1);
+              vector<TreeNode*> right = genTrees(i+1, end);
+              for(TreeNode* leftNode: left) {
+                  for(TreeNode* rightNode: right) {
+                      TreeNode* root = new TreeNode(i);
+                      root->left = leftNode;
+                      root->right = rightNode;
+                      v.push_back(root);
+                  }
+              }
+          }
+          return v;
+      }
+  };
+  ```
+
+#### [leetcode 96: 不同的二叉排序树](https://leetcode.com/problems/unique-binary-search-trees)
+
+- 代码
+
+  ```c++
+  /*
+  * a[n] = a[0] * a[n-1]
+  *      + a[1] * a[n-2]
+  *      + ...
+  *      + a[n-1] * a[0]
+  */
+  class Solution {
+  public:
+      int numTrees(int n) {
+          int trees[n+1] = {0};
+          trees[0] = 1;
+          for(int i = 1; i <= n; i++) {
+              for(int j = 0; j < i; j++) {
+                  trees[i] += trees[j] * trees[i-j-1];
+              }
+          }
+          return trees[n];
+      }
+  };
+
+  /*
+  * catalan[n] = C(n, 2n) / (n+1)
+  * catalan[n] / catalan[n-1] = 2 * (2n-1) / (n+1)
+  */
+  class Solution {
+  public:
+      int numTrees(int n) {
+          long catalan = 1;
+          for(int i = 1; i <= n; i++) {
+              catalan = catalan * 2 * (2 * i - 1) / (i + 1);
+          }
+          return catalan;
+      }
+  };
+  ```
+
+## BFS
+
+#### [leetcode 126: 单词接龙II](https://leetcode.com/problems/word-ladder-ii)
+
+  ```c++
+  class Solution {
+  public:
+      vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+          unordered_set<string> set(wordList.begin(), wordList.end());
+          queue<vector<string>> q;
+          q.push(vector<string>{beginWord});
+          vector<vector<string>> res;
+
+          int step = 1;
+          while(!q.empty() && res.empty()) {
+              int size = q.size();
+              vector<string> wordsToBeRemoved;
+              while(size--) {
+                  vector<string> vec = q.front();
+                  q.pop();
+                  string word = vec.back();
+                  if(word == endWord) {
+                      res.push_back(vec);
+                  }
+                  for(int i = 0; i < word.length(); i++) {
+                      char c = word[i];
+                      for(int j = 'a'; j <= 'z'; j++) {
+                          word[i] = j;
+                          if(set.count(word)) {
+                              vec.push_back(word);
+                              q.push(vec);
+                              vec.pop_back();
+                              wordsToBeRemoved.push_back(word);
+                          }
+                      }
+                      word[i] = c;
+                  }
+              }
+              for(int i = 0; i < wordsToBeRemoved.size(); i++) {
+                  set.erase(wordsToBeRemoved[i]);
+              }
+              step++;
+          }
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 127: 单词接龙](https://leetcode.com/problems/word-ladder)
+
+  ```c++
+  class Solution {
+  public:
+      int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+          unordered_set<string> set(wordList.begin(), wordList.end());
+          queue<string> q;
+          q.push(beginWord);
+
+          int step = 1;
+          while(!q.empty()) {
+              int size = q.size();
+              while(size--) {
+                  string word = q.front();
+                  q.pop();
+                  if(word == endWord) return step;
+                  for(int i = 0; i < word.size(); i++) {
+                      char c = word[i];
+                      for(char j = 'a'; j <= 'z'; j++) {
+                          word[i] = j;
+                          if(set.count(word)) {
+                              q.push(word);
+                              set.erase(word);
+                          } 
+                      }
+                      word[i] = c;
+                  }
+              }
+              step++;
+          }
+          return 0;
+      }
+  };
+  ```
+
+## 数学
+
+#### [leetcode 7: 整数反转](https://leetcode.com/problems/reverse-integer/)
+
+- 需要判断int类型的整数是否溢出，方法是将可能溢出的数还原比较是否与原先的数相等，或者用long类型
+
+  ```c++
+  class Solution {
+  public:
+      int reverse(int x) {
+          //bool isPositive = true;
+          //if(x < 0) {
+          //    isPositive = false;
+          //    x = -x;
+          //}
+          int result = 0;
+          while(x != 0) {
+              int tail = x % 10;
+              int newResult = 10 * result + tail;
+              if((newResult - tail) / 10 != result)
+                  return 0;
+              result = newResult;
+              x = x / 10;
+          }
+          //if(!isPositive)
+          //    result = - result;
+          return result;
+      }
+  };
+  ```
+
+#### [leetcode 29: 两数相除](https://leetcode.com/problems/divide-two-integers/)
+
+- 思路：位操作
+
+  15/3，除数利用加法倍增，直到大于被除数，3<<2=12，所以结果至少为1<<2=4. 问题转化为3/3.
+
+  - 代码
+
+    ```c++
+    class Solution {
+    public:
+        int divide(int dividend, int divisor) {
+            if(dividend < 0 && divisor == 0) return INT_MIN;
+            if(dividend > 0 && divisor == 0) return INT_MAX;
+            if(dividend == INT_MIN && divisor == -1) return INT_MAX;
+            int result = 0;
+            bool isPositive = true;
+            if((dividend < 0 && divisor > 0) || (dividend > 0 && divisor < 0))
+                isPositive = false;
+            long long dvd = labs(dividend);
+            long long dvs = labs(divisor);
+            while(dvd >= dvs) {
+                long long tmp = dvs;
+                int times = 1;
+                while(dvd >= tmp + tmp) {
+                    tmp = tmp + tmp;
+                    times = times + times;
+                }
+                result = result + times;
+                dvd = dvd - tmp;
+            }
+            if(!isPositive) return -result;
+            return result;
+        }
+    };
+    ```
+
+#### [leetcode 43: 字符串相乘](https://leetcode.com/problems/multiply-strings)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      string multiply(string num1, string num2) {
+          string res = "0";
+
+          for(int i = num2.length()-1; i >= 0; i--) {
+              string prod = multiply(num1, num2[i]);
+              for(int j = 0; j < num2.length()-1-i; j++) {
+                  prod += '0';
+              }
+              res = add(res, prod);
+          }
+
+          int i = 0;
+          while(i < res.length()-1 && res[i] == '0') i++;
+          return res.substr(i, res.length()-i);
+      }
+
+  private:
+      string multiply(string num1, char num2) {
+          string res;
+
+          int carry = 0;
+          for(int i = num1.length()-1; i >= 0; i--) {
+              int prod = (num1[i]-'0') * (num2-'0') + carry;
+              carry = prod / 10;
+              res = char(prod % 10 + '0') + res;
+          }
+          if(carry) {
+              res = char(carry + '0') + res;
+          }
+
+          return res;
+      }
+
+      string add(string num1, string num2) {
+          string res;
+
+          int carry = 0;
+          int len1 = num1.length();
+          int len2 = num2.length();
+          for(int i = 0; i < max(len1, len2); i++) {
+              int sum = carry;
+              if(len1-1-i >= 0) {
+                  sum += num1[num1.length()-1-i] - '0';
+              }
+              if(len2-1-i >= 0) {
+                  sum += num2[num2.length()-1-i] - '0';
+              }
+              carry = sum / 10;
+              res = char(sum % 10 + '0') + res;
+          }
+          if(carry) {
+              res = char(carry + '0') + res;
+          }
+
+          return res;
+      }
+  };
+  ```
+
+#### [leetcode 50: Pow(w, n)](https://leetcode.com/problems/powx-n)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      double myPow(double x, int n) {
+          return pow(x, n);
+      }
+      
+  private:
+      double pow(double x, long n) {
+          if(n == 0) return 1;
+          if(n < 0) return 1 / pow(x, -n);
+          if(n % 2) return pow(x*x, n/2) * x;
+          return pow(x*x, n/2);
+      }
+  };
+  ```
+
+#### [leetcode 65: 有效数字](https://leetcode.com/problems/valid-number)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      bool isNumber(string s) {
+          /*
+          "0" => true
+          " 0.1 " => true
+          "abc" => false
+          "1 a" => false
+          "2e10" => true
+          " -90e3   " => true
+          " 1e" => false
+          "e3" => false
+          " 6e-1" => true
+          " 99e2.5 " => false
+          "53.5e93" => true
+          " --6 " => false
+          "-+3" => false
+          "95a54e53" => false
+
+          "." => false
+          ". 1" => false
+          ".-4"
+          "6e6.5"
+          */
+
+          // remove space of two sides
+          int start = 0;
+          int end = s.length();
+          while(start < s.length()) {
+              if(s[start] == ' ') start++;
+              else break;
+          }
+          while(end > 0) {
+              if(s[end-1] == ' ') end--;
+              else break;
+          }
+          s = s.substr(start, end-start);
+          
+          // exp
+          size_t exp_pos = s.find('e');
+          if(exp_pos != string::npos) {
+              string num1 = s.substr(0, exp_pos);
+              string num2 = s.substr(exp_pos+1, s.size()-exp_pos-1);
+              if(isValid(num1) && isInt(num2)) return true;
+          } else {
+              if(isValid(s)) return true;
+          }
+          return false;
+      }
+
+  private:
+      bool isValid(string s) {
+          cout << "#" << s << "#";
+          // empty
+          if(s == "") return false;
+
+          // alpha
+          for(int i = 0; i < s.size(); i++) {
+              if(isalpha(s[i]) || s[i] == ' ') return false;
+          }
+
+          // negtive, positive, point
+          int num_pos_neg = 0;
+          int num_point = 0;
+          int num_digit = 0;
+          for(int i = 0; i < s.size(); i++) {
+              if(isdigit(s[i])) num_digit++;
+              else if(s[i] == '.') num_point++;
+              else if(s[i] == '+' || s[i] == '-') {
+                  num_pos_neg++;
+                  if(num_digit > 0 || num_point > 0) return false;
+              }
+          }
+          if(num_pos_neg > 1 || num_point > 1 || num_digit == 0) return false;
+          return true;
+      }
+
+      bool isInt(string s) {
+          cout << "#" << s << "#";
+          // empty
+          if(s == "") return false;
+
+          // alpha
+          for(int i = 0; i < s.size(); i++) {
+              if(isalpha(s[i]) || s[i] == ' ') return false;
+          }
+
+          // negtive, positive, point
+          int num_pos_neg = 0;
+          int num_point = 0;
+          int num_digit = 0;
+          for(int i = 0; i < s.size(); i++) {
+              if(isdigit(s[i])) num_digit++;
+              else if(s[i] == '.') num_point++;
+              else if(s[i] == '+' || s[i] == '-') {
+                  num_pos_neg++;
+                  if(num_digit > 0 || num_point > 0) return false;
+              }
+          }
+          if(num_pos_neg > 1 || num_point > 0 || num_digit == 0) return false;
+          return true;
+      }
+  };
+  ```
+
+#### [leetcode 69: x的平方根](https://leetcode.com/problems/sqrtx)
+
+- 代码
+
+  ```c++
+  class Solution {
+  public:
+      int mySqrt(int x) {
+          if(x < 0) return -1;
+          if(x == 0) return 0;
+          int lo = 1;
+          int hi = x;
+          while(lo <= hi) {
+              int mid = lo + (hi - lo) / 2; // avoid overflow when (lo + hi) / 2
+              if(mid == x/mid)  return mid; // avoid overflow when mid*mid
+              else if(mid < x/mid) lo = mid + 1;
+              else hi = mid - 1;
+          }
+          return hi;
+      }
+  };
+  ```
+
+#### [leetcode 166: 分数到小数](https://leetcode.com/problems/fraction-to-recurring-decimal)
+
+```c++
+class Solution {
+public:
+    string fractionToDecimal(int numerator, int denominator) {
+        if(numerator == 0) return "0";
+
+        // sign
+        string res;
+        if((numerator > 0) ^ (denominator > 0)) res += "-";
+        long absNumerator = abs((long)numerator);
+        long absDenominator = abs((long)denominator);
+
+        // integral part
+        res += to_string(absNumerator / absDenominator);
+        long remainder = absNumerator % absDenominator;
+        if(remainder == 0) return res;
+
+        // fractional part
+        res += '.';
+        unordered_map<long, int> map;
+        while(remainder != 0) {
+            if(map.count(remainder)) {
+                res.insert(map[remainder], "(");
+                res += ')';
+                break;
+            }
+            
+            map[remainder] = res.length();
+            remainder *= 10;
+            res += to_string(remainder / absDenominator);
+            remainder = remainder % absDenominator;
+        }
+        return res;
+    }
+};
+```
+
+#### [leetcode 171: 阶乘后的零](https://leetcode.com/problems/factorial-trailing-zeroes)
+
+```c++
+class Solution {
+public:
+    int trailingZeroes(int n) {
+        int res = 0;
+        while(n != 0) {
+            res += n/5;
+            n /= 5;
+        }
+        return res;
+    }
+};
+```
+
+#### [leetcode 179: 最大数](https://leetcode.com/problems/largest-number)
+
+```c++
+class Solution {
+public:
+    string largestNumber(vector<int>& nums) {
+        sort(nums.begin(), nums.end(), [](int& a, int& b){ return to_string(a)+to_string(b) > to_string(b)+to_string(a); });
+        string res;
+        for(int i = 0; i < nums.size(); i++) {
+            res += to_string(nums[i]);
+        }
+        while(res[0] == '0') {
+            res.erase(0, 1);
+        }
+        return res.empty()? "0": res;
+    }
+};
+```
+
+#### [leetcode 190: 颠倒二进制位](https://leetcode.com/problems/reverse-bits)
+
+```c++
+uint32_t reverseBits(uint32_t n) {
+    uint32_t count=0;
+    int i;
+    for(i=0;i<32;i++){
+        count=count*2+n%2;
+        n=n/2;
+    }
+    return count;
+}
+```
+
+#### [leetcode 204: 计数质数](https://leetcode.com/problems/count-primes)
+
+```c++
+class Solution {
+public:
+    int countPrimes(int n) {
+        int res = 0;
+        vector<bool> isPrime(n, true);
+        for(long i = 2; i < n; i++) {
+            if(isPrime[i]) {
+                res++;
+                for(long j = i*i; j < n; j += i) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+        return res;
+    }
+};
+```
+
+## 并发
+
+#### [leetcode 1114: 按序打印](https://leetcode.com/problems/print-in-order/) 
+
+- 代码
+
+  ```java
+  import java.util.concurrent.*;
+  class Foo {
+
+      Semaphore run2, run3;
+
+      public Foo() {
+          run2 = new Semaphore(0);
+          run3 = new Semaphore(0);
+      }
+
+      public void first(Runnable printFirst) throws InterruptedException {
+          
+          // printFirst.run() outputs "first". Do not change or remove this line.
+          printFirst.run();
+          
+          run2.release();
+      }
+
+      public void second(Runnable printSecond) throws InterruptedException {
+          run2.acquire();
+
+          // printSecond.run() outputs "second". Do not change or remove this line.
+          printSecond.run();
+
+          run3.release();
+      }
+
+      public void third(Runnable printThird) throws InterruptedException {
+          run3.acquire();
+
+          // printThird.run() outputs "third". Do not change or remove this line.
+          printThird.run();
+      }
+  }
+  ```
+
+#### [leetcode 1115: 交替打印FooBar](https://leetcode.com/problems/print-foobar-alternately/)
+
+- 代码
+
+  ```java
+  import java.util.concurrent.*;
+  class FooBar {
+      Semaphore foo = new Semaphore(1);
+      Semaphore bar = new Semaphore(0);
+      
+      private int n;
+
+      public FooBar(int n) {
+          this.n = n;
+      }
+
+      public void foo(Runnable printFoo) throws InterruptedException {
+          
+          for (int i = 0; i < n; i++) {
+              foo.acquire();
+
+              // printFoo.run() outputs "foo". Do not change or remove this line.
+              printFoo.run();
+
+              bar.release();
+          }
+      }
+
+      public void bar(Runnable printBar) throws InterruptedException {
+          
+          for (int i = 0; i < n; i++) {
+              bar.acquire();
+
+              // printBar.run() outputs "bar". Do not change or remove this line.
+              printBar.run();
+
+              foo.release();
+          }
+      }
+  }
+  ```
+
+#### [leetcode 1116: 打印零与奇偶数](https://leetcode.com/problems/print-zero-even-odd/)
+
+- 代码
+
+  ```java
+  import java.util.concurrent.*;
+  class ZeroEvenOdd {
+      Semaphore zero = new Semaphore(1);
+      Semaphore even = new Semaphore(0);
+      Semaphore odd = new Semaphore(0);
+      
+      private int n;
+      
+      public ZeroEvenOdd(int n) {
+          this.n = n;
+      }
+
+      // printNumber.accept(x) outputs "x", where x is an integer.
+      public void zero(IntConsumer printNumber) throws InterruptedException {
+          for(int i = 1; i <= n; i++) {
+              zero.acquire();
+              printNumber.accept(0);
+              if(i % 2 == 1) {
+                  odd.release();
+              } else {
+                  even.release();
+              }
+          }
+      }
+
+      public void even(IntConsumer printNumber) throws InterruptedException {
+          for(int i = 2; i <= n; i += 2) {
+              even.acquire();
+              printNumber.accept(i);
+              zero.release();
+          }
+      }
+
+      public void odd(IntConsumer printNumber) throws InterruptedException {
+          for(int i = 1; i <= n; i += 2) {
+              odd.acquire();
+              printNumber.accept(i);
+              zero.release();
+          }
+      }
+  }
+  ```
+
+#### [leetcode 1117: H20生成](https://leetcode.com/problems/building-h2o/)
+
+- 代码
+
+  ```java
+  import java.util.concurrent.*;
+  class H2O {
+
+      Semaphore h;
+      Semaphore o;
+
+      public H2O() {
+          h = new Semaphore(2);
+          o = new Semaphore(0);
+      }
+
+      public void hydrogen(Runnable releaseHydrogen) throws InterruptedException {
+          h.acquire();
+          // releaseHydrogen.run() outputs "H". Do not change or remove this line.
+          releaseHydrogen.run();
+          o.release();
+      }
+
+      public void oxygen(Runnable releaseOxygen) throws InterruptedException {
+          o.acquire(2);
+          // releaseOxygen.run() outputs "O". Do not change or remove this line.
+          releaseOxygen.run();
+          h.release(2);
+      }
+  }
+  ```
+
+#### [leetcode 1195: 交替打印字符串](https://leetcode.com/problems/fizz-buzz-multithreaded/)
+
+- 代码
+
+  ```java
+  import java.util.concurrent.*;
+  class FizzBuzz {
+      private int n;
+
+      Semaphore number;
+      Semaphore fizz;
+      Semaphore buzz;
+      Semaphore fizzbuzz;
+
+      public FizzBuzz(int n) {
+          this.n = n;
+
+          number = new Semaphore(1);
+          fizz = new Semaphore(0);
+          buzz = new Semaphore(0);
+          fizzbuzz = new Semaphore(0);
+      }
+
+      // printFizz.run() outputs "fizz".
+      public void fizz(Runnable printFizz) throws InterruptedException {
+          for(int i = 3; i <= n; i += 3) {
+              if(i % 5 != 0) {
+                  fizz.acquire();
+                  printFizz.run();
+                  // System.out.println("fizz"+i);
+                  number.release();
+              }
+          }
+      }
+
+      // printBuzz.run() outputs "buzz".
+      public void buzz(Runnable printBuzz) throws InterruptedException {
+          for(int i = 5; i <= n; i += 5) {
+              if(i % 3 != 0) {
+                  buzz.acquire();
+                  printBuzz.run();
+                  // System.out.println("buzz"+i);
+                  number.release();
+              }
+          }
+      }
+
+      // printFizzBuzz.run() outputs "fizzbuzz".
+      public void fizzbuzz(Runnable printFizzBuzz) throws InterruptedException {
+          for(int i = 15; i <= n; i += 15) {
+              fizzbuzz.acquire();
+              printFizzBuzz.run();
+              // System.out.println("fizzbuzz"+i);
+              number.release();
+          }
+      }
+
+      // printNumber.accept(x) outputs "x", where x is an integer.
+      public void number(IntConsumer printNumber) throws InterruptedException {
+          for(int i = 1; i <= n; i++) {
+              number.acquire();
+              if(i % 3 != 0 && i % 5 != 0) {
+                  printNumber.accept(i);
+                  // System.out.println(i);
+                  number.release();
+              } else if(i % 15 == 0) {
+                  fizzbuzz.release();
+              } else if(i % 3 == 0) {
+                  fizz.release();
+              } else if(i % 5 == 0) {
+                  buzz.release();
+              }
+          }
+      }
+  }
+  ```
+
+#### 抢票
+
+- 代码
+
+  ```java
+  // 某场演唱会门票1000张（票面编号0-999），落入了黄牛A、B、C手中，
+  // 三人同时对外售票（按编号顺序卖票），票价500/张，总票数每卖掉100张，每张票涨价100元。
+  // 请编写出程序，最终打印出三个人卖掉每张票的编号和每人的总收入。
+
+  import java.util.ArrayList;
+
+  class TicketSeller implements Runnable{
+      private static volatile int ticketNum = 0;
+      private static int ticketPrice = 500;
+
+      private ArrayList<Integer> tickets = new ArrayList<>();
+      private int profit = 0;
+
+      @Override
+      public void run() {
+          while(ticketNum < 1000) {
+              synchronized(TicketSeller.class) {
+                  profit += ticketPrice;
+                  tickets.add(ticketNum++);
+                  ticketPrice = 500 + ticketNum / 100 * 100;
+              }
+          }
+          System.out.println(String.valueOf(tickets.size()) + " " + profit + " " + tickets);
+      }
+
+      public static void main(String[] args) {
+          Thread a = new Thread(new TicketSeller());
+          Thread b = new Thread(new TicketSeller());
+          Thread c = new Thread(new TicketSeller());
+          a.start();
+          b.start();
+          c.start();
+      }
+  }
+
+
+  import java.util.ArrayList;
+
+  class TicketSeller implements Runnable{
+      private volatile int ticketNum = 0;
+      private int ticketPrice = 500;
+
+      @Override
+      public void run() {
+          ArrayList<Integer> tickets = new ArrayList<>();
+          int profit = 0;
+          while(ticketNum < 1000) {
+              synchronized(TicketSeller.class) {
+                  profit += ticketPrice;
+                  tickets.add(ticketNum++);
+                  ticketPrice = 500 + ticketNum / 100 * 100;
+              }
+          }
+          System.out.println(tickets);
+          System.out.println(profit);
+      }
+
+      public static void main(String[] args) {
+          TicketSeller ticketSeller = new TicketSeller();
+          Thread a = new Thread(ticketSeller);
+          Thread b = new Thread(ticketSeller);
+          Thread c = new Thread(ticketSeller);
+          a.start();
+          b.start();
+          c.start();
+      }
+  }
+  ```
