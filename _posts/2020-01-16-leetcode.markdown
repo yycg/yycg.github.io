@@ -182,7 +182,7 @@ tags:
   }
   ```
 
-- 快速排序：时间$O(n\logn)$，最坏$O(n^2)$，空间$O(\log n)$，最坏$O(n)$
+- 快速排序：时间$O(n\log n)$，最坏$O(n^2)$，空间$O(\log n)$，最坏$O(n)$
 
   ```java
   void quickSort(int[] a, int lo, int hi) {
@@ -241,6 +241,347 @@ tags:
           k = j;
       }
   }
+  ```
+
+- 回溯
+
+  ```c++
+  // Backtracking pseudocode
+  bool Solve(configuration conf) {
+      if (no more choices) // BASE CASE
+          return (conf is goal state);
+      for (all available choices) {
+          try one choice c;
+          // solve from here, if works out, you're done
+          if (Solve(conf with choice c made)) return true;
+          unmake choice c;
+      }
+      return false; // tried all choices, no soln found
+  }
+  ```
+
+- DFS
+
+  ```c++
+  bool mark[];
+
+  void dfs(Graph G, int v) {
+      marked[v] = true;
+      for(int w: G.adj(v)) {
+          if(!marked[w]) {
+              dfs(G, w);
+          }
+      }
+  }
+
+  int main() {
+      for(int s = 0; s < G.V(); s++) {
+          if(!mark[s]) {
+              dfs(G, s);
+          }
+      }
+
+      return 0;
+  }
+  ```
+
+- BFS
+
+  ```c++
+  void bfs(Graph G, int s) {
+      queue<int> q;
+
+      marked[s] = true;
+      q.push(s);
+      while(!q.empty()) {
+          int v = q.front();
+          q.pop();
+          for(int w: G.adj(v)) {
+              if(!marked[w]) {
+                  marked[w] = true;
+                  q.push(w);
+              }
+          }
+      }
+  }
+  ```
+
+- 并查集
+
+  ```c++
+  #include <cstdio>
+
+  int tree[];
+
+  int findRoot(int x) {
+      if(tree[x] == -1) return x;
+      int ret = findRoot(tree[x]);
+      tree[x] = ret;
+      return ret;
+  }
+
+  int main() {
+      for(int i = 1; i <= n; i++)
+          tree[i] = -1;
+      while(m--) {
+          int a, b;
+          scanf("%d%d", &a, &b);
+          a = findRoot(a);
+          b = findRoot(b);
+          if(a != b) tree[a] = b;
+      }
+      int res = 0;
+      for(int i = 1; i <= n; i++) {
+          if(tree[i] == -1) res++;
+      }
+
+      return 0;
+  }
+  ```
+
+- 最小生成树(MST) Kruskal
+
+  ```c++
+  #include <cstdio>
+  #include <algorithm>
+
+  int tree[];
+  struct Edge {
+      int a, b;
+      int cost;
+
+      bool operator < (const Edge& b) const {
+          return cost < b.cost;
+      }
+  } edge[];
+
+  int findRoot(int x) {
+      if(tree[x] == -1) return x;
+      int ret = findRoot(tree[x]);
+      tree[x] = ret;
+      return ret;
+  }
+
+  int main() {
+      for(int i = 0; i < n*(n-1)/2; i++) {
+          scanf("%d%d%d", &edge[i].a, &edge[i].b, &edge[i].cost);
+      }
+      sort(edge, edge+n*(n-1)/2);
+      for(int i = 1; i <= n; i++) {
+          tree[i] = -1;
+      }
+      int res = 0;
+      for(int i = 0; i < n*(n-1)/2; i++) {
+          int a = findRoot(edge[i].a);
+          int b = findRoot(edge[i].b);
+          if(a != b) {
+              tree[a] = b;
+              res += edge[i].cost;
+          }
+      }
+      printf("%d\n", res);
+
+      return 0;
+  }
+  ```
+
+- Dijkstra 邻接表
+
+  ```c++
+  #include <cstdio>
+  #include <algorithm>
+  #include <vector>
+
+  const int INF = 0x7fffffff;
+
+  struct Edge {
+      int to;
+      int cost;
+  };
+  vector<Edge> edge[];
+  bool mark[];
+  int dist[];
+
+  int main() {
+      for(int i = 1; i <= n; i++) {
+          edge[i].clear();
+          mark[i] = false;
+          dist[i] = -1;
+      }
+      for(int i = 1; i <= m; i++) {
+          int a, b, c;
+          scanf("%d%d%d", &a, &b, &c);
+          Edge tmp;
+          tmp.cost = c;
+          tmp.to = b;
+          edge[a].push_back(tmp);
+          tmp.to = a;
+          edge[b].push_back(tmp);
+      }
+      mark[1] = true;
+      dist[1] = 0;
+      int newPoint = 1;
+      for(int i = 0; i < n-1; i++) {
+          int len = edge[newPoint].size();
+          for(int j = 0; j < len; j++) {
+              int to = edge[newPoint][j].to;
+              int cost = edge[newPoint][j].cost;
+              if(mark[to]) continue;
+              if(dist[to] == -1 || dist[to] > dist[newPoint] + cost)
+                  dist[to] = dist[newPoint] + cost;
+          }
+          int min = INF;
+          for(int j = 1; j <= n; j++) {
+              if(mark[j]) continue;
+              if(dist[j] == -1) continue;
+              if(dist[j] < min) {
+                  min = dist[j];
+                  newPoint = j;
+              }
+          }
+          mark[newPoint] = true;
+      }
+      return 0;
+  }
+  ```
+
+- 拓扑排序
+
+  ```c++
+  class Solution {
+  public:
+      vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+          vector<vector<int>> graph(numCourses, vector<int>());
+          vector<int> indegree(numCourses, 0);
+          for(vector<int> prerequisite: prerequisites) {
+              int start = prerequisite[1];
+              int end = prerequisite[0];
+              graph[start].push_back(end);
+              indegree[end]++;
+          }
+          vector<int> res;
+          queue<int> q;
+          for(int i = 0; i < numCourses; i++) {
+              if(indegree[i] == 0) {
+                  q.push(i);
+              }
+          }
+          while(!q.empty()) {
+              int node = q.front();
+              res.push_back(node);
+              q.pop();
+              for(int neighbour: graph[node]) {
+                  indegree[neighbour]--;
+                  if(indegree[neighbour] == 0) {
+                      q.push(neighbour);
+                  }
+              }
+          }
+          return res.size()==numCourses? res: vector<int>();
+      }
+  };
+  ```
+
+- 0-1背包
+
+  ```c++
+  #include <cstdio>
+  #include <algorithm>
+  using namespace std;
+
+  int dp[];
+
+  struct List {
+      int volume;
+      int weight;
+  } list[];
+
+  int main() {
+      int v, n;
+      scanf("%d%d", &v, &n);
+      for(int i = 1; i <= n; i++) {
+          scanf("%d%d", &list[i].volume, &list[i].weight);
+      }
+      for(int j = 0; j <= v; j++) {
+          dp[j] = 0;
+      }
+      for(int i = 1; i <= n; i++) {
+          for(int j = v; j >= list[i].volume; j--) {
+              dp[j] = max(dp[j-list[i].volume] + list[i].weight, dp[j]);
+          }
+      }
+      printf("%d\n", dp[v]);
+
+      return 0;
+  }
+  ```
+
+  初始化分两种情况：
+
+  1. 如果背包要求正好装满则初始化 f[0] = 0, f[1~w] = -INF;
+  2. 如果不需要正好装满 f[0~v] = 0;  
+
+- 完全背包
+
+  ```c++
+  #include <cstdio>
+  #include <algorithm>
+  using namespace std;
+
+  const int INF = 0x7fffffff;
+  int dp[];
+
+  struct List {
+      int volume;
+      int weight;
+  } list[];
+
+  int main() {
+      int t;
+      scanf("%d", &t);
+      while(t--) {
+          int a, b, n;
+          scanf("%d%d%d", &a, &b, &n);
+          int v = b - a;
+          for(int i = 1; i <= n; i++) {
+              scanf("%d%d", &list[i].weight, &list[i].volume);
+          }
+          dp[0] = 0;
+          for(int j = 1; j <= v; j++) {
+              dp[j] = INF;
+          }
+          for(int i = 1; i <= n; i++) {
+              for(int j = list[i].volume; j <= v; j++) {
+                  if (dp[j-list[i].volume] != INF)
+                      dp[j] = min(dp[j-list[i].volume] + list[i].weight, dp[j]);
+              }
+          }
+          if(dp[v] == INF) printf("This is impossible.\n");
+          else printf("The minimum amount of money in the piggy-bank is %d\n", dp[v]);
+      }
+
+      return 0;
+  }
+  ```
+
+- 最大公共子序列、最大公共子串
+
+  ```java
+  int dp[][] = new int[s1.length()+1][s2.length()+1];
+  for(int i = 1; i <= s1.length(); i++) {
+      for(int j = 1; j <= s2.length(); j++) {
+          if(s1.charAt(i-1) == s2.charAt(j-1)) dp[i][j] = dp[i-1][j-1] + 1;
+          //else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+          else dp[i][j] = 0;
+      }
+  }
+  for(int i = 0; i <= s1.length(); i++) {
+      for(int j = 0; j <= s2.length(); j++) {
+          System.out.format("%d ", dp[i][j]);
+      }
+      System.out.println();
+  }
+  System.out.println(dp[s1.length()][s2.length()]);
   ```
 
 ## 分治
@@ -760,6 +1101,148 @@ public:
 };
 ```
 
+#### [leetcode 347: 前 K 个高频元素](https://leetcode.com/problems/top-k-frequent-elements)
+
+排序：$O(n \log n)$
+
+先利用散列表统计次数，然后对值排序。
+
+```c++
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> map;
+        for(int num: nums) {
+            if(!map.count(num)) map[num] = 0;
+            map[num]++;
+        }
+        vector<pair<int, int>> vec(map.begin(), map.end());
+        sort(vec.begin(), vec.end(), cmp);
+
+        vector<int> res;
+        for(int i = 0; i < k; i++) {
+            res.push_back(vec[i].first);
+        }
+        return res;
+    }
+
+private:
+    static bool cmp(const pair<int, int>& a, const pair<int, int>& b) {
+        return a.second > b.second;
+    }
+};
+```
+
+桶排序：$O(n)$
+
+先利用散列表统计次数，交换散列表的键和值，进行桶排序。
+
+```c++
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> freq;
+        for(int num: nums) {
+            if(!freq.count(num)) freq[num] = 0;
+            freq[num]++;
+        }
+
+        unordered_map<int, vector<int>> bucket;
+        for(unordered_map<int, int>::iterator it = freq.begin(); it != freq.end(); it++) {
+            if(!bucket.count(it->second)) bucket[it->second] = vector<int>();
+            bucket[it->second].push_back(it->first);
+            // cout << it->second << ' ' << it->first << endl;
+        }
+
+        vector<int> res;
+        for(int i = nums.size(); i > 0 && res.size() < k; i--) {
+            if(bucket.count(i)) {
+                for(int num: bucket[i]) {
+                    res.push_back(num);
+                    if(res.size() == k) break;
+                }
+            }
+        }
+        return res;
+    }
+};
+```
+
+#### [leetcode 350: 两个数组的交集II](https://leetcode.com/problems/intersection-of-two-arrays-ii)
+
+```c++
+class Solution {
+public:
+    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+        unordered_map<int, int> map;
+        for(int num: nums1) {
+            if(!map.count(num)) map[num] = 0;
+            map[num]++;
+        }
+
+        vector<int> res;
+        for(int num: nums2) {
+            if(map.count(num)) {
+                res.push_back(num);
+                if(--map[num] == 0) map.erase(num);
+            }
+        }
+        return res;
+    }
+};
+```
+
+#### [leetcode 380: 常数时间插入、删除和获取随机元素](https://leetcode.com/problems/insert-delete-getrandom-o1)
+
+散列+数组
+
+```c++
+class RandomizedSet {
+public:
+    /** Initialize your data structure here. */
+    RandomizedSet() {
+        
+    }
+    
+    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+    bool insert(int val) {
+        if(map.count(val)) return false;
+        vec.push_back(val);
+        map[val] = vec.size() - 1;
+        return true;
+    }
+    
+    /** Removes a value from the set. Returns true if the set contained the specified element. */
+    bool remove(int val) {
+        if(!map.count(val)) return false;
+        // notice case when val == last
+        int last = vec.back();
+        map[last] = map[val];
+        vec[map[val]] = last;
+        vec.pop_back();
+        map.erase(val);
+        return true;
+    }
+    
+    /** Get a random element from the set. */
+    int getRandom() {
+        return vec[rand() % vec.size()];
+    }
+
+private:
+    unordered_map<int, int> map;
+    vector<int> vec;
+};
+
+/**
+ * Your RandomizedSet object will be instantiated and called as such:
+ * RandomizedSet* obj = new RandomizedSet();
+ * bool param_1 = obj->insert(val);
+ * bool param_2 = obj->remove(val);
+ * int param_3 = obj->getRandom();
+ */
+```
+
 ## 数组
 
 #### [leetcode 41: 缺失的第一个正数](https://leetcode.com/problems/first-missing-positive/)
@@ -1165,6 +1648,152 @@ public:
             sum += i - nums[i];
         }
         return sum;
+    }
+};
+```
+
+#### [leetcode 287: 寻找重复数](https://leetcode.com/problems/find-the-duplicate-number)
+
+剑指offer上的方法
+
+```java
+class Solution {
+    public int findDuplicate(int[] nums) {
+        for(int i = 0; i < nums.length; i++) {
+            while(nums[i]-1 != i) {
+                if(nums[i] == nums[nums[i]-1]) return nums[i];
+                swap(nums, i, nums[i]-1);
+            }
+        }
+        return -1;
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+}
+```
+
+cycle detection
+
+```c++
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+        int slow = 0;
+        int fast = 0;
+        do {
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        } while(slow != fast);
+        
+        int ptr1 = 0;
+        int ptr2 = slow;
+        while(ptr1 != ptr2) {
+            ptr1 = nums[ptr1];
+            ptr2 = nums[ptr2];
+        }
+        return ptr1;
+    }
+};
+```
+
+#### [leetcode 384: 打乱数组](https://leetcode.com/problems/shuffle-an-array)
+
+Fisher-Yates Algorithm
+
+```c++
+class Solution {
+public:
+    Solution(vector<int>& nums) {
+        original = nums;
+    }
+    
+    /** Resets the array to its original configuration and return it. */
+    vector<int> reset() {
+        return original;
+    }
+    
+    /** Returns a random shuffling of the array. */
+    vector<int> shuffle() {
+        vector<int> shuffle(original);
+        for(int i = 0; i < shuffle.size(); i++) {
+            swap(shuffle[i], shuffle[rand()%shuffle.size()]);
+        }
+        return shuffle;
+    }
+
+private:
+    vector<int> original;
+};
+```
+
+#### [leetcode 324: 摆动排序](https://leetcode.com/problems/wiggle-sort-ii)
+
+方法1：时间$O(n\log n)$，空间$O(n)$
+
+小的一半（可能多一个）放偶数位，大的一半放奇数位，翻转是为了避免[4,5,5,6] => [5,6,4,5]这种情况。
+
+```c++
+class Solution {
+public:
+    void wiggleSort(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        int half = nums.size()%2==0? nums.size()/2: nums.size()/2+1;
+        vector<int> small(nums.begin(), nums.begin()+half);
+        reverse(small.begin(), small.end());
+        vector<int> large(nums.begin()+half, nums.end());
+        reverse(large.begin(), large.end());
+        for(int i = 0; i < small.size(); i++) {
+            nums[2*i] = small[i];
+        }
+        for(int i = 0; i < large.size(); i++) {
+            nums[2*i+1] = large[i];
+        }
+    }
+};
+```
+
+方法2：时间$O(n)$
+
+leetcode 75 颜色分类 + leetcode 215 快速选择
+
+先用$O(n)$快速选择出中位数，再用$O(n)$，大于中位数的到左边（映射到奇数位），小于中位数的到右边（映射到偶数位）。
+
+```
+Accessing A(0) actually accesses nums[1].
+Accessing A(1) actually accesses nums[3].
+Accessing A(2) actually accesses nums[5].
+Accessing A(3) actually accesses nums[7].
+Accessing A(4) actually accesses nums[9].
+Accessing A(5) actually accesses nums[0].
+Accessing A(6) actually accesses nums[2].
+Accessing A(7) actually accesses nums[4].
+Accessing A(8) actually accesses nums[6].
+Accessing A(9) actually accesses nums[8].
+```
+
+```c++
+class Solution {
+public:
+    void wiggleSort(vector<int>& nums) {
+        int n = nums.size();
+        auto midptr = nums.begin() + n/2;
+        nth_element(nums.begin(), midptr, nums.end());
+        int mid = *midptr;
+
+        #define A(i) nums[(1+2*(i)) % (n|1)]
+
+        int left = 0;
+        int right = n - 1;
+        int i = 0;
+        while(i <= right) {
+            if(A(i) > mid) swap(A(i++), A(left++));
+            else if(A(i) < mid) swap(A(i), A(right--));
+            else i++;
+        }
     }
 };
 ```
@@ -1826,7 +2455,7 @@ public:
 #### [leetcode 395: 至少有K个重复字符的最长子串](<https://leetcode.com/problems/longest-substring-with-at-least-k-repeating-characters/>)
 
 ## 双指针
-#### [leetcode 3: 无重复字符的最长子字符串](<https://leetcode.com/problems/longest-substring-without-repeating-characters/>)
+#### [leetcode 3: 无重复字符的最长子字符串](https://leetcode.com/problems/longest-substring-without-repeating-characters/)
 
 - 思路：双指针。
 
@@ -2485,6 +3114,121 @@ private:
  */
 ```
 
+#### [leetcode 341: 扁平化嵌套列表迭代器](https://leetcode.com/problems/flatten-nested-list-iterator)
+
+思路：初始化的时候将列表中的元素倒序入栈。hasNext()中将栈顶元素解析成列表并倒序入栈，直到栈顶元素是数字。next()中弹出栈顶元素。
+
+```c++
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * class NestedInteger {
+ *   public:
+ *     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     bool isInteger() const;
+ *
+ *     // Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // The result is undefined if this NestedInteger holds a nested list
+ *     int getInteger() const;
+ *
+ *     // Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // The result is undefined if this NestedInteger holds a single integer
+ *     const vector<NestedInteger> &getList() const;
+ * };
+ */
+class NestedIterator {
+public:
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        for(int i = nestedList.size()-1; i >= 0; i--) {
+            st.push(nestedList[i]);
+        }
+    }
+
+    int next() {
+        int res = st.top().getInteger();
+        st.pop();
+        return res;
+    }
+
+    bool hasNext() {
+        while(!st.empty()) {
+            if(st.top().isInteger()) return true;
+            vector<NestedInteger> nestedList = st.top().getList();
+            st.pop();
+            for(int i = nestedList.size()-1; i >= 0; i--) {
+                st.push(nestedList[i]);
+            }
+        }
+        return false;
+    }
+
+private:
+    stack<NestedInteger> st;
+};
+
+/**
+ * Your NestedIterator object will be instantiated and called as such:
+ * NestedIterator i(nestedList);
+ * while (i.hasNext()) cout << i.next();
+ */
+```
+
+```c++
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * class NestedInteger {
+ *   public:
+ *     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     bool isInteger() const;
+ *
+ *     // Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // The result is undefined if this NestedInteger holds a nested list
+ *     int getInteger() const;
+ *
+ *     // Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // The result is undefined if this NestedInteger holds a single integer
+ *     const vector<NestedInteger> &getList() const;
+ * };
+ */
+class NestedIterator {
+public:
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        begins.push(nestedList.begin());
+        ends.push(nestedList.end());
+    }
+
+    int next() {
+        return (begins.top()++)->getInteger();
+    }
+
+    bool hasNext() {
+        while(!begins.empty()) {
+            if(begins.top() == ends.top()) {
+                begins.pop();
+                ends.pop();
+            } else {
+                auto x = begins.top();
+                if(x->isInteger()) return true;
+                begins.top()++; // 为将来退栈后访问到这个节点做准备
+                begins.push(x->getList().begin());
+                ends.push(x->getList().end());
+            }
+        }
+        return false;
+    }
+
+private:
+    stack<vector<NestedInteger>::iterator> begins, ends;
+};
+
+/**
+ * Your NestedIterator object will be instantiated and called as such:
+ * NestedIterator i(nestedList);
+ * while (i.hasNext()) cout << i.next();
+ */
+```
+
 ## 堆
 
 #### [leetcode 23: 归并K个排序链表](https://leetcode.com/problems/merge-k-sorted-lists/)
@@ -2635,6 +3379,46 @@ private:
         return j;
     }
 };
+```
+
+#### [leetcode 295: 数据流中的中位数](https://leetcode.com/problems/find-median-from-data-stream)
+
+思路：小的一半数放在大顶堆里，大的一半数放在小顶堆里。插入时先插入到小的一半里，再调整一个到大的一半，如果大的一半数量大于小的一半，再调整一个回来，保证小的一半的数量大于等于大的一半。
+
+```c++
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) {
+        small.push(num);
+        large.push(small.top());
+        small.pop();
+        if(large.size() > small.size()) {
+            small.push(large.top());
+            large.pop();
+        }
+    }
+    
+    double findMedian() {
+        if(small.size() > large.size()) return small.top();
+        return (small.top() + large.top()) / 2.0;
+    }
+
+private:
+    priority_queue<int> small; // 大顶堆
+    priority_queue<int, vector<int>, greater<int>> large; // 小顶堆
+};
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder* obj = new MedianFinder();
+ * obj->addNum(num);
+ * double param_2 = obj->findMedian();
+ */
 ```
 
 ## 二叉树
@@ -3756,48 +4540,81 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
 
 #### [leetcode 144: 二叉树的先序遍历](https://leetcode.com/problems/binary-tree-preorder-traversal/description/)
 
-- 思路：先向左子树追溯，访问结点，将右子树入栈；然后出栈
+- 思路：先访问结点，将右子树入栈，向左子树追溯；然后出栈
 
 - 代码
 
-  ```c++
-  void preOrder(TreeNode* root) {
-      stack<TreeNode*> s;
-      while(true) {
-          while(root) {
-              visit(root->val);
-              s.push(root->right);
-              root = root->left;
+  ```java
+  class Solution {
+      public List<Integer> preorderTraversal(TreeNode root) {
+          while(true) {
+              while(root != null) {
+                  res.add(root.val);
+                  stack.push(root.right);
+                  root = root.left;
+              }
+              if(stack.empty()) break;
+              root = stack.pop();
           }
-          if(s.empty()) break;
-          root = s.pop();
+          return res;
       }
+
+      private Stack<TreeNode> stack = new Stack<>();
+      private List<Integer> res = new ArrayList<>();
   }
   ```
 
 #### [leetcode 94: 二叉树的中序遍历](https://leetcode.com/problems/binary-tree-inorder-traversal/description/)
 
-- 思路：先入栈并往左子树追溯；然后出栈，访问结点，转入右子树
+- 思路：先入栈并往左子树追溯；然后出栈，访问结点，转入右子树。
 
 - 代码
 
-  ```c++
-  void inOrder(TreeNode* root) {
-      stack<TreeNode*> s;
-      while(true) {
-          while(root) {
-            s.push(root);
-            root = root->left;
+  ```java
+  class Solution {
+      public List<Integer> inorderTraversal(TreeNode root) {
+          while(true) {
+              while(root != null) {
+                  stack.push(root);
+                  root = root.left;
+              }
+              if(stack.empty()) break;
+              root = stack.pop();
+              res.add(root.val);
+              root = root.right;
           }
-          if(s.empty()) break;
-          root = s.pop();
-          visit(root->val);
-          root = root->right;
+          return res;
       }
+      
+      private Stack<TreeNode> stack = new Stack<>();
+      private List<Integer> res = new ArrayList<>();
   }
   ```
 
 #### [leetcode 145: 二叉树的后序遍历](https://leetcode.com/problems/binary-tree-postorder-traversal/description/)
+
+```java
+class Solution {
+    public List<Integer> postorderTraversal(TreeNode root) {
+        while(true) {
+            while(root != null) {
+                res.add(root.val);
+                stack.push(root.left);
+                root = root.right;
+            }
+            if(stack.empty()) break;
+            root = stack.pop();
+        }
+        Collections.reverse(res);
+        return res;
+    }
+    
+    private Stack<TreeNode> stack = new Stack<>();
+    private List<Integer> res = new ArrayList<>();
+}
+```
+
+---
 
 Here I summarize the iterative implementation for preorder, inorder, and postorder traverse.
 
@@ -3897,6 +4714,126 @@ private:
         return false;
     }
 
+};
+```
+
+#### [leetcode 297: 二叉树的序列化与反序列化](https://leetcode.com/problems/serialize-and-deserialize-binary-tree)
+
+层次遍历
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        vector<string> res;
+        
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()) {
+            TreeNode* node = q.front();
+            q.pop();
+            res.push_back(node==NULL? "null": to_string(node->val));
+            if(node != NULL) {
+                q.push(node->left);
+                q.push(node->right);
+            }
+        }
+
+        string serializeStr;
+        for(int i = 0; i < res.size(); i++) {
+            serializeStr += res[i] + ' ';
+        }
+        cout << serializeStr << endl;
+        return serializeStr;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        stringstream ss(data);
+        string val;
+        vector<TreeNode*> vec;
+        while(ss >> val) {
+            if(val == "null") vec.push_back(NULL);
+            else vec.push_back(new TreeNode(stoi(val)));
+        }
+
+        if(vec[0] == NULL) return NULL;
+        queue<TreeNode*> q;
+        q.push(vec[0]);
+        int cur = 1;
+        while(!q.empty()) {
+            TreeNode* node = q.front();
+            q.pop();
+            TreeNode* left = vec[cur++];
+            node->left = left;
+            if(left != NULL) q.push(left);
+            TreeNode* right = vec[cur++];
+            node->right = right;
+            if(right != NULL) q.push(right);
+        }
+        return vec[0];
+    }
+};
+```
+
+递归
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        ostringstream out;
+        serialize(root, out);
+        return out.str();
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        istringstream in(data);
+        return deserialize(in);
+    }
+
+private:
+    void serialize(TreeNode* root, ostringstream& out) {
+        if(root == NULL) out << "n ";
+        else {
+            out << root->val << " ";
+            serialize(root->left, out);
+            serialize(root->right, out);
+        }
+    }
+
+    TreeNode* deserialize(istringstream& in) {
+        string val;
+        in >> val;
+        if(val == "n") return NULL;
+        TreeNode* root = new TreeNode(stoi(val));
+        root->left = deserialize(in);
+        root->right = deserialize(in);
+        return root;
+    }
 };
 ```
 
@@ -5083,6 +6020,48 @@ private:
 };
 ```
 
+#### [leetcode 329: 矩阵中的最长递增路径](https://leetcode.com/problems/longest-increasing-path-in-a-matrix)
+
+带缓存的DFS
+
+```c++
+class Solution {
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        int rows = matrix.size();
+        if(rows == 0) return 0;
+        int cols = matrix[0].size();
+        if(cols == 0) return 0;
+        vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+        vector<vector<int>> cache(rows, vector<int>(cols, -1));
+        int res = 0;
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < cols; j++) {
+                if(cache[i][j] == -1) {
+                    cache[i][j] = dfs(i, j, matrix, visited, cache, rows, cols);
+                    res = max(res, cache[i][j]);
+                }
+            }
+        }
+        return res;
+    }
+
+private:
+    int dfs(int i, int j, vector<vector<int>>& matrix, vector<vector<bool>>& visited, vector<vector<int>>& cache, int rows, int cols) {
+        if(cache[i][j] != -1) return cache[i][j];
+
+        cache[i][j] = 1;
+        visited[i][j] = true;
+        if(i-1 >= 0 && !visited[i-1][j] && matrix[i-1][j] > matrix[i][j]) cache[i][j] = max(cache[i][j], 1+dfs(i-1, j, matrix, visited, cache, rows, cols));
+        if(i+1 < rows && !visited[i+1][j] && matrix[i+1][j] > matrix[i][j]) cache[i][j] = max(cache[i][j], 1+dfs(i+1, j, matrix, visited, cache, rows, cols));
+        if(j-1 >= 0 && !visited[i][j-1] && matrix[i][j-1] > matrix[i][j]) cache[i][j] = max(cache[i][j], 1+dfs(i, j-1, matrix, visited, cache, rows, cols));
+        if(j+1 < cols && !visited[i][j+1] && matrix[i][j+1] > matrix[i][j]) cache[i][j] = max(cache[i][j], 1+dfs(i, j+1, matrix, visited, cache, rows, cols));
+        visited[i][j] = false;
+        return cache[i][j];
+    }
+};
+```
+
 #### [leetcode 207: 课程表](https://leetcode.com/problems/course-schedule)
 
 ```c++
@@ -5273,6 +6252,8 @@ public:
   ```
 
 #### [leetcode 72: 编辑距离](https://leetcode.com/problems/edit-distance)
+
+- 跟最长公共子序列比较
 
 - 代码
 
@@ -5552,9 +6533,212 @@ public:
 };
 ```
 
+#### [leetcode 322: 零钱兑换](https://leetcode.com/problems/coin-change)
+
+方法1：动态规划，时间$O(num_coins*amount)$
+
+```c++
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        vector<int> dp(amount+1, INT_MAX);
+        dp[0] = 0;
+        for(int i = 1; i <= amount; i++) {
+            for(int coin: coins) {
+                if(i-coin >= 0 && dp[i-coin] != INT_MAX) dp[i] = min(dp[i], dp[i-coin]+1);
+            }
+        }
+        return dp[amount]==INT_MAX? -1: dp[amount];
+    }
+};
+```
+
+方法2：BFS
+
+```c++
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        if(amount == 0) return 0;
+        
+        queue<int> q;
+        q.push(0);
+        unordered_set<int> set;
+        int step = 0;
+        while(!q.empty()) {
+            int size = q.size();
+            while(size--) {
+                int node = q.front();
+                q.pop();
+                for(int coin: coins) {
+                    if(node+coin == amount) return step+1;
+                    if(node+coin < amount && !set.count(node+coin)) {
+                        q.push(node+coin);
+                        set.insert(node+coin);
+                    }
+                }
+            }
+            step++;
+        }
+        return -1;
+    }
+};
+```
+
+#### [leetcode 300: 最长上升子序列](https://leetcode.com/problems/longest-increasing-subsequence)
+
+方法1：动态规划，时间$O(n^2)$
+
+```c++
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        if(nums.size() == 0) return 0;
+        
+        vector<int> dp(nums.size(), 1);
+        for(int i = 0; i < nums.size(); i++) {
+            for(int j = 0; j < i; j++) {
+                if(nums[i] > nums[j]) dp[i] = max(dp[i], dp[j]+1);
+            }
+        }
+        
+        int res = dp[0];
+        for(int i = 1; i < nums.size(); i++) {
+            res = max(res, dp[i]);
+        }
+        return res;
+    }
+};
+```
+
+方法2：贪心+二分查找，时间$O(n\log n)$
+
+我们维护一个数组 d[i] ，表示长度为 i 的最长上升子序列的末尾元素的最小值。
+
+```
+nums = [4,5,6,3]
+len = 1   :      [4], [5], [6], [3]   => tails[0] = 3
+len = 2   :      [4, 5], [5, 6]       => tails[1] = 5
+len = 3   :      [4, 5, 6]            => tails[2] = 6
+```
+
+```
+input: [0, 8, 4, 12, 2]
+dp: [0]
+dp: [0, 8]
+dp: [0, 4]
+dp: [0, 4, 12]
+dp: [0, 2, 12]
+```
+
+```c++
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        if(nums.size() == 0) return 0;
+        
+        vector<int> dp(nums.size(), 0);
+        int len = 0;
+        for(int x: nums) {
+            int i = binarySearch(0, len-1, dp, x);
+            dp[i] = x;
+            if(i == len) len++;
+        }
+        return len;
+    }
+
+private:
+    int binarySearch(int lo, int hi, vector<int>& dp, int target) {
+        while(lo <= hi) {
+            int mid = (lo + hi) / 2;
+            if(dp[mid] < target) lo = mid + 1;
+            else hi = mid - 1;
+        }
+        return lo;
+    }
+};
+```
+
+#### [leetcode 334: 递增的三元子序列](https://leetcode.com/problems/increasing-triplet-subsequence)
+
+类似于tail数组
+
+```c++
+class Solution {
+public:
+    bool increasingTriplet(vector<int>& nums) {
+        int small = INT_MAX;
+        int big = INT_MAX;
+        for(int num: nums) {
+            if(num <= small) small = num;
+            else if(num <= big) big = num;
+            else return true;
+        }
+        return false;
+    }
+};
+```
+
 #### [leetcode 221: 最大正方形](<https://leetcode.com/problems/maximal-square/>)
 
+```c++
+class Solution {
+public:
+    int maximalSquare(vector<vector<char>>& matrix) {
+        if (matrix.empty()) {
+            return 0;
+        }
+        int m = matrix.size(), n = matrix[0].size(), sz = 0;
+        vector<vector<int>> dp(m, vector<int>(n, 0));
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!i || !j || matrix[i][j] == '0') {
+                    dp[i][j] = matrix[i][j] - '0';
+                } else {
+                    dp[i][j] = min(dp[i - 1][j - 1], min(dp[i - 1][j], dp[i][j - 1])) + 1;
+                }
+                sz = max(dp[i][j], sz);
+            }
+        }
+        return sz * sz;
+    }
+};
+```
+
 #### [leetcode 85: 最大矩形](<https://leetcode.com/problems/maximal-rectangle/>)
+
+```c++
+class Solution {public:
+  int maximalRectangle(vector<vector<char> > &matrix) {
+      if(matrix.empty()) return 0;
+      const int m = matrix.size();
+      const int n = matrix[0].size();
+      int left[n], right[n], height[n];
+      fill_n(left,n,0); fill_n(right,n,n); fill_n(height,n,0);
+      int maxA = 0;
+      for(int i=0; i<m; i++) {
+          int cur_left=0, cur_right=n; 
+          for(int j=0; j<n; j++) { // compute height (can do this from either side)
+              if(matrix[i][j]=='1') height[j]++; 
+              else height[j]=0;
+          }
+          for(int j=0; j<n; j++) { // compute left (from left to right)
+              if(matrix[i][j]=='1') left[j]=max(left[j],cur_left);
+              else {left[j]=0; cur_left=j+1;}
+          }
+          // compute right (from right to left)
+          for(int j=n-1; j>=0; j--) {
+              if(matrix[i][j]=='1') right[j]=min(right[j],cur_right);
+              else {right[j]=n; cur_right=j;}    
+          }
+          // compute the area of rectangle (can do this from either side)
+          for(int j=0; j<n; j++)
+              maxA = max(maxA,(right[j]-left[j])*height[j]);
+      }
+      return maxA;
+  }
+};
+```
 
 ## 回溯
 
@@ -6953,6 +8137,22 @@ public:
             }
         }
         return res;
+    }
+};
+```
+
+#### [leetcode 371: 两整数之和](https://leetcode.com/problems/sum-of-two-integers)
+
+```c++
+class Solution {
+public:
+    int getSum(int a, int b) {
+        while(b != 0) {
+            unsigned int carry = a & b;
+            a = a ^ b;
+            b = carry << 1;
+        }
+        return a;
     }
 };
 ```
