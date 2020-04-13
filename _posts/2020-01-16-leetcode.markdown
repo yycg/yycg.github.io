@@ -21,7 +21,7 @@ tags:
 - [双指针](#双指针)
 - [栈](#栈)
 - [堆](#堆)
-- [二叉树](#二叉树)
+- [树](#树)
 - [链表](#链表)
 - [图](#图)
 - [动态规划](#动态规划)
@@ -132,7 +132,7 @@ tags:
 - 冒泡排序：时间$O(N^2)$，空间$O(1)$，稳定
 
   ```java
-  void bubleSort(int a[], int N) {
+  void bubleSort(int[] a, int N) {
       for(int i = 0; i < N-1; i++) {
           for(int j = N-1; j > i; j--) {
               if(a[j-1] > a[j]) exch(a, j-1, j);
@@ -141,10 +141,10 @@ tags:
   }
   ```
 
-- 希尔排序（对比插入排序）：时间$O(n^1.3)$，最坏$O(n^2)$，空间$O(1)$，不稳定
+- 希尔排序（对比插入排序）：时间$O(n^{1.3})$，最坏$O(n^2)$，空间$O(1)$，不稳定
 
   ```java
-  void shellSort(int a[], int N) {
+  void shellSort(int[] a, int N) {
       for(int h = N/2; h >= 1; h /= 2) {
           for(int i = h; i < N; i++) {
               for(int j = i; j >= h && a[j] < a[j-h]; j -= h) {
@@ -160,7 +160,7 @@ tags:
   ```java
   int[] aux = new int[N];
 
-  void mergeSort(int a[], int lo, int hi) {
+  void mergeSort(int[] a, int lo, int hi) {
       if(hi <= lo) return;
       int mid = (lo + hi) / 2;
       mergeSort(a, lo, mid);
@@ -168,7 +168,7 @@ tags:
       merge(a, lo, mid, hi);
   }
   
-  void merge(int a[], int lo, int mid, int hi) {
+  void merge(int[] a, int lo, int mid, int hi) {
       int i = lo, j = mid + 1;
       for(int k = lo; k <= hi; k++) {
           aux[k] = a[k];
@@ -182,7 +182,7 @@ tags:
   }
   ```
 
-- 快速排序：时间$O(n\log n)$，最坏$O(n^2)$，空间$O(\log n)$，最坏$O(n)$
+- 快速排序：时间$O(n\log n)$，最坏$O(n^2)$，空间$O(\log n)$，最坏$O(n)$，不稳定
 
   ```java
   void quickSort(int[] a, int lo, int hi) {
@@ -210,7 +210,7 @@ tags:
 
   删除堆顶元素：先将堆的最后一个元素与堆顶元素交换，再对此时的根结点进行sink操作。
 
-  插入：先将新结点放在堆的末端，再对这个新结点进行swam操作。
+  插入：先将新结点放在堆的末端，再对这个新结点进行swim操作。
 
   ```java
   void heapSort(int[] a, int N) {
@@ -760,9 +760,44 @@ tags:
     };
     ```
 
-<!-- #### [leetcode 4: 寻找两个有序数组的中位数](<https://leetcode.com/problems/median-of-two-sorted-arrays/>)
+#### [leetcode 4: 寻找两个有序数组的中位数](<https://leetcode.com/problems/median-of-two-sorted-arrays/>)
 
-- 时间：$O(\log (n+m))$ -->
+时间：$O(\log (n+m))$
+
+```python
+def median(A, B):
+    m, n = len(A), len(B)
+    if m > n:
+        A, B, m, n = B, A, n, m
+    if n == 0:
+        raise ValueError
+
+    imin, imax, half_len = 0, m, (m + n + 1) / 2
+    while imin <= imax:
+        i = (imin + imax) / 2
+        j = half_len - i
+        if i < m and B[j-1] > A[i]:
+            # i is too small, must increase it
+            imin = i + 1
+        elif i > 0 and A[i-1] > B[j]:
+            # i is too big, must decrease it
+            imax = i - 1
+        else:
+            # i is perfect
+
+            if i == 0: max_of_left = B[j-1]
+            elif j == 0: max_of_left = A[i-1]
+            else: max_of_left = max(A[i-1], B[j-1])
+
+            if (m + n) % 2 == 1:
+                return max_of_left
+
+            if i == m: min_of_right = B[j]
+            elif j == n: min_of_right = A[i]
+            else: min_of_right = min(A[i], B[j])
+
+            return (max_of_left + min_of_right) / 2.0
+```
 
 #### [leetcode 33: 搜索旋转排序数组](https://leetcode.com/problems/search-in-rotated-sorted-array/)
 
@@ -1346,6 +1381,7 @@ private:
 #### [leetcode 48: 旋转图像](https://leetcode.com/problems/rotate-image)
 
 - 代码
+
   ```c++
   /*
   * clockwise rotate
@@ -3345,7 +3381,7 @@ public:
 };
 ```
 
-方法3：快速选择，时间$O(\log N * \log N)=O(N)$，空间$O(1)$
+方法3：快速选择，时间$O(N)$，空间$O(1)$
 
 ```c++
 class Solution {
@@ -3421,7 +3457,7 @@ private:
  */
 ```
 
-## 二叉树
+## 树
 
 #### [leetcode 98: 验证二叉搜索树](https://leetcode.com/problems/validate-binary-search-tree)
 
@@ -3844,7 +3880,7 @@ private:
   };
   ```
 
-#### [leetcode 110: 二叉数的最大深度](https://leetcode.com/problems/balanced-binary-tree)
+#### [leetcode 110: 平衡二叉树](https://leetcode.com/problems/balanced-binary-tree)
 
 - 代码
 
@@ -4494,6 +4530,57 @@ private:
 ```
 
 #### [leetcode 236: 二叉树的最近公共祖先](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree)
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        unordered_map<TreeNode*, TreeNode*> father;
+        father[root] = NULL;
+        traverse(root, father);
+
+        vector<TreeNode*> path1;
+        vector<TreeNode*> path2;
+        while(p != NULL) {
+            path1.push_back(p);
+            p = father[p];
+        }
+        while(q != NULL) {
+            path2.push_back(q);
+            q = father[q];
+        }
+
+        int i = path1.size() - 1;
+        int j = path2.size() - 1;
+        while(i >= 0 && j >= 0 && path1[i] == path2[j]) {
+            i--;
+            j--;
+        }
+        return path1[i+1];
+    }
+
+private:
+    void traverse(TreeNode* root, unordered_map<TreeNode*, TreeNode*>& father) {
+        if(root->left != NULL) {
+            father[root->left] = root;
+            traverse(root->left, father);
+        }
+        if(root->right != NULL) {
+            father[root->right] = root;
+            traverse(root->right, father);
+        }
+    }
+};
+```
 
 这个函数的功能有三个：给定两个节点 p 和 q
 
@@ -5349,7 +5436,7 @@ public:
 };
 ```
 
-#### [leetcode 143: 翻转链表](https://leetcode.com/problems/reorder-list)
+#### [leetcode 143: 重排链表](https://leetcode.com/problems/reorder-list)
 
 思路：翻转后半个链表。
 
@@ -6508,7 +6595,7 @@ public:
 
 #### [leetcode 279: 完全平方数](https://leetcode.com/problems/perfect-squares)
 
-时间：$O(n \log n)$
+时间：$O(n^{1.5})$
 
 ```c++
 class Solution {
@@ -6535,7 +6622,7 @@ public:
 
 #### [leetcode 322: 零钱兑换](https://leetcode.com/problems/coin-change)
 
-方法1：动态规划，时间$O(num_coins*amount)$
+方法1：动态规划，时间$O(num\_coins*amount)$
 
 ```c++
 class Solution {
@@ -6744,73 +6831,7 @@ class Solution {public:
 
 #### [leetcode 17: 电话号码的字母组合](https://leetcode.com/problems/letter-combinations-of-a-phone-number/)
 
-- 方法1：迭代器
-  - 时间：$O(4^nn)$
-
-  - 代码
-    ```c++
-    #include <cstdio>
-    #include <algorithm>
-    #include <iostream>
-    #include <string>
-    using namespace std;
-
-    bool iterate(const vector<string>& key_vec, vector<int>& key_index) {
-        int i = key_index.size() - 1;
-        while(i >= 0 && ++key_index[i] >= key_vec[i].length()) {
-            key_index[i] = 0;
-            i--;
-        }
-
-        if(i < 0) return false;
-        return true;
-    }
-
-    vector<string> combine(string s) {
-        vector<string> keys{
-            "", // 0
-            "", // 1
-            "abc", // 2
-            "def", // 3
-            "ghi", // 4
-            "jkl", // 5
-            "mno", // 6
-            "pqrs", // 7
-            "tuv", // 8
-            "wxyz" }; // 9
-
-        vector<string> keys_vec;
-        for(char c: s) {
-            keys_vec.push_back(keys[c - '0']);
-        }
-        //for(string s: keys_vec) {
-        //    cout << s << endl;
-        //}
-        vector<int> keys_index(s.size(), 0);
-
-        vector<string> res;
-        do {
-            string cur;
-            int i = 0;
-            for(int index: keys_index) {
-                cur += keys_vec[i++][index];
-            }
-            res.push_back(cur);
-        } while(iterate(keys_vec, keys_index));
-        return res;
-    }
-
-    int main() {
-        string s = "234";
-        vector<string> res = combine(s);
-        for(string s: res) {
-            cout << s << endl;
-        }
-
-        return 0;
-    }
-    ```
-- 方法2：回溯
+- 方法1：回溯
   - 时间：$O(4^n)$
 
   - 代码
@@ -6840,7 +6861,7 @@ class Solution {public:
     };
     ```
 
-- 方法3：队列
+- 方法2：队列
   - 时间：$O(4^n)$
 
   - 代码
@@ -7489,7 +7510,7 @@ class Solution {public:
           res.push_back(combination);
 
           for(int i = cur; i < size; i++) {
-              if(i >= 1 && nums[i] == nums[i-1] && available[i-1]) continue;
+              if(i > cur && nums[i] == nums[i-1] && available[i-1]) continue;
               if(available[i]) {
                   combination.push_back(nums[i]);
                   available[i] = false;
@@ -8472,3 +8493,139 @@ public:
       }
   }
   ```
+
+#### FooBar
+
+```java
+import java.util.concurrent.Semaphore;
+
+public class Main {
+
+    public static void main(String[] args) {
+        FooBar fooBar = new FooBar(10);
+        Thread thread1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    fooBar.foo();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Thread thread2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    fooBar.bar();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread1.start();
+        thread2.start();
+    }
+}
+
+class FooBar {
+    private Semaphore foo = new Semaphore(1);
+    private Semaphore bar = new Semaphore(0);
+
+    private int n;
+
+    public FooBar(int n) {
+        this.n = n;
+    }
+
+    public void foo() throws InterruptedException {
+
+        for (int i = 0; i < n; i++) {
+            foo.acquire();
+            System.out.println("foo");
+            bar.release();
+        }
+    }
+
+    public void bar() throws InterruptedException {
+
+        for (int i = 0; i < n; i++) {
+            bar.acquire();
+            System.out.println("bar");
+            foo.release();
+        }
+    }
+}
+```
+
+#### 生产者消费者
+
+```java
+import java.util.concurrent.Semaphore;
+
+public class Main {
+
+    public static void main(String[] args) {
+        ProducerConsumer producerConsumer = new ProducerConsumer(5);
+        Thread thread1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    producerConsumer.produce();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Thread thread2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    producerConsumer.consume();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread1.start();
+        thread2.start();
+    }
+}
+
+class ProducerConsumer {
+    public ProducerConsumer(int capacity) {
+        this.capacity = capacity;
+        count = 0;
+        mutex = new Semaphore(1);
+        empty = new Semaphore(capacity);
+        full = new Semaphore(0);
+    }
+
+    private int capacity;
+    private int count;
+
+    private Semaphore mutex;
+    private Semaphore empty;
+    private Semaphore full;
+
+    public void produce() throws InterruptedException {
+        for(int i = 0; i < 10; i++) {
+            empty.acquire();
+            mutex.acquire();
+            System.out.println("produce" + String.valueOf(count++));
+            mutex.release();
+            full.release();
+        }
+    }
+
+    public void consume() throws InterruptedException {
+        for(int i = 0; i < 10; i++) {
+            full.acquire();
+            mutex.acquire();
+            System.out.println("consume" + count--);
+            mutex.release();
+            empty.release();
+        }
+    }
+}
+```
