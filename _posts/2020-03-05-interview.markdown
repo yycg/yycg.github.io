@@ -1,0 +1,842 @@
+---
+layout:     post
+title:      "面试"
+subtitle:   ""
+date:       2020-03-05 12:00:00
+author:     "盈盈冲哥"
+header-img: "img/fleabag.jpg"
+mathjax: true
+catalog: true
+tags:
+    - 学习
+---
+
+#### 项目介绍
+
+我负责智能执法平台里用户授权的工作，从用户查询到他所拥有的权限，开发接口管理用户角色、角色、权限的增删改查，和它们之间的多对多关系的增删改查。另外我还负责法规的检索和推荐的工作。
+
+#### 项目的问题
+
+解决检索项目在服务器不能正常运行的问题
+
+(1) 页面的搜索结果不能正常显示，但是后台并没有报错。
+
+(2) 直接运行flask项目中的入口python文件没有问题，用uwsgi将配置文件中的3行多线程相关的内容注释掉也可以正常运行。
+
+(3) 定位发现是调用HanLP的函数过程中线程会卡住。原因是利用python的jpype调用Hanlp的java源代码时，不能为新开启的线程分配JVM。解决方法是在每个API的开头添加两行代码，判断并为线程分配JVM。
+
+#### 项目怎么优化
+
+> [https://tieba.baidu.com/p/6239499571?red_tag=0442800574&traceid=](https://tieba.baidu.com/p/6239499571?red_tag=0442800574&traceid=)
+
+redis缓存，异步，接口调优，SQL调优，调用超时
+
+可以说一下分布式方面的改进吧，什么集群，数据库主从分离等等
+
+#### 反问
+
+> [https://www.zhihu.com/question/19640623?isn=1](https://www.zhihu.com/question/19640623?isn=1)
+
+- 您详细能告诉我我如果被录用了，我会负责一些工作么？
+- 我会接受什么样的培训呢？
+- 您觉得胜任这个职位的人什么品质最重要？
+- 您觉得贵公司未来五年的发展方向是什么？
+- 您能告诉我您为什么喜欢在这工作么？
+- 您能形容一下这里的工作氛围么？
+- 能告诉我现在公司/所处部门面临最大机遇(或挑战)是什么吗？
+- 这个职位的发展路径一般是怎么样的呢？
+
+## 面经
+
+- 牛客
+
+  > [https://www.nowcoder.com/discuss/356120](https://www.nowcoder.com/discuss/356120)
+  
+  **集合**
+
+  - ArrayList与LinkedList的实现和区别
+  - HashMap：了解其数据结构、hash冲突如何解决（链表和红黑树）、扩容时机、扩容时避免rehash的优化
+  - LinkedHashMap：了解基本原理、哪两种有序、如何用它实现LRU
+  - TreeMap：了解数据结构、了解其key对象为什么必须要实现Compare接口、如何用它实现一致性哈希
+
+  常见问题
+
+  - hashmap如何解决hash冲突，为什么hashmap中的链表需要转成红黑树？
+  - hashmap什么时候会触发扩容？
+  - **jdk1.8之前并发操作hashmap时为什么会有死循环的问题？**
+  - **hashmap扩容时每个entry需要再计算一次hash吗？**
+  - hashmap的数组长度为什么要保证是2的幂？
+  - **如何用LinkedHashMap实现LRU？**
+  - **如何用TreeMap实现一致性hash？**
+
+  **线程安全的集合**
+  
+  - Collections.synchronized：了解其实现原理
+  - CopyOnWriteArrayList：了解写时复制机制、了解其适用场景、思考为什么没有ConcurrentArrayList
+  - ConcurrentHashMap：了解实现原理、扩容时做的优化、与HashTable对比。
+  - BlockingQueue：了解LinkedBlockingQueue、ArrayBlockingQueue、DelayQueue、SynchronousQueue
+
+  常见问题
+
+  - ConcurrentHashMap是如何在保证并发安全的同时提高性能？
+  - ConcurrentHashMap是如何让多线程同时参与扩容？
+  - LinkedBlockingQueue、DelayQueue是如何实现的？
+  - CopyOnWriteArrayList是如何保证线程安全的？
+
+  **I/O**
+
+  - 了解BIO和NIO的区别、了解多路复用机制
+
+  常见问题
+
+  - 同步阻塞、同步非阻塞、异步的区别？
+  - **select、poll、eopll的区别？**
+  - java NIO与BIO的区别？
+  - reactor线程模型是什么?
+
+  **并发**
+
+  - synchronized：了解偏向锁、轻量级锁、重量级锁的概念以及升级机制、以及和ReentrantLock的区别
+  - CAS：了解AtomicInteger实现原理、CAS适用场景、如何实现乐观锁
+  - AQS：了解AQS内部实现、及依靠AQS的同步类比如ReentrantLock、Semaphore、CountDownLatch、CyclicBarrier等的实现
+  - ThreadLocal：了解ThreadLocal使用场景和内部实现
+  - ThreadPoolExecutor：了解线程池的工作原理以及几个重要参数的设置
+
+  常见问题
+
+  - synchronized与ReentrantLock的区别？
+  - 乐观锁和悲观锁的区别？
+  - 如何实现一个乐观锁？
+  - AQS是如何唤醒下一个线程的？
+  - ReentrantLock如何实现公平和非公平锁是如何实现？
+  - CountDownLatch和CyclicBarrier的区别？各自适用于什么场景？
+  - 适用ThreadLocal时要注意什么？比如说内存泄漏?
+  - 说一说往线程池里提交一个任务会发生什么？
+  - 线程池的几个参数如何设置？
+  - 线程池的非核心线程什么时候会被释放？
+  - 如何排查死锁？
+
+  **JVM**
+  
+  - GC：垃圾回收基本原理、几种常见的垃圾回收器的特性、重点了解CMS（或G1）以及一些重要的参数
+  - 内存区域：能说清jvm的内存划分
+
+  常见问题
+
+  - CMS GC回收分为哪几个阶段？分别做了什么事情？
+  - CMS有哪些重要参数？
+  - Concurrent Model Failure和ParNew promotion failed什么情况下会发生？
+  - CMS的优缺点？
+  - 有做过哪些GC调优？
+  - 为什么要划分成年轻代和老年代？
+  - 年轻代为什么被划分成eden、survivor区域？
+  - 年轻代为什么采用的是复制算法？
+  - 老年代为什么采用的是标记清除、标记整理算法
+  - 什么情况下使用堆外内存？要注意些什么？
+  - 堆外内存如何被回收？
+  - jvm内存区域划分是怎样的？
+
+  **Mysql**
+
+  - 事务隔离级别、锁、索引的数据结构、聚簇索引和非聚簇索引、最左匹配原则、查询优化（explain等命令）
+
+  常见问题
+
+  - Mysql(innondb 下同) 有哪几种事务隔离级别？
+  - 不同事务隔离级别分别会加哪些锁？
+  - mysql的行锁、表锁、间隙锁、意向锁分别是做什么的？
+  - 说说什么是最左匹配？
+  - 如何优化慢查询？
+  - mysql索引为什么用的是b+ tree而不是b tree、红黑树
+  - 分库分表如何选择分表键
+  - 分库分表的情况下，查询时一般是如何做排序的？
+
+  **Redis（或其他缓存系统）**
+
+  - redis工作模型、redis持久化、redis过期淘汰机制、redis分布式集群的常见形式、分布式锁、缓存击穿、缓存雪崩、缓存一致性问题
+
+  常见问题
+
+  - redis性能为什么高?
+  - 单线程的redis如何利用多核cpu机器？
+  - redis的缓存淘汰策略？
+  - redis如何持久化数据？
+  - redis有哪几种数据结构？
+  - redis集群有哪几种形式？
+  - 有海量key和value都比较小的数据，在redis中如何存储才更省内存？
+  - 如何保证redis和DB中的数据一致性？
+  - 如何解决缓存穿透和缓存雪崩？
+  - 如何用redis实现分布式锁？
+
+  **中间件、存储、以及其他框架**
+
+  - Spring：bean的生命周期、循环依赖问题、spring cloud（如项目中有用过）、AOP的实现、spring事务传播
+  
+  - java动态***和cglib动态***的区别（经常结合spring一起问所以就放这里了）
+  - spring中bean的生命周期是怎样的？
+  - 属性注入和构造器注入哪种会有循环依赖的问题？
+
+  > [https://www.nowcoder.com/discuss/368408?type=2&order=4&pos=5&page=1](https://www.nowcoder.com/discuss/368408?type=2&order=4&pos=5&page=1)
+
+  **ZooKeeper**
+
+  - CAP定理
+  - ZAB协议
+  - leader选举算法和流程
+  
+  **Redis**
+
+  - Redis的应用场景
+  - Redis支持的数据类型（必考）
+  - zset跳表的数据结构（必考）
+  - Redis的数据过期策略（必考）
+  - Redis的LRU过期策略的具体实现
+  - 如何解决Redis缓存雪崩，缓存穿透问题
+  - Redis的持久化机制（必考）
+  - Redis的管道pipeline
+
+  **Mysql**
+
+  - 事务的基本要素
+  - 事务隔离级别（必考）
+  - 如何解决事务的并发问题(脏读，幻读)（必考）
+  - MVCC多版本并发控制（必考）
+  - binlog,redolog,undolog都是什么，起什么作用
+  - InnoDB的行锁/表锁
+  - myisam和innodb的区别，什么时候选择myisam
+  - 为什么选择B+树作为索引结构（必考）
+  - 索引B+树的叶子节点都可以存哪些东西（必考）
+  - 查询在什么时候不走（预期中的）索引（必考）
+  - sql如何优化
+  - explain是如何解析sql的
+  - order by原理
+  
+  **JVM**
+
+  - 运行时数据区域（内存模型）（必考）
+  - 垃圾回收机制（必考）
+  - 垃圾回收算法（必考）
+  - Minor GC和Full GC触发条件
+  - GC中Stop the world（STW）
+  - 各垃圾回收器的特点及区别
+  - 双亲委派模型
+  - JDBC和双亲委派模型关系
+  
+  **Java基础**
+
+  - HashMap和ConcurrentHashMap区别（必考）
+  - ConcurrentHashMap的数据结构（必考）
+  - 高并发HashMap的环是如何产生的
+  - volatile作用（必考）
+  - Atomic类如何保证原子性（CAS操作）（必考）
+  - synchronized和Lock的区别（必考）
+  - 为什么要使用线程池（必考）
+  - 核心线程池ThreadPoolExecutor的参数（必考）
+  - ThreadPoolExecutor的工作流程（必考）
+  - 如何控制线程池线程的优先级
+  - 线程之间如何通信
+  - Boolean占几个字节
+  - jdk1.8/jdk1.7都分别新增了哪些特性
+  - Exception和Error
+  
+  **Spring**
+
+  - Spring的IOC/AOP的实现（必考）
+  - 动态代理的实现方式（必考）
+  - Spring如何解决循环依赖（三级缓存）（必考）
+  - Spring的后置处理器
+  - Spring的@Transactional如何实现的（必考）
+  - Spring的事务传播级别
+  - BeanFactory和ApplicationContext的联系和区别
+  
+  **其他**
+
+  - 高并发系统的限流如何实现
+  - 高并发秒杀系统的设计
+  - 负载均衡如何设计
+  
+  **补充**
+
+  另外还会考一些计算机网络，操作系统啊之类的。像消息队列，RPC框架这种考的比较少。计算机网络就是分层啊，tcp/udp啊，三次握手之类的。操作系统就是进程与线程啊，进程的数据结构以及如何通信之类的。数据结构的排序算法也比较常考，考的话一定会让你手写个快排。剩下的算法题就靠LeetCode的积累了。其实非算法岗考的算法题都蛮简单的，很多题完全就是考察你智力是否正常，稍微难点的涉及到一些算法思想的按照LeetCode题目类型的分类，每种题做一两道基本就能完全应付面试了。
+  
+  > [https://www.nowcoder.com/discuss/342084?type=2&order=4&pos=2&page=1](https://www.nowcoder.com/discuss/342084?type=2&order=4&pos=2&page=1)
+
+  - **重写equals()是否需要重写hashcode()，不重写会有什么后果**
+  - 自旋锁和阻塞锁的区别
+  - 公平锁和非公平锁的区别
+  - jdk中哪种数据结构或工具可以实现当多个线程到达某个状态时执行一段代码
+  - 栅栏和闭锁的区别
+  - 如何使用信号量实现上述情况
+  - 新生代和年老代的GC算法分别是什么
+  - 标记清除和标记整理的区别
+  - 了解过CMS收集器吗
+  - 解释HTTPs，HTTPs为什么要用对称加密+非对称加密，相对于只使用非对称加密有什么好处
+  - 给定一个表，其中有三列（员工名称，工资，部门号），找出每个部门工资最高的员工
+  - LeetCode 863 二叉树中所有距离为K的结点
+  - 用过哪些Java开源框架
+  - 讲一讲对Spring的理解
+  - 看过IOC和AOP的源码吗
+  - 它们底层是如何实现的
+  - 用过其他什么框架
+  - 了解过分布式或者微服务的开源框架吗
+  - 讲一讲对分布式系统模型的理解
+  - 分布式系统中有一个节点宕机怎么办
+  - 分布式系统如何实现负载均衡
+  - MySQL和Oracle数据库有哪些不同
+  - 数据库有哪些锁
+  - 表锁和行锁的区别
+  - 哪些场景需要加表锁
+  - 插入一条数据需要加什么锁
+  - 分布式数据库如何保证数据可靠性
+  - 了解过MySQL的主从复制吗
+  
+  > [https://www.nowcoder.com/discuss/372983](https://www.nowcoder.com/discuss/372983)
+
+  - 如何实现延时任务
+  - 如何实现限流
+  - 线程池的参数
+  - epoll和poll的区别
+  - 如何自己实现内存分配和管理？不太懂，然后说了jvm的垃圾回收机制
+  - Redis的key过期策略
+  - 缓存穿透和缓存雪崩
+  - 分布式锁
+  - 如何实现全局的id生成策略
+  - 悲观锁和乐观锁
+  - 写个producer-consumer
+  - 两线程交替打印
+  - 线程模拟100分钱随机分给20个人，每个人最少分配到2分钱
+  - MVCC
+  - HTTPS
+  - ElasticSearch的查询过程
+  - Kafka如何保证高可用
+  - Reids的集群和选主
+  - 分布式一致性算法
+  - 如何实现定时关单
+
+  > [https://www.nowcoder.com/discuss/382503](https://www.nowcoder.com/discuss/382503)
+
+  - 数据库的三大范式和约束类型
+  - 线程生命周期
+
+  > [https://www.nowcoder.com/discuss/382603](https://www.nowcoder.com/discuss/382603)
+
+  - 知道MySQL插入和查询分别用的是什么锁吗？
+  - 引用计数法与GC Root可达性分析法区别
+  - CAS机制会出现什么问题
+  - RabbitMQ了解吗？丢失消息，重复消费问题怎么处理？
+
+  > [https://www.nowcoder.com/discuss/382329](https://www.nowcoder.com/discuss/382329)
+
+  - 如何衡量一个哈希算法的好坏
+  - 哈希解决冲突的4种方法
+  - cookie和session的生命周期
+  - 集群中的session会遇到什么问题，有什么解决方案呢
+  - 常量过多会导致什么问题
+  - JDK8用了哪种回收器，内存空间管理和以前相比有哪些提升（Parallel Scavenge + Parallel Old）
+  - 构造函数的加载顺序，多个构造函数先加载哪一个
+  - group by中使用的having是用来干啥的
+  - 服务治理介绍一下
+  - 远程调用需要从注册中心代理吗
+  - 如果注册中心代理的话并发量太大不会承受不了，怎么解决
+
+  > [https://www.nowcoder.com/discuss/382110](https://www.nowcoder.com/discuss/382110)
+
+  - bio. nio
+  - linux五种io模型
+  - poll 和 epoll 的区别
+  - synchronized底层原理
+  - AQS
+  - 聚簇索引非聚簇索引
+  - timewait和closewait状态含义
+
+  > [https://www.nowcoder.com/discuss/381858](https://www.nowcoder.com/discuss/381858)
+
+  - synchronized用在静态和非静态方法的区别
+
+  > [https://www.nowcoder.com/discuss/381849](https://www.nowcoder.com/discuss/381849)
+
+  - jre和jdk的区别
+  - 如何理解僵尸进程，如何解决僵尸进程
+
+  > [https://www.nowcoder.com/discuss/381726](https://www.nowcoder.com/discuss/381726)
+
+  - 结合数据库三大范式聊聊，项目的表设计
+  - redis为什么快？在多核cpu下redis单线程浪费？
+  - redis击穿
+  - redis与mysql数据同步
+  - redis集群
+  - redis分布式锁的实现(https://www.cnblogs.com/williamjie/p/9395659.html)
+  - 海量数据，找重复数量前几的数据
+  - 写个死锁
+  - 处理日志，获取error的日志，去重，排序（本意是让用shell写的，但我不会，就用Java写了）
+  - 写个LRU
+  - 泛型、通配符区别
+  - 红黑树为什么插入效率高
+  - MySQL执行SQL的流程
+  - 选择排序原理，时间、空间复杂度
+  - 访问量太大redis支撑不住怎么办
+  - 爬虫用的是什么？有用框架吗？有用多线程爬虫吗？
+  - 用过哪些SpringCloud组件
+  - redis数据结构
+  - redis zset set区别
+  - redis在增删改查时为什么单线程 还那么快？io模型？
+  - MYSQL日志种类 undolog redolog分别是做什么的？(https://www.jianshu.com/p/57c510f4ec28)
+  - MYSQL如何实现MVCC(https://blog.csdn.net/nmjhehe/article/details/98470570)
+  - MYSQL优化，Explain 有哪些信息
+
+  > [https://www.nowcoder.com/discuss/380853](https://www.nowcoder.com/discuss/380853)
+
+  - 线程安全的单例模式
+  - 类加载时机
+  - 虚拟内存，内存爆了怎么办
+  - https能讲一下吗(https://www.jianshu.com/p/14cd2c9d2cd2)
+  - 数据库聚集索引和非聚集索引能讲一下吗
+  - read commited隔离级别解决什么问题，通过什么实现(https://blog.csdn.net/fxkcsdn/article/details/82694357)
+  - 数据库行锁是互斥锁还是其他还是什么类型的锁呢，读操作会阻塞吗(https://blog.csdn.net/arkblue/article/details/53895150)
+
+  > [https://www.nowcoder.com/discuss/164967](https://www.nowcoder.com/discuss/164967)
+
+  - 如何判断一颗二叉树是另一颗二叉树的子树
+  - tcp如果在发送数据的时候服务器宕机了会怎么样，服务器又好了又会怎么样呢
+  - 用过缓存，Redis吗，用过分布式吗，比如kafka或者dubbo
+
+  > [https://www.nowcoder.com/discuss/219099](https://www.nowcoder.com/discuss/219099)
+
+  - 大量用户产生很多消息，消息队列怎么处理
+  - 消费者消费不完怎么处理
+
+  > [https://www.nowcoder.com/discuss/362693](https://www.nowcoder.com/discuss/362693)
+
+  - 线程池（具体参数，拒绝策略，减少线程的机制，具体实现类及对应的阻塞队列，阻塞队列有什么特点，为什么用这个阻塞队列，线程复用的原理）(https://blog.csdn.net/testcs_dn/article/details/78083966)
+  - JVM（对象是否可回收的判断条件，怎么判断，回收算法，垃圾回收器的类别及特点，担保机制）
+  - JAVA内存模型
+  - 线程之间的通信方式，通过volatile，synchronized，Lock的实现类那些，结合内存模型去讲。
+  - MyBatis、spring、springboot相关（面试题较常见）
+  - Linux常用命令
+  - redis的数据结构那些，讲了skiplist、ziplist、sds等，结合使用场景说了下(https://blog.csdn.net/chenssy/article/details/89599232)
+
+  > [https://www.nowcoder.com/discuss/370072](https://www.nowcoder.com/discuss/370072)
+
+  - transient关键字的作用
+  - synchronized关键字加的地方，有什么区别，底层实现
+  - 算法：两个数值原地交换值，不能使用第三个变量(https://blog.csdn.net/qq_39411607/article/details/80989996)
+
+  > [https://www.nowcoder.com/discuss/198399](https://www.nowcoder.com/discuss/198399)
+
+  - 事务传播
+  - 变量的初始化顺序(https://www.zhihu.com/question/49196023)
+
+  > [https://www.nowcoder.com/discuss/370435](https://www.nowcoder.com/discuss/370435)
+
+  - 写题：由于记账错误，给定的一个正整数序列里面，有两个数字重复了，同时缺少了一个数字。 要求写一个函数，找出序列中重复的数字和缺少的数字。（set、异或） 例如： 输入：[1, 5, 2, 2, 3] 输出：[2, 4] 附加： 如果题目为缺少x个数字，并且输入序列可能有不匹配的重复和缺少项
+
+  - 进程线程协程(https://blog.csdn.net/fadbgfnbxb/article/details/88787361)
+
+  > [https://www.nowcoder.com/discuss/192690](https://www.nowcoder.com/discuss/192690)
+
+  - 逻辑题，25匹赛马🐎，5条赛道，求前三快的马(https://www.nowcoder.com/questionTerminal/e07d8e0df93b4f6b93a3fadbe72f2c7c)
+
+  > [https://www.nowcoder.com/discuss/98120](https://www.nowcoder.com/discuss/98120)
+
+  - 了解过其他AOP包：ASPECTJ么
+  - start之后线程就会马上调用吗
+  - 了解过乐观锁和悲观锁么，如何自己实现一个乐观锁 
+  - hashMap高并发下的缺陷？链表为什么会成环？(https://blog.csdn.net/wthfeng/article/details/88972137)
+  - 类隔离
+  - 包冲突
+  - 有了解过RPC么
+  - 了解过一致性Hash么？
+  - Java1.8做了什么优化，新特性
+
+  > [https://www.nowcoder.com/discuss/238370](https://www.nowcoder.com/discuss/238370)
+
+  - 反射的作用，反射相关的类(https://snailclimb.gitee.io/javaguide/#/docs/java/basic/reflection)
+  - 假设一个场景，支付系统和订单系统，支付失败后订单系统怎么知道失败（感觉是分布式事务的一致性，我开始问他是两个系统吗？是分布式吗？他也不回答我，后面复述一遍问题我又问了一遍分布式事务的一致性，他才说是的）(https://www.cnblogs.com/luxiaoxun/p/8832915.html)
+
+  > [https://www.nowcoder.com/discuss/258249](https://www.nowcoder.com/discuss/258249)
+
+  - 反射的原理及应用
+  - spring四种事务的实现方式(https://blog.csdn.net/chinacr07/article/details/78817449)
+  - cap和base
+  - 问了几个设计模式 工厂 策略 *** 观察者 适配器 桥接等，jdk里面用到了哪些说说
+  - 分布式秒杀如果不用mq怎么做？我说直接去掉mq用异步➕分布式事务，大佬说不好，还有吗？
+  - 统计用户url访问次数，我说用拦截器存redis，大佬问java有没有提供这种系统或者工具直接用？我说令牌桶也行，大佬没说话
+
+  > [https://www.nowcoder.com/discuss/89956](https://www.nowcoder.com/discuss/89956)
+
+  - 字符串连接的几种方法和区别(https://www.cnblogs.com/lujiahua/p/11408689.html)
+  - 自己实现线程池如何实现
+  - 如何防止重复买
+  - String类为什么要设计为final(https://www.zhihu.com/question/31345592)
+  
+  > [https://www.nowcoder.com/discuss/381334](https://www.nowcoder.com/discuss/381334)
+
+  - JDBC
+  - synchronized和lock底层实现，区别
+
+  > [https://www.nowcoder.com/discuss/87868](https://www.nowcoder.com/discuss/87868)
+
+  - Java的线程池说一下，各个参数的作用，如何进行的。
+  - Redis讲一下
+  - 分布式系统的全局id如何实现。用zookeeper如何实现的呢，机器号+时间戳即可。
+  - 分布式锁的方案，redis和zookeeper那个好，如果是集群部署，高并发情况下哪个性能更好。
+  - kafka了解么，了解哪些消息队列。
+  - 反射的作用是什么
+  - 了解哪些中间件，dubbo，rocketmq，mycat等。
+  - dubbo中的rpc如何实现。
+  - 自己实现rpc应该怎么做
+  - dubbo的服务注册与发现。
+
+  > [https://www.nowcoder.com/discuss/244392](https://www.nowcoder.com/discuss/244392)
+
+  - Mybatis是如何做到动态sql解析
+  - Mybatis是如何实现xml文件与实体类的映射
+  - java中反射获取到的属性和方法是存储在什么地方(字节码、方法区)
+  - 反射如何获取方法上的注解(https://www.cnblogs.com/a591378955/p/8350499.html)
+  - 注解和接口的区别(https://www.cnblogs.com/linshenghui/p/11213867.html)
+  - Redis中的命令(https://www.runoob.com/redis/redis-keys.html)(https://www.php.cn/faq/417108.html)
+
+  > [https://bbs.byr.cn/#!article/ParttimeJob/856659](https://bbs.byr.cn/#!article/ParttimeJob/856659)
+
+  > JAVA研发工程师
+
+  - 希望你是2021年应届毕业生（校招）
+  - 扎实的java编程基础（java语法原理，java容器原理，jvm原理（jvm调优加分），java并发（越深越好）），熟悉java开发体系，如果能有一定的项目开发经验那就更好了。
+  - 表达问题思路清晰，良好的沟通能力与技术学习能力 （后面项我列举了最好了解一下的知识）
+  - 有过用mysql等数据库使用经验
+  - 了解http，操作系统，计网等基础知识(我另一篇推荐知识的博客有这些，大概简单的勉强够用)
+  - 了解一些简单的设计模式（常见的那些最好看过一些源码，实现过一些，项目中用到过并有自己的理解）
+  - 了解SSM，SpringBoot 等框架加分（建议初学以spring，spring boot，mybatis框架开始，这是现在很多公司的主流架构）
+  - 了解WEB开发相关技术，如HTML，CSS，JavaScript，ajax 等加分（优先度不高，安心安心）
+  - 了解分布式架构加分（缓存建议学一下redis，消息队列可以学一下kafka，rocketmq，分布式事务了解一些，分布式锁可以学一下zookeeper，rpc可以看dubbo）
+  - 了解高可用架构加分(比如看看Hystrix，优先级不高~ )
+  - 了解微服务加分（公司项目现在设计的很轻量级，一般都是微服务架构的，了解一下有好处，这是未来所有公司架构的升级方向）
+
+  - 热点数据请求太多，redis负载均衡全都hash到一个节点上，如何处理(https://www.cnblogs.com/rjzheng/p/10874537.html)
+
+  > [https://www.nowcoder.com/discuss/181259](https://www.nowcoder.com/discuss/181259)
+
+  学习历程
+
+  18/10月: 那时候学长发布了一些日常实习的内容，这时候我才发现自己什么都不会。开始慢慢准备找实习的事。我当时很纠结，不知道自己应该从事什么样的方向。学校实验室的项目是C++，但是最后还是放弃了，因为我发现岗位太少了。于是转而走向了Java后台的路线，当时我只有一点点语法的基础。
+
+  18/11月：开始补Java语法的基础，说实话我没有去啃《Think in Java》这类厚的书，我看的第一本是《Effective Java》,不出意料，看的第一遍并不懂，不过几个月后再看一遍是真的收获很大。学校网络原理开的晚，我便把网络原理自学了一下，看了《自顶向下》这本书，把最常考的应用层、传输层、网络层看了一遍。
+
+  18/12月：我开始发觉缺少实践了，于是开始走了Web后台的方向，当然也走了不少弯路。建议路线是servlet规范了解后，直接上Spring Boot，然后慢慢了解Spring MVC的原理，IOC/AOP的原理，以及掌握一门ORM框架。也开始看Java的并发，《艺术》看了两遍，《实战》看了一半。《Java虚拟机》看了一遍。
+
+  19/1月：我开始系统地学习MySQL与Redis，《MySQL技术内幕》和《高性能MySQL》各看了一小部门。重点看事务、InnoDB存储引擎、索引、热备、主从以及分片。Redis建议实践最重要，做分布式锁、做缓存，自己要试着去敲代码，然后慢慢就熟练了。当时《Redis设计与实现》也看了四分之三。然后也开始复习了HTTP的内容，《图解HTTP》看了一遍。
+
+  19/2月：我开始跟着视频做项目。自己改编了，换了技术栈做了原创的web项目。项目需要有亮点才能打动面试官，我推荐把《大型网站技术架构》看一遍，这本书很好，一点都不难懂，就像看小说一样。将里面的部分内容复现一遍，你的项目也有闪光点了。买了极客时间的虚拟机课，看了一部分，补充下JVM的知识。
+
+  19/3月：我开始细读源码，Java的容器、JUC的部分源码、Spring的部分实现，看别人的博客对照着读会收获很多。这时候也开始陆陆续续面试了，最重要的就是复盘，了解自己的不足，并且弥补。之前准备的过程中也再陆陆续续写博客。到3月底时，一共写了51篇。操作系统、分布式等知识我有一直对照着CyC大佬的Github以及其他大佬的博客看，收获很大。
+
+  > [https://www.nowcoder.com/discuss/238131](https://www.nowcoder.com/discuss/238131)
+
+  面的是阿里口碑，总共38分钟，小哥哥人很好，但是我感觉我好菜
+  
+  1.我看你是大数据与网络安全实验室，我们不招安全呀。
+  2.Java基础，实现多线程的方法，线程池有哪些，怎么扩容。
+  3.三次握手，四次挥手
+  4.设计模式（我说只熟悉单例和工厂，他说那算了）
+  5.Mysql索引讲一讲
+  6.redis介绍一下
+  7.缓存击穿，穿透，雪崩怎么处理，怎么预防
+  8.mysql和redis怎么保证数据一致
+  9.kafka怎么保证消息不丢失
+  10.springmvc流程讲一下
+  11.redis锁机制，怎么处理并发（我说这个不太熟，mysql的锁机制比较熟，小哥哥说那你讲一下）
+  12.让你设计一个高性能的购物网站，你怎么设计，从前端到后台，到数据库
+  13.你有什么想问我的
+
+  > [https://www.nowcoder.com/discuss/240122](https://www.nowcoder.com/discuss/240122)
+
+  前言
+  8.29投的内推，8.31面我了，还是个周六，果然是福报，我太难了。
+  不过面完我再去官网看，我的简历还是在评估中，不知道怎么进的流程吧，我笔试也一个没做（没通知我），真是奇了怪了。
+  口碑部门Java岗。
+  抱着玩一玩的心态投的简历，看了这里那么多大佬都被刷了，我就没抱希望，本着查漏补缺，啊不，本着女娲补天的补知识的心态去面试的。
+  面试时间28分钟，发挥得不好。
+  概述
+  主要问了以下几个方面
+  1、自我介绍
+  2、Java反射
+  3、类加载器
+  4、HashMap
+  5、数组链表
+  6、锁
+  7、数据库
+  8、算法
+  正文
+  〇 Java反射
+  上手就问你了解反射么，讲讲吧？我真不知道从哪里讲起。
+  然后问反射的private的访问，关于是否能访问私有成员变量
+  那private还有什么用
+  反射的优缺点
+  反射的使用场景
+  反射怎么使用
+  〇 类加载器
+  讲讲类加载器吧。我，，，我真不知道从哪里讲，就把几个类加载器说了一下
+  〇 HashMap
+  HashMap的数据结构怎么样的，我就说了一下 数组和链表这种，不知道是不是他的意思
+  key可否null，为什么
+  是否线程安全，否则会发生什么情况
+  〇 数组链表
+  ArrayList的优缺点
+  数组和链表的区别
+  〇 锁
+  类锁和对象锁的不同
+  〇 数据库
+  MySQL索引的机制，我说的是B+，不知道是不是他的意思
+  为什么要用索引，好处是？坏处是？
+  简单介绍一下MySQL的事务。这里我又好难了，又不知道回答的方向是什么。于是就说了事务的隔离，MySQL的引擎
+  数据库回滚的原理，这个我还真不怎么会
+  〇 算法
+  无环链表是否相交
+  劝退算法：梯度下降算法给我讲讲，我：？？？？？？？？？？？？？？
+  后记
+  全程体验不太好，有时候有点尬聊，问题之间双方经常有沉默，我get不到他想的方面，所以没有半小时就over了，也没问我你有什么要问的，说了句，谢谢你就到此结束了。我：？？？？
+  不管了不管了，体验不是很好，也没想着进二面，就当做复习和预习吧。
+
+## 面试
+
+- 阿里
+
+  - 红黑树
+  - ARP协议
+  - java如何实现多态：虚函数子类重写，然后让父类对象指针指向子类，这是调用虚函数
+  - leetcode751：给你一个cidr网络段，算出所有合理的ip，比如1.2.3.4/24，输出1.2.3.1~1.2.3.254
+  - leetcode 1143：求两个字符串的最长公共子串
+  - 如何解决hashmap线程不安全，concurrenthashmap的原理，扩容为什么是2的幂
+  - SpringBoot实现的原理、AOP的原理、注解的原理（xml配置加注入）
+  - 线程池
+  - 最大的优点，AOP的原理
+  - java1.8类加载是在哪里发生的（方法区移到元空间，在直接内存里）
+
+  - 项目：增量添加（时间戳），查询依赖字段，实习中的难点、负责的工作
+  - like能否使用索引
+  - CPU过高怎么应对
+  - 三次握手，为什么要有第三次
+  - 往一个网页输入URL发生了什么
+  - 用过的linux命令
+  - docker对项目的部署
+
+  - 项目介绍
+  - SpringBoot和Spring的区别
+  - AOP原理
+  - MySQL如何导入Solr及如何增量导入
+  - Bean的生命周期
+  - hashMap扩容
+  - JVM的结构、收集算法、G1和CMS的不同（stop the world发生时间）
+  - session和cookie介绍
+  - mysql acid和事务隔离级别
+  - mysql索引的数据结构及介绍（b+树）
+  - 两个队列实现一个栈
+  - 依赖注入的方式
+  - A依赖于B，B依赖于A，spring如何解决
+  - 多个服务器的情况，session会不会串（我回答nginx，他说可以解决，答案是redis?）
+
+  - 自我介绍，主要说项目
+  - 围绕项目，挑一个说了项目的架构，为什么用SpringCloud，和dubbo对比
+  - 微服务时怎么拆分的，微服务和传统单体式相比的优缺点
+  - 项目中的难点
+  - 五层网络模型说一下，HTTP属于哪一层，下面又用到那些层
+  - TCP协议的特点说一说
+  - 拥塞避免算法说一说
+  - HTTP2.0了解吗
+  - HTTPS的过程说一说
+  - 非对称加密算法了解吗
+  - 从输入URL到得到响应，中间的过程说一说
+  - 操作系统进程、线程、协程说一说
+  - 进程之间是怎么通信的
+  - 求最短路径的算法说一说
+  - 排序算法，快排的时间复杂度，为什么是不稳定的
+  - TOPK问题（用大顶堆或者小顶堆），时间复杂度
+  - 用1G的数据，但是只有128M的内存，要排序怎么排
+  
+  - JVM的内存划分，解释各个区域的作用，JVM为什么要这么分区
+  - 分布式：paxos协议的leader选举
+  - 两个字符数组求交集
+  - jvm分区
+  - redis介绍
+  - tcpip协议介绍
+  - 索引优化有哪些
+  
+  - 单链表序列化反序列化，结点中存字符串怎么办，类比网络中组包分包
+  - 数据库表怎么设计，用户登录怎么保证安全性，数据库建索引了吗，为什么要把这些列作为索引， 索引建立顺序怎么确定
+  - shiro中的token保存在什么地方
+  - concurrenthashmap的场景：抢票
+  - hibernate多对多是怎么查询的，hibernate多对多模型介绍下，数据库表索引设计顺序设计，为啥选择shiro
+  - session怎么分布式存储（cookie，redis）
+  - 并发打印foobar
+  - 三个瓶身可以换一瓶酒，七个瓶盖可以换一瓶酒，初始x瓶酒，一共可以喝几瓶酒（考虑借瓶子、瓶盖再还回去）
+  - atomiclong atomicadder
+  - 随机生成1到一亿的数，怎么保证不重复（布隆过滤器），误报怎么办
+  - hashmap concurrenthashmap(1.7 1.8 多线程扩容死循环 put的位置是NULL就用CAS插入，如果是forward就参与扩容，最后加syn锁)
+
+  - Hashmap底层结构（1.7 1.8）concurrenthashmap怎么保证高效地操作(https://blog.csdn.net/qq_36520235/article/details/82417949)
+  - 线程池优点、线程池的参数在什么场景下应该怎么配置、IO密集型线程跟CPU密集型线程的线程池参数怎么配置
+  - 如何自定义一个注解(https://blog.csdn.net/xsp_happyboy/article/details/80987484)
+  - 有没有接触过什么新技术(Docker)(https://zhuanlan.zhihu.com/p/62653543)(https://zhuanlan.zhihu.com/p/62653543)(https://www.cnblogs.com/linguoguo/p/10754756.html)
+  - 有没有知道其他的数据库、非关系型数据库、分布式数据库(Redis)
+  - Redis的使用场景，按你的理解如何设计一个秒杀系统(https://www.jianshu.com/p/d789ea15d060)
+    > 1. 后台使用redis分布式数据库来保存秒杀的物品的信息，整体的服务架构可以使用 集群模式+主从模式，每个服务器分担一定的请求，并在主服务器出现故障后由哨兵节点及时切换到从服务器。  
+    > 2. 在此期间，不要将缓存中的数据与数据库进行同步，等时间过后再进行同步。  
+    > 3. 在数据持久化过程中，使用AOF方式，并可以把AOF持久化的时间间隔调整稍微长一点，减少持久化操作的次数。 
+    > 4. 在redis缓存中，设置要秒杀的物品的信息永不过期，防止出现缓存雪崩的问题，并使用布隆过滤器来过滤掉来自客户端的一些无效恶意请求
+    > 5. 服务器处理请求时，使用消息队列，减轻服务器并发操作的压力
+    > 6. 当整体某些下游服务出现故障时，对故障服务进行熔断，防止影响整体服务的性能； 当整体服务的负载过高时，可以适当对某些服务进行降级，减低整体服务的负载
+  - 在低并发的场景下，如何保证redis与数据库的数据一致性
+  - Session的持久化问题
+  - 登录人数的统计问题
+  - 用户关闭了网页，服务器知道，并让用户登出
+  - 如果有了用户违反了一些操作，怎么禁用这些用户的任何操作和登录（禁止token）
+  - AomicLong跟LongAdder的区别
+  - 使用Random生成 1~1亿的数字到文件中，如何保证不重复、单线程和多线程环境下
+  - Java1.8 1.9 1.10的区别 jdk源码中用到了哪些设计模式
+  - Shiro的过程，如果这个人的角色权限信息修改了，session中这个人的信息应该怎么办
+  - 用户登陆的过程（实质上就是一次浏览器请求页面的过程）
+  - 如果项目的qps很高的话项目怎么设计（分布式）
+  - Servlet知不知道 他的生命周期
+  - 线程池的使用，应该注意哪些问题，原生的线程池有哪些隐患
+  - Springboot为啥能提供服务（因为有tomcat） tomcat你知道有啥东西吗，或者能配置什么东西 项目怎么配置运行过程中的jvm一些信息
+  - Cpu怎么排查，怎么查看进程的信息，有没有导出过dump文件，你能看到什么东西
+  - 服务集群了解过没
+  - Rpc是什么，java原生的rpc知不知道 rmi知不知道
+
+- 头条
+
+  - 100瓶药水，其中只有一瓶有毒。给你一些老鼠，老鼠吃了之后24小时内会死亡。请问这24小时内，你需要最少多少只老鼠，可以把那瓶毒药试出来？
+  - 交替打印ABC
+
+- 领英
+
+  - 链表排序：自顶向上的归并排序
+
+- 腾讯
+
+  - 一个长度一亿的数组，大量有序，少量无序，把数组改成链表怎么做
+
+- 猿辅导
+
+  - 二叉树后序遍历
+
+- 美团
+
+  - 自我介绍
+  - 项目介绍
+  - 项目中的难点
+  - java基础：java的特性，**构造方法能不能被重写**，hashmap、hashtable、concurrenthashmap对比，string和stringbuffer对比
+  - JVM垃圾回收算法
+  - 有没有用过mysql、redis和消息中间件
+  - 怎么用的消息中间件
+  - TCP/IP的流量控制实现
+  - 平时怎么学习的
+  - 算法题：TOP K，无序数组找最小的K个
+
+  - 项目，技术难点，怎么攻克的
+  - 微服务怎么划分的，微服务之间怎么通信的
+  - 为什么不用dubbo，为什么dubbo比springcloud速度快
+  - 消息序列化用的什么版本
+  - **编写sql时需要注意什么**
+  - stu表，有id、name、score字段，写sql找到成绩第二的
+  - **where a=x,b>y,c=z会不会走联合索引c,b,a**(https://blog.csdn.net/weixin_42935902/article/details/96887763)
+  - 怎么判断一个sql会不会走某个索引，explain的字段都有哪些
+  - **mysql优化器的策略**(https://blog.csdn.net/hsd2012/article/details/51526733)
+  - 怎么衡量一个系统设计得成不成功，负载、TPS都是什么意思
+  - 平时线上服务出了问题，怎么排查
+  - 平时都是用什么工具排查JVM问题
+  - 编程：斜对角线打印二维数组
+
+  - 虚拟内存解决了什么问题（说了半天，面试官都觉得没达到点子上）
+  - 请求分页方式为什么以页未单位，这样的好处
+  - 进程和线程区别
+  - Java中的线程和操作系统怎么对应的
+  - CPU为什么要进行进程上下文切换
+  - CPU和内存存在速度差异，那么程序执行时怎么解决这个问题（以加法指令为例）
+  - CPU负载高有哪些原因，为什么FullGC的时候负载就高，CPU负载高本质是什么导致的
+  - Servlet了解吗，它的生命周期是什么
+  - SpringMVC比以往使用Servlet开发优势再哪里，什么是MVC，Model具体指什么，为什么需要Model
+  - Dubbo原理，把你知道的说下
+  - 最近在看什么书
+  - 你技术和性格上的优缺点有哪些
+
+  1.jvm分区 
+  2.redis如何处理重复请求（比如你淘宝下单，你按了很多下，你是不是收到了重复请求，但是你单只有一个，所以怎么处理呢，我说redis里有set，每个订单下单都是唯一值，查看是否存在，然后就问我redis如何设定唯一值的命令，我这个不记得了，我查了下好像最好用上redis的锁...）（我觉得是set (key value nx ex)然后value保证唯一）
+  3.elasticsearch（这个是我自己简历的，你们没有就不用管）
+  4.mysql锁的概念，以及Mysql什么时候出现死锁，如何解决。
+  5.描述下二分查询。
+  6.算法题，删除字符串中出现字符出现最少的字符。
+
+  - spring组件，mvcc，es，solr的索引表结构
+
+- Zoom
+
+  > [https://www.nowcoder.com/community/comment/detail/1051?action=0&notEmpty=false&page=1](https://www.nowcoder.com/community/comment/detail/1051?action=0&notEmpty=false&page=1)
+
+  - 进公司后，HR 拿来一道笔试题，主要是线程安全方面的知识，简单的如 StringBuffer 和 StringBuilder 的区别，一般的有死锁怎么形成的，怎么解决死锁，HashMap,ConcurrentHashMap,LinkedHashMap的区别，SpringMVC的运行原理，难的有分布式锁怎么实现，BIO 和 NIO区别，除了难的题超出了我的范围其他的对我来说都比较easy了。只要JVM，多线程方面的知识准备充分，笔试面试都没问题。下面讲讲面试情况： 技术官进来，先自我介绍，问 new 一个对象，JVM 里面都干了啥，先是加载，验证，准备，解析，初始化啥的。后面问 volatile 关键字，从原子性，可见性，指令重排三个方面说了，又问 Synchronized 关键字在 1.6 做了哪些优化，从锁消除，锁粗化，偏向锁，轻量级锁，重量级锁解锁了一遍。 再问 ReentrantLock 和 Synchronized 的区别，从可中断，是否公平锁，条件锁方面阐述，延伸到 AQS，CAS 等。后面打算问我 IO 和 MySQL 方面的知识，我没经验，就说不知道，面试官也就直接跳过了。除了这两个，我几乎百分百答完了，基本达到甚至超过了面试官的知识准备。 后面是技术经理吧，进来就说刚才的反馈，是你不熟悉 MySQL，那么你平时用什么DB，答Oracle，然后就问你在公司从事什么角色，我是技术组长，那他说你举几个例子吧，我就举了两个，他也没深问，后面就锁，问了 AQS 的原理。再就没怎么问了。然后问我面什么职位，怎么投的简历。问我有什么问题，我当时尿急，直接说要先上下厕所，囧。回来后随便聊了下他们职位的工作内容，问了他们系统的 QPS，也没怎么仔细地说，再问项目都用了哪些技术，讲了些常规的技术。 总体感觉下来，里面的技术实力都不太强，也就一般互联网公司的技术实力，不过也算是中上了，不是什么公司都有独特的环境，获取到大流量，大数据量操练。
+
+  - 流程的话，从学校投的简历，之后做了一个在线笔试。笔试比较考察基础吧，编程题就一题，也不是很难，刷刷算法题应该都做出来。 没有电面，去公司直接面的，公司环境很好，整体体验很好。下午去早了，前台小姐姐带我去的会议室（很nice的小姐姐还给我一杯水缓解压力），说面试官还在睡觉呢，以为要等很久。结果马上就来了，还打印了我的简历（包里彩打的简历表示毫无用处）之后就是正常面试流程，主要根据简历，考了数据结构，网络协议，数据库，设计模式等。大概50分钟，hr先来聊了一下公司现状岗位情况以及人生理想。然后说主管可以再面一下，然后就被问了GC，类加载，spring源码，算法源码，hash，网络和加密算法什么的，回答了大概，spring源码还没准备过。。。但是主管人也很好，一直鼓励你。让我在凉凉边缘多次拯救。 进公司就不用多说了，导师很牛，培训很多，制度也很完善，没有加班，人文关怀也特别优秀，节假日会有礼物，日常还有零食，来zoom不吃亏！（在职舔狗，性感评价）
+
+  > [https://www.nowcoder.com/discuss/158738](https://www.nowcoder.com/discuss/158738)
+
+  一面
+
+  大概面了30分钟，面试官估计是以后的同事
+
+  - 自我介绍
+  - 问了问读了什么书
+  - 围绕项目问了一些实现的问题
+  - Redis场景题：
+    - 如果有一个for循环，不停地进行SET操作，且每次SET的key不一样，可能会循环上万次。这样的话应该怎么优化（redis管道流执行命令，不会返回每次执行的结果，主要用于批量执行命令）(https://www.jianshu.com/p/84b655a55bf5)
+    - 用Redis做缓存的时候，说说详细流程，怎么防脏读
+  - Spring的AOP
+  - Spring怎么实现事务，事务有哪些隔离级别
+  - Java基本类型的封包拆包
+  - 举个线程不安全的例子
+  - 关于线程的使用的场景题
+  - CAS的具体实现
+  - MySQL有哪些索引，有什么区别
+  - SQL语句调优会吗，有哪些调优方式
+  - 关于我们公司，有什么想问我的吗
+
+  二面
+
+  面试官开会去了，等了大概20分钟，面了50分钟左右
+
+  - 自我介绍
+  - 继续聊项目
+  - 说了项目的表结构
+  - 项目部分功能的具体实现
+  - 提了一些项目上可能会遇到的问题，问我怎么解决
+  - 感觉收获很大，很多自己以前没有考虑
+  - Java8有什么新的特性
+  - Java怎么具体实现的ThreadLocal
+  - 线程有哪些状态
+  - 讲讲线程池，都有哪些参数
+  - 说说常用的线程同步的方法
+  - 浏览器请求URL到返回页面的详细过程(如果是localhost呢)
+  - 三次握手、四次挥手的详细过程
+  - 讲讲Java都有哪些锁，他们有什么区别
+  - 说说你会什么容器，然后挑了HashMap和TreeMap问
+  - 说说你会什么并发容器，挑了ConcurrentHashMap的具体实现问
+  - Web后台一些功能实现的场景题
+  - 项目用了Spring Boot，问了问内嵌的服务器还有做了哪些配置
+  - AOP有什么用？有些名词你知道吗？
+  - 说说jdk动态***和CGLIB有什么区别
+  - 对什么设计模式比较熟？挑了适配器、装饰器和***模式问
+  - 用过Spring Cloud吗(不会，但谈了谈Dubbo和ZooKeeper)
+  - 会前端吗，有了解过什么
+  - 打算做后台什么方向
+  - 关于我们公司有什么想问我的吗
+
+  三面(HR)
+
+  后来才发现，来的是人力资源的经理(哦豁)
+
+  - 哪里人
+  - 对工资有什么要求吗
+  - 打算读研吗
+  - 有没有女朋友
+  - 每周可以保证来几天
+  - 什么时候可以来上班
+  - 聊完后，去和Boss打了招呼后，就送我离开公司了

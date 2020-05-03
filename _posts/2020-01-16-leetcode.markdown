@@ -36,6 +36,119 @@ tags:
 
 [leetcode难度及面试频率](<https://blog.csdn.net/yutianzuijin/article/details/11477603>)
 
+#### 散列
+
+- 选择散列函数
+
+  - Division method
+
+    - $h(k)=k \mod m$
+
+  - Multiplication method
+
+    - $m=2^r$，计算机有$w$位词
+
+    - $h(k)=(A\cdot k\mod 2^w)\rm{rsh}(w-r)$
+    - 模块轮 (Modular wheel)：将轮子旋转$k$个$A$，然后舍弃最后几位
+
+  > [http://www.alloyteam.com/2017/05/hash-functions-introduction/](http://www.alloyteam.com/2017/05/hash-functions-introduction/)
+
+  加法、位运算、乘法、除法、查表、混合
+
+  一个好的哈希函数应该具备以下三点：
+  1. 抗碰撞性，尽量避免冲突。
+  2. 抗篡改性，只要改动一个字节，其哈希值也会很大不同。
+  3. 查找效率。
+
+- 处理冲突
+
+  - 拉链法  
+
+    填装因子$\alpha=表中记录数（键数）n/散列表长度（槽数）m$
+
+    **不成功**搜索的期望时间$=\Theta(1+\alpha)$
+
+  - 开放定址法：线性探查法、平方探查法、再散列法、伪随机序列法
+
+    假设均匀散列，每个键等可能地将$m!$种排序之一作为其探查序列。
+
+    定理：不成功搜索的期望探查次数 $E[$#$probes]\le1/(1-\alpha)$
+
+#### B树和B+树
+
+> 王道数据结构P243 B树和B+树
+
+- B树
+
+  一棵$m$阶B树或为空树，或为满足如下特征的$m$叉树：
+
+  1. **树中每个结点至多有$m$棵子树**（即至多含有$m-1$个关键字）。
+
+  2. **若根节点不是终端结点，则至少有2棵子树。**
+
+  3. **除根结点外的所有非叶结点至少有$\lceil m/2\rceil$棵子树**（即至少含有$\lceil m/2\rceil-1$个关键字）
+
+  4. 所有的非叶结点的结构：$n,P_0,K_1,P_1,K_2,P_2,...,K_n,P_n$. 其中$K_i$为结点的关键字，且满足$K_1\lt K_2\lt...\lt K_n$; $P_i$所指子树中所有结点的关键字均大于$K_i$, $n$为结点中关键字的个数。
+
+  5. 所有的叶节点都出现再同一层次上，并且不带信息。
+
+  B树的插入：定位（找到最底层的某个非叶结点），插入（分裂上移）
+
+  B树的删除：不在终端结点删除（删除合并），在终端结点删除（兄弟够借，兄弟不够借）
+
+- B+树
+
+  $m$阶B+树与$m$阶B树的主要差异在于：
+
+  1. 在B+树中，具有$n$个关键字的结点只含有$n$棵子树，即每个关键字对应一棵子树；而在B树中，具有$n$个关键字的结点含有$(n+1)$棵子树。
+
+  2. 在B+树中，每个结点（非根内部结点）关键字个数$n$的范围时$\lceil m/2\rceil \le n \le m$（根结点：$1\le n\le m-1$）；在B树中，每个结点（非根内部结点）关键字个数$n$的范围是$\lceil m/2\rceil-1 \le n \le m-1$（根结点：$1\le n\le m-1$）。
+
+  3. 在B+树中，叶结点包含信息，所有非叶节点仅起到索引作用，非叶结点中的每个索引项只含有对应子树的最大关键字和指向该子树的指针，不含有该关键字对应记录的存储地址。
+
+  4. 在B+树中，叶结点包含了全部关键字，即在非叶结点中出现的关键字也会出现在叶结点中；而在B树中，叶结点包含的关键字和其他结点包含的关键字是不重复的。
+
+#### 布隆过滤器
+
+**什么是布隆过滤器**
+
+布隆过滤器（Bloom Filter）是一个叫做 Bloom 的老哥于1970年提出的。我们可以把它看作由二进制向量（或者说位数组）和一系列随机映射函数（哈希函数）两部分组成的数据结构。相比于我们平时常用的的 List、Map 、Set 等数据结构，它占用空间更少并且效率更高，但是缺点是其返回的结果是概率性的，而不是非常准确的。理论情况下添加到集合中的元素越多，误报的可能性就越大。并且，存放在布隆过滤器的数据不容易删除。
+
+**布隆过滤器的原理**
+
+当一个元素加入布隆过滤器中的时候，会进行如下操作：
+
+1. 使用布隆过滤器中的哈希函数对元素值进行计算，得到哈希值（有几个哈希函数得到几个哈希值）。
+2. 根据得到的哈希值，在位数组中把对应下标的值置为 1。
+
+当我们需要判断一个元素是否存在于布隆过滤器的时候，会进行如下操作：
+
+1. 对给定元素再次进行相同的哈希计算；
+2. 得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。
+
+![img](https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-11/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8-hash%E8%BF%90%E7%AE%97.png)
+
+**布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，那么这个元素一定不在。**
+
+**布隆过滤器使用场景**
+
+1. **判断给定数据是否存在**：**比如判断一个数字是否在于包含大量数字的数字集中**（数字集很大，5亿以上！）、 **防止缓存穿透（判断请求的数据是否有效避免直接绕过缓存请求数据库）**、邮箱的垃圾邮件过滤、黑名单功能等等。
+2. 去重：比如爬给定网址的时候对已经爬取过的 URL 去重。
+
+> [https://www.zhihu.com/question/38573286](https://www.zhihu.com/question/38573286)
+
+- 海量数据的TopK问题
+
+  > [https://www.cnblogs.com/itxiaok/p/10385676.html](https://www.cnblogs.com/itxiaok/p/10385676.html)
+
+  - 找重复最多的TopK：散列成多个小数据集再统计
+  - 找最大TopK：外排、优先队列、分治找最大
+  - 去重：布隆过滤器
+
+- 跳表
+
+  [https://blog.csdn.net/lusic01/article/details/92001898](https://blog.csdn.net/lusic01/article/details/92001898)
+
 #### 主方法
 
 > CLRS
@@ -2686,9 +2799,9 @@ public:
 
 - 思路：跟26题类似，双指针。
 
-<!-- #### [leetcode 30: 串联所有单词的子串](https://leetcode.com/problems/substring-with-concatenation-of-all-words) -->
+#### [leetcode 30: 串联所有单词的子串](https://leetcode.com/problems/substring-with-concatenation-of-all-words)
 
-#### [leetcode 42: 接雨水](<https://leetcode.com/problems/trapping-rain-water/>)
+#### [leetcode 42: 接雨水](https://leetcode.com/problems/trapping-rain-water/)
 
 - 思路：双指针
 
@@ -2931,7 +3044,7 @@ public:
     };
     ```
 
-#### [leetcode 84: 柱状图中最大矩形](<https://leetcode.com/problems/largest-rectangle-in-histogram>)
+#### [leetcode 84: 柱状图中最大矩形](https://leetcode.com/problems/largest-rectangle-in-histogram)
 
 - 方法1：分治
 
@@ -3382,6 +3495,10 @@ public:
 ```
 
 方法3：快速选择，时间$O(N)$，空间$O(1)$
+
+> [https://blog.csdn.net/u014421167/article/details/41087841](https://blog.csdn.net/u014421167/article/details/41087841)
+
+T(N) =n +n/2+n/4+n/8+n/2^k = n*(1-2^-k)/(1-2^-1) =2N 
 
 ```c++
 class Solution {
@@ -8626,6 +8743,97 @@ class ProducerConsumer {
             mutex.release();
             empty.release();
         }
+    }
+}
+```
+
+#### 死锁
+
+```java
+public class Main {
+
+    private static String a = "a";
+    private static String b = "b";
+
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (a) {
+                    try {
+                        Thread.currentThread().sleep(2000);
+                        synchronized (b) {
+                            System.out.println(1);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        Thread t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (b) {
+                    try {
+                        Thread.currentThread().sleep(2000);
+                        synchronized (a) {
+                            System.out.println(2);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        t1.start();
+        t2.start();
+    }
+}
+```
+
+#### 实现一个k-v的内存计数类，功能包括添加、删除、查询、自增四个功能
+
+```java
+class KV {
+    Map<Integer, Integer> map = new ConcurrentHashMap<>();
+
+    synchronized void add(int key) {
+        map.putIfAbsent(key, 0);
+    }
+
+    synchronized void delete(int key) {
+        map.remove(key);
+    }
+
+    synchronized int get(int key) {
+        return map.get(key);
+    }
+
+    synchronized void increment(int key) {
+        map.put(key, map.getOrDefault(key, 0) + 1);
+    }
+}
+```
+
+```java
+class KV {
+    Map<Integer, AtomicInteger> map = new ConcurrentHashMap<>();
+
+    void add(int key) {
+        map.putIfAbsent(key, new AtomicInteger(0));
+    }
+
+    synchronized void delete(int key) {
+        map.remove(key);
+    }
+
+    synchronized int get(int key) {
+        return map.get(key).get();
+    }
+
+    void increment(int key) {
+        map.get(key).getAndIncrement();
     }
 }
 ```
