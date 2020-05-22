@@ -57,17 +57,17 @@ tags:
 
   - ArrayBlockingQueue
 
-    ArrayBlockingQueue 是 BlockingQueue 接口的有界队列实现类，底层采用数组来实现。ArrayBlockingQueue 一旦创建，容量不能改变。其并发控制采用可重入锁来控制，不管是插入操作还是读取操作，都需要获取到锁才能进行操作。当队列容量满时，尝试将元素放入队列将导致操作阻塞;尝试从一个空队列中取一个元素也会同样阻塞。
+    **ArrayBlockingQueue** 是 BlockingQueue 接口的有界队列实现类，**底层采用数组来实现**。**ArrayBlockingQueue 一旦创建，容量不能改变**。其并发控制采用可重入锁来控制，不管是插入操作还是读取操作，都需要获取到锁才能进行操作。当队列容量满时，尝试将元素放入队列将导致操作阻塞;尝试从一个空队列中取一个元素也会同样阻塞。
 
     ArrayBlockingQueue 默认情况下不能保证线程访问队列的公平性，所谓公平性是指严格按照线程等待的绝对时间顺序，即最先等待的线程能够最先访问到 ArrayBlockingQueue。而非公平性则是指访问 ArrayBlockingQueue 的顺序不是遵守严格的时间顺序，有可能存在，当 ArrayBlockingQueue 可以被访问时，长时间阻塞的线程依然无法访问到 ArrayBlockingQueue。如果保证公平性，通常会降低吞吐量。
 
   - LinkedBlockingQueue
 
-    LinkedBlockingQueue 底层基于单向链表实现的阻塞队列，可以当做无界队列也可以当做有界队列来使用，同样满足 FIFO 的特性，与 ArrayBlockingQueue 相比起来具有更高的吞吐量，为了防止 LinkedBlockingQueue 容量迅速增，损耗大量内存。通常在创建 LinkedBlockingQueue 对象时，会指定其大小，如果未指定，容量等于 Integer.MAX_VALUE。
+    **LinkedBlockingQueue 底层基于单向链表实现的阻塞队列**，**可以当做无界队列也可以当做有界队列来使用**，同样满足 FIFO 的特性，与 ArrayBlockingQueue 相比起来具有更高的吞吐量，为了防止 LinkedBlockingQueue 容量迅速增，损耗大量内存。**通常在创建 LinkedBlockingQueue 对象时，会指定其大小，如果未指定，容量等于 Integer.MAX_VALUE。**
 
   - PriorityBlockingQueue
 
-    PriorityBlockingQueue 是一个支持优先级的无界阻塞队列。默认情况下元素采用自然顺序进行排序，也可以通过自定义类实现 compareTo() 方法来指定元素排序规则，或者初始化时通过构造器参数 Comparator 来指定排序规则。
+    **PriorityBlockingQueue 是一个支持优先级的无界阻塞队列**。默认情况下元素采用自然顺序进行排序，也可以通过自定义类实现 compareTo() 方法来指定元素排序规则，或者初始化时通过构造器参数 Comparator 来指定排序规则。
 
     PriorityBlockingQueue 并发控制采用的是 ReentrantLock，队列为无界队列（ArrayBlockingQueue 是有界队列，LinkedBlockingQueue 也可以通过在构造函数中传入 capacity 指定队列最大的容量，但是 PriorityBlockingQueue 只能指定初始的队列大小，后面插入元素的时候，如果空间不够的话会自动扩容）。
 
@@ -272,15 +272,15 @@ tags:
 
   四、而java.util.concurrent包(J.U.C)中包含的是java并发编程中有用的一些工具类，包括几个部分：
 
-  1、collections部分：散落在java.util.concurrent包中，提供并发容器相关功能；
+  1、collections部分：散落在java.util.concurrent包中，提供**并发容器**相关功能；
 
-  2、atomic部分：包含在java.util.concurrent.atomic包中，提供原子变量类相关的功能，是构建非阻塞算法的基础；
+  2、atomic部分：包含在java.util.concurrent.atomic包中，提供**原子变量**类相关的功能，是构建非阻塞算法的基础；
   
-  3、locks部分：包含在java.util.concurrent.locks包中，提供显式锁(互斥锁和速写锁)相关功能；
+  3、locks部分：包含在java.util.concurrent.locks包中，提供**显式锁**(互斥锁和速写锁)相关功能；
 
-  4、tools部分：散落在java.util.concurrent包中，提供同步工具类，如信号量、闭锁、栅栏等功能；
+  4、tools部分：散落在java.util.concurrent包中，提供**同步工具**类，如信号量、闭锁、栅栏等功能；
 
-  5、executor部分：散落在java.util.concurrent包中，提供线程池相关的功能；
+  5、executor部分：散落在java.util.concurrent包中，提供**线程池**相关的功能；
 
 - synchronized关键字
 
@@ -517,7 +517,7 @@ tags:
     **如果当前同时运行的线程数量达到最大线程数量并且队列也已经被放满了时，ThreadPoolTaskExecutor 定义一些策略:**
 
     - **ThreadPoolExecutor.AbortPolicy：抛出 RejectedExecutionException来拒绝新任务的处理。**
-    - ThreadPoolExecutor.CallerRunsPolicy：调用执行自己的线程运行任务，也就是直接在调用execute方法的线程中运行(run)被拒绝的任务，如果执行程序已关闭，则会丢弃该任务。因此这种策略会降低对于新任务提交速度，影响程序的整体性能。另外，这个策略喜欢增加队列容量。如果您的应用程序可以承受此延迟并且你不能任务丢弃任何一个任务请求的话，你可以选择这个策略。
+    - **ThreadPoolExecutor.CallerRunsPolicy：调用执行自己的线程运行任务，也就是直接在调用execute方法的线程中运行(run)被拒绝的任务**，如果执行程序已关闭，则会丢弃该任务。因此这种策略会降低对于新任务提交速度，影响程序的整体性能。另外，这个策略喜欢增加队列容量。如果您的应用程序可以承受此延迟并且你不能任务丢弃任何一个任务请求的话，你可以选择这个策略。
     - **ThreadPoolExecutor.DiscardPolicy： 不处理新任务，直接丢弃掉。**
     - **ThreadPoolExecutor.DiscardOldestPolicy： 此策略将丢弃最早的未处理的任务请求。**
 

@@ -803,7 +803,7 @@ tags:
 
   > [https://blog.csdn.net/qq_27093465/article/details/52270519](https://blog.csdn.net/qq_27093465/article/details/52270519)
 
-  还是原来的hash，`hash & oldCap`如果是0的话就是原索引，如果是1的话是原索引+oldCap
+  还是原来的hash，`hash & oldCap`如果是0的话就是原索引，否则是原索引+oldCap
 
 - jdk1.8之前并发操作hashmap时为什么会有死循环的问题
 
