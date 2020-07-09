@@ -1,0 +1,76 @@
+---
+layout:     post
+title:      "Shell"
+subtitle:   ""
+date:       2020-03-05 12:00:00
+author:     "盈盈冲哥"
+header-img: "img/fleabag.jpg"
+mathjax: true
+catalog: true
+tags:
+    - 学习
+---
+
+1. 
+
+  ```shell
+  chmod +x ./test.sh  #使脚本具有执行权限
+  ```
+
+  不能写成test.sh，因为会去PATH里找。
+
+2. 使用变量
+
+  $变量名
+
+  ${变量名}
+
+3. 字符串
+
+  ```shell
+  your_name='runoob'
+  str="Hello, I know you are \"$your_name\"! \n"
+  echo -e $str
+  ```
+
+  - 双引号可以有变量、转义字符
+  - 字符串长度
+  
+  ```shell
+  echo ${#string}
+  ```
+
+  字符串截取
+
+  echo ${string:1:4}
+
+4. 数组
+
+  ```shell
+  array_name=(value0 value1 value2 value3)
+  valuen=${array_name[n]}
+  ```
+
+  数组中的所有元素
+
+  ```shell
+  ${my_array[*]}
+  ${my_array[@]}
+  ```
+
+  获取数组的长度
+
+  ```shell
+  ${#my_array[*]}
+  ${#my_array[@]}
+  ```
+
+5. 传递参数
+
+  ```shell
+  echo "第一个参数为：$1";
+  echo "参数个数为：$#";
+  echo "传递的参数作为一个字符串显示：$*";
+  ```
+
+  `$*`和`$@`的区别：如果传入3个参数，`$*`是一个参数，`$@`是3个参数
