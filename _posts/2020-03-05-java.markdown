@@ -865,7 +865,7 @@ tags:
 
   使用HashMap，如果key是自定义的类，就必须重写hashcode()和equals()。
 
-- 覆盖equals是请遵守通用约定
+- 覆盖equals时请遵守通用约定
 
   实现高质量equals方法的诀窍：
 
