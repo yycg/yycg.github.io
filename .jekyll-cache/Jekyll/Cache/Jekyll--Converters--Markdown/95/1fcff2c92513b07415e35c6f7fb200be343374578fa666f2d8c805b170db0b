@@ -1,0 +1,58 @@
+I"'<h2 id="初试">初试</h2>
+
+<p>暑假七八月份在家，一边准备考研一边准备工作，效率比较低，看了两百多页李永乐全书。</p>
+
+<p>九月份到了学校专心准备考研。寝室里同学全都考研，学习氛围比较好。到12月23号考试之前，我数学看了李永乐全书的高数、概率部分和李永乐线性代数讲义，其中高数、线代看了第二遍，做了660题的高数部分和31年真题。专业课看了两遍王道四本书的知识点，做了选择题，最后做了几年408真题和两年803真题。英语看了两遍考研考过的单词，做了05年到10年的真题。政治看了风中劲草马原部分，看了两遍肖秀荣1000题，做了8套卷选择题，背了4套卷的大题。</p>
+
+<p>九月份预报名，十月份正式报名，之后还要现场确认。北邮计算机类可以选择计院、网研院、网安院和软院。北邮报名的时候就要选好组，也就是将来的实验室。</p>
+
+<h2 id="复试">复试</h2>
+
+<p>初试结束，感觉不是很好。数学比较难，好多题来不及做。专业课也比前两年稍微难一些，一道算法题卡了好久，剩下的题有点来不及做了。花了十几天把毕设的开题报告写好。</p>
+
+<p>寒假在家先把王道机试指南的例题代码一道一道敲出来。2月3号出成绩，考同一个组的同学会加到一个群里用来估计自己的排名，我们组学硕爆炸，专硕人也不少。然后联系导师，导师教我好好准备复试。之后在牛客网上刷考研机试题。九度OJ今年关了，机试题只能在牛客网和TK题库上刷。TK题库感觉测试用例要求得更严格，而且通不过没有提示，题目没有牛客网多。大多数机试题的思路在机试指南的例题里都出现过，有的难题实在想不出可以查题解。刷题刷多了还挺上瘾的。我发现在牛客网上刷题排名靠前的很多都是考北邮的，因为我在考研群里看到过一样的头像。最后做了北邮的历年机试题。</p>
+
+<p>2月20几号开始看六选四笔试的PPT，做考研群里的试卷。我选的是计算机系统结构、人工智能、数据库、软件工程。系统结构课本最好看白中英那本，比郑纬民的薄了好多。软件工程课本可以看北邮的第一版，第二版有的第一版都有。</p>
+
+<p>3月15号跟同宿舍的一个同学一起到北京。他考的是北邮的控制，原报组没上，所以早点来找调剂。3月16号陪同学刷楼，去了主楼、教三、教四、明光楼，最后找到一个老师说没有更合适的就要他。一个星期之后，老师把他叫到办公室里，一同的还有两个同学，最后要了一个女生。就在他心灰意冷的时候，那个女生给了他另外一个老师的联系方式，之后进行了电话面试。那个老师看重我的同学的实习经历，就让他进复试了。</p>
+
+<p>3月16号出了国家线。22号计算机院出了组线。我们组学硕分超级高，好多340+的同学本来以为可以进复试的都没进复试。计院调剂本来就很难，这个时间就更加找不到调剂了。23号出了排名，跟群里的分数一模一样，我排名比较靠后。</p>
+
+<p>来北京之前要准备好身份证、学生证、身份证复印件、四六级成绩单和复印件、信封、简历、初试准考证。进复试之后要在网上做一个心理测试，交复试费、体检费，下载打印登记表、体检表、政治面试表（现在不用政审表了）。</p>
+
+<p>29号上午我和同学八点半到北邮，体检的队伍排得很长了。我们已经到了八百多号，一天最多到一千号。体检就是辨色，测血压，抽血，要空腹去。</p>
+
+<p>30号上午资格审查，那里墙上贴了机试笔试的教室。</p>
+
+<p>下午一点我在主楼机试。电脑上装了codeblocks、devcpp、cfree、eclipse。建议用codeblocks，调试比devcpp方便。考场里有个监考的学生提醒我们，如果用C/C++的话，最好用C++ 11提交，但是北邮的OJ目前C++ 11的特性还没有完全支持。具体题目可以看这位同学的博客：https://blog.csdn.net/qq_37640597/article/details/79772948。做第一题的时候超紧张，怕一题都a不出来。要注意的地方就是输入输出要用long long，还有每次都要先把32位数组赋0。题目不难，但我这题调了好久。第二题比第一题还更简单一些，要注意的就是读完第一行的数要getchar()。第三题直接从2到1e7（经过测试，2到1e6只有两千多个发财数）判断素因数个数是否大于8，如果是就保存到数组里，求素因数个数我是用下面的方法，没用筛素数也过了。如果直接从2到x判断肯定是会超时的，因为我用本地的IDE都运行了好几秒。这道题一共就只有8个人a出来。最后一题我先暴力解毫无疑问地超时了，想了好久也没想出来。</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre><span class="kt">int</span> <span class="nf">factorNum</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">x</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">x</span> <span class="o">/=</span> <span class="n">i</span><span class="p">;</span>
+            <span class="n">res</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="n">res</span><span class="o">++</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>晚上是笔试，一个小时刚好能做完，不会的就猜。体系结构的试卷跟群里以往的试卷不太一样的。笔试跟是否录取关系应该不是很大，但也不要不准备。重要的是面试，而机试是作为面试的参考的。</p>
+
+<p>第二天早上八点开始面试，先学硕后专硕，先分低的再分高的。我是第十三个，已经到下午第二个面试了。进去先交登记表，给老师发简历和成绩单，然后是英文自我介绍和英文翻译。自我介绍要背熟。英文翻译我单词都看得懂，但是自己都不知道在翻译什么。最后导师问了简历上的项目和竞赛经历，以及成绩单上的课程。之后填好政治面试表去政治面试，主要就是聊天。复试就结束了。如果复试没过会给你电话通知。我和同学都通过了。</p>
+:ET

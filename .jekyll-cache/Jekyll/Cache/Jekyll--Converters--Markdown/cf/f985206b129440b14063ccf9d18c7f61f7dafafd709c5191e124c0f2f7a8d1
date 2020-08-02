@@ -1,0 +1,148 @@
+I"`#<blockquote>
+  <p><a href="https://www.cnblogs.com/wmyskxz/p/10229148.html">https://www.cnblogs.com/wmyskxz/p/10229148.html</a></p>
+</blockquote>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/qq_26648623/article/details/84062666">https://blog.csdn.net/qq_26648623/article/details/84062666</a></p>
+</blockquote>
+
+<ul>
+  <li>
+    <p>应用安全的四大基石</p>
+
+    <p>认证：用户身份识别，通常被称为用户“登录”。</p>
+
+    <p>授权：访问控制。比如某个用户是否具有某个操作的使用权限。</p>
+
+    <p>会话管理：特定于用户的会话管理,甚至在非web 或 EJB 应用程序。</p>
+
+    <p>加密：在对数据源使用加密算法加密的同时，保证易于使用。</p>
+  </li>
+  <li>
+    <p>三个主要的理念</p>
+
+    <p>Subject：当前用户，Subject 可以是一个人，但也可以是第三方服务、守护进程帐户、时钟守护任务或者其它–当前和软件交互的任何事件。</p>
+
+    <p>SecurityManager：管理所有Subject，SecurityManager 是 Shiro 架构的核心，配合内部安全组件共同组成安全伞。</p>
+
+    <p>Realms：用于进行权限信息的验证，我们自己实现。Realm 本质上是一个特定的安全 DAO：它封装与数据源连接的细节，得到Shiro 所需的相关的数据。在配置 Shiro 的时候，你必须指定至少一个Realm 来实现认证（authentication）和/或授权（authorization）。</p>
+  </li>
+  <li>
+    <p>Shiro 加密</p>
+
+    <p>在之前的学习中，我们在数据库中保存的密码都是明文的，一旦数据库数据泄露，那就会造成不可估算的损失，所以我们通常都会使用非对称加密，简单理解也就是不可逆的加密，而 md5 加密算法就是符合这样的一种算法。</p>
+
+    <p>如上面的 123456 用 Md5 加密后，得到的字符串：e10adc3949ba59abbe56e057f20f883e，就无法通过计算还原回 123456，我们把这个加密的字符串保存在数据库中，等下次用户登录时我们把密码通过同样的算法加密后再从数据库中取出这个字符串进行比较，就能够知道密码是否正确了，这样既保留了密码验证的功能又大大增加了安全性，但是问题是：虽然无法直接通过计算反推回密码，但是我们仍然可以通过计算一些简单的密码加密后的 Md5 值进行比较，推算出原来的密码</p>
+
+    <p>比如我的密码是 123456，你的密码也是，通过 md5 加密之后的字符串一致，所以你也就能知道我的密码了，如果我们把常用的一些密码都做 md5 加密得到一本字典，那么就可以得到相当一部分的人密码，这也就相当于“破解”了一样，所以其实也没有我们想象中的那么“安全”。</p>
+
+    <p>既然相同的密码 md5 一样，那么我们就让我们的原始密码再加一个随机数，然后再进行 md5 加密，这个随机数就是我们说的盐(salt)，这样处理下来就能得到不同的 Md5 值，当然我们需要把这个随机数盐也保存进数据库中，以便我们进行验证。</p>
+
+    <p>另外我们可以通过多次加密的方法，即使黑客通过一定的技术手段拿到了我们的密码 md5 值，但它并不知道我们到底加密了多少次，所以这也使得破解工作变得艰难。</p>
+  </li>
+</ul>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/romantic_PK/article/details/81510003">https://blog.csdn.net/romantic_PK/article/details/81510003</a></p>
+</blockquote>
+
+<ul>
+  <li>
+    <p>Shiro认证流程</p>
+
+    <ul>
+      <li><strong>subject(主体)请求认证，调用subject.login(token)</strong></li>
+      <li>SecurityManager (安全管理器)执行认证</li>
+      <li><strong>SecurityManager通过ModularRealmAuthenticator进行认证。</strong></li>
+      <li><strong>ModularRealmAuthenticator将token传给realm，realm根据token中用户信息从数据库查询用户信息（包括身份和凭证）</strong></li>
+      <li>realm如果查询不到用户给ModularRealmAuthenticator返回null，ModularRealmAuthenticator抛出异常（用户不存在）</li>
+      <li><strong>realm如果查询到用户给ModularRealmAuthenticator返回AuthenticationInfo(认证信息)</strong></li>
+      <li><strong>ModularRealmAuthenticator拿着AuthenticationInfo(认证信息)去进行凭证（密码）比对。</strong>如果一致则认证通过，如果不致抛出异常（凭证错误）。</li>
+    </ul>
+  </li>
+  <li>
+    <p>Shiro授权流程</p>
+
+    <ul>
+      <li><strong>对subject进行授权，调用方法isPermitted(“<em>“)或者hasRole(“</em>”)</strong></li>
+      <li><strong>SecurityManager执行授权，通过ModularRealmAuthorizer执行授权</strong></li>
+      <li>ModularRealmAuthorizer执行realm（自定义的CustomRealm）从数据库查询权限数据调用realm的授权方法：doGetAuthorizationInfo</li>
+      <li><strong>realm从数据库查询权限数据，返回ModularRealmAuthorizer</strong></li>
+      <li><strong>ModularRealmAuthorizer调用PermissionResolver进行权限串比对</strong></li>
+      <li>如果比对后，isPermitted中”permission串”在realm查询到权限数据中，说明用户访问permission串有权限，否则没有权限，抛出异常。</li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>慕课网</p>
+</blockquote>
+
+<p><strong>什么是Shiro？</strong></p>
+
+<ul>
+  <li>Apache的强大灵活的开源安全框架</li>
+  <li>认证、授权、企业会话管理、缓存管理、安全加密</li>
+</ul>
+
+<p><strong>Shiro与Spring Security比较</strong></p>
+
+<ul>
+  <li>Apache Shiro：简单、灵活，可脱离Spring，粒度较粗</li>
+  <li>Spring Security：复杂、笨重，不可脱离Spring，粒度更细</li>
+</ul>
+
+<p><strong>Shiro整体架构</strong></p>
+
+<ul>
+  <li>SecurityManager是Shiro的核心，Shiro通过Security Manager提供安全服务。</li>
+  <li>认证器(Authenticator)管理登入登出，授权器(Authorizer)赋予主体有哪些权限。Realm是Shiro和数据库之间的桥梁，Shiro获取认证数据、权限数据都是通过Realm。主体提交请求到Security Manager，SecurityManager调用认证器去认证，认证器获取认证数据的时候是通过Realm来获取，从数据库中来获取信息和主题提交过来的认证数据去比对。</li>
+  <li>session管理器，shiro自己实现了一套session管理机制，可以不借助任何web容器的情况下使用session。Session Dao提供了Session的操作，主要是由增删改查。</li>
+  <li>Cache Manager是缓存管理器，可以缓存角色数据和权限数据。</li>
+  <li>Cryptography是用来做数据加密的。</li>
+</ul>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/li383200888/article/details/76904284">https://blog.csdn.net/li383200888/article/details/76904284</a></p>
+</blockquote>
+
+<p>认证原理：</p>
+
+<p>1、通过ini配置文件创建securityManager</p>
+
+<p>2、调用subject.login方法主体提交认证，提交的token</p>
+
+<p>3、securityManager进行认证，securityManager最终由ModularRealmAuthenticator进行认证。</p>
+
+<p>4、ModularRealmAuthenticator调用IniRealm(给realm传入token) 去ini配置文件中查询用户信息</p>
+
+<p>5、IniRealm根据输入的token（UsernamePasswordToken，即这里的token是用户从页面输入的信息）从 shiro-first.ini查询用户信息（这里是测试阶段，后面都是查询的数据库，注入service，调用dao），根据账号查询用户信息（账号和密码）</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>      如果查询到用户信息，就给ModularRealmAuthenticator返回用户信息（账号和密码）
+
+      如果查询不到，就给ModularRealmAuthenticator返回null
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>6、ModularRealmAuthenticator接收IniRealm返回Authentication认证信息</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>      如果返回的认证信息是null，ModularRealmAuthenticator抛出异常（org.apache.shiro.authc.UnknownAccountException）
+
+      如果返回的认证信息不是null（说明inirealm找到了用户），对IniRealm返回用户密码 （在ini文件中存在）和 token中的密码 进行对比，如果不一致抛出异常（org.apache.shiro.authc.IncorrectCredentialsException）
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/baidu_22254181/article/details/82594072">https://blog.csdn.net/baidu_22254181/article/details/82594072</a></p>
+</blockquote>
+
+<ul>
+  <li>对称加密：AES/DES/3DES</li>
+  <li>非对称加密：RSA、ECC</li>
+  <li>散列加密：MD5、SHA1</li>
+</ul>
+:ET

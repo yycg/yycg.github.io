@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="没有对生活绝望，就不会爱生活。——阿尔贝·加缪">
+    <meta name="keywords"  content="">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="盈盈冲哥的博客">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="没有对生活绝望，就不会爱生活。——阿尔贝·加缪">
+    
+    <meta property="og:image" content="http://localhost:4000/img/a-perfect-world.jpg">
+    <meta property="og:url" content="http://localhost:4000/page2/">
+    <meta property="og:site_name" content="盈盈冲哥的博客">
+    
+    <title>盈盈冲哥的博客</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/letter-y.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/page2/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">盈盈冲哥的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Page Header -->
+
+
+
+
+
+
+
+<header class="intro-header" style="background-image: url('/img/2001-space-odyssey-sauna.jpg')">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        
+        <div class="site-heading">
+        
+          <h1>盈盈冲哥的博客</h1>
+          <span class="subheading">没有对生活绝望，就不会爱生活。——阿尔贝·加缪</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<!-- Main Content -->
+<div class="container">
+	<div class="row">
+        
+
+<!-- USE SIDEBAR -->
+    <!-- PostList Container -->
+    		<div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                postlist-container
+            ">
+    			
+<div class="post-preview">
+    <a href="/2020/03/05/framework/">
+        <h2 class="post-title">
+            架构
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                架构
+
+
+  大型网站技术架构
+
+
+
+  https://snailclimb.gitee.io/javaguide/#/docs/system-design/website-architecture/8%20%E5%BC%A0%E5%9B%BE%E8%AF%BB%E6%87%82%E5%A4%A7%E5%9E%8B%E7%BD%91%E7%AB%99%E6%8A%80%E6%9C%AF%E...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/elasticsearch/">
+        <h2 class="post-title">
+            ElasticSearch
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                ElasticSearch &amp; Solr
+
+
+  
+    常见问题
+
+    
+      lucena引擎，一次查询的过程
+      近实时刷新的原理
+      
+        分页怎么使用的，各个查询的原理，为什么有不同
+      
+      底层原理
+      常用的命令
+      倒排索引
+      es的打分机制，tfidf
+      分页命令、scro...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/designpattern/">
+        <h2 class="post-title">
+            设计模式
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                设计模式
+
+
+  大话设计模式
+
+
+
+  
+    封装
+
+    
+      每个对象都包含它能进行操作所需要的所有信息，这个特性称为封装，因此对象不必依赖其他对象来完成自己的操作。
+      封装有很多好处，第一、良好的封装能够减少耦合，第二、类内部的实现可以自由地修改，第三、类具有清晰的对外接口。
+    
+  
+  
+    继承
+
+    
+      对象的继承代表了一种is...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/database/">
+        <h2 class="post-title">
+            数据库
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                MySQL
+
+
+  高性能MySQL
+
+
+
+  
+    可以使用B-Tree索引的查询类型
+
+    key(last_name, first_name, dob)
+
+    前面所述的索引对如下类型的查询有效：
+
+    
+      全值匹配：全值匹配指的是和索引中的所有列进行匹配，例如前面提到的索引可用于查找姓名为Cuba Allen、出生于1960-01-01的人。
+      匹...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/concurrency/">
+        <h2 class="post-title">
+            并发
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                并发容器
+
+
+  
+    并发容器
+
+    JDK 提供的并发容器总结
+
+    
+      ConcurrentHashMap: 线程安全的 HashMap
+      CopyOnWriteArrayList: 线程安全的 List，在读多写少的场合性能非常好，远远好于 Vector.
+      ConcurrentLinkedQueue: 高效的并发队列，使用链表实现。可以看做...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/spring/">
+        <h2 class="post-title">
+            Spring
+        </h2>
+        
+        <div class="post-content-preview">
+            
+                
+
+layout:     post
+title:      “Spring”
+subtitle:   “”
+date:       2020-03-05 12:00:00
+author:     “盈盈冲哥”
+header-img: “img/fleabag.jpg”
+mathjax: true
+catalog: true
+tags:
+    - 学习
+—
+
+Spring
+
+
+  Spri...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥的博客 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/01/MTM/">
+        <h2 class="post-title">
+            梦天门实习
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                后端
+
+Shiro
+
+
+  https://www.cnblogs.com/wmyskxz/p/10229148.html
+
+
+
+  https://blog.csdn.net/qq_26648623/article/details/84062666
+
+
+
+  
+    应用安全的四大基石
+
+    认证：用户身份识别，通常被称为用户“登录”。
+
+    授权：访问控制。比如某个用户是否具有...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 1, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/01/16/leetcode/">
+        <h2 class="post-title">
+            leetcode整理
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                目录
+
+
+  基础
+  分治
+  散列
+  数组
+  字符串
+  双指针
+  栈
+  堆
+  树
+  链表
+  图
+  动态规划
+  回溯
+  BFS
+  数学
+  并发
+
+
+基础
+
+频率
+
+leetcode难度及面试频率
+
+散列
+
+
+  
+    选择散列函数
+
+    
+      
+        Division method
+
+        
+          $h(k)=k ...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on January 16, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/01/15/postgraduate2/">
+        <h2 class="post-title">
+            研二的流水账
+        </h2>
+        
+        <h3 class="post-subtitle">
+            人被迫自由；因为从他被投进这个世界的那一刻起，就要对自己的一切行为负责。——萨特
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                游览
+19/10/1 国庆节共熊之颐和园。欲乘舟，然风起。途中熊谓：若见彼楼邪？尝实习焉，不料在此。
+
+20/1/16 共钱之物美购物。钱谓：或曰武汉疫重，然隐之。又忆考研事。途中见双日并出。夜共汤观利刃出鞘。翌还杭州，火车上观伦敦生活剧。既还，共父母市菜。
+
+20/4/25 廿五廿六日共母之吉麦隆市衣。三十日之美团为入职手续，未成。职员曰：学生还没接受过社会的毒打吧。他职员曰：这不是来接受...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on January 15, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2019/08/19/postgraduate1/">
+        <h2 class="post-title">
+            研一的流水账
+        </h2>
+        
+        <h3 class="post-subtitle">
+            世界上只有一种真正的英雄主义，就是认清了生活的真相后还依然热爱它。——罗曼·罗兰
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                游览
+18暑假 六月三十日共苗程骑自行车之故烧烤店傍之联通店。然後之华润超市傍联通店，正修路。还校之移动店。午後共程就货拉拉车适库所租屋，在江南大学南。共程骑青橘车还舍，是时苗已还。携物之校东门，天雨，就火车之京，转於南京，復遇復试所遇之乘务员。共程适超市购物。适北京西站携物还。初，共丁程适无锡火车站寄物，夜饭於校南门。世界杯决赛日共舍中同学饭於木屋烧烤，还观足球赛。共李熊适北海公园。七月廿...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on August 19, 2019
+    </p>
+</div>
+<hr>
+
+
+<!-- Pager -->
+
+<ul class="pager">
+    
+    <li class="previous">
+        <a href="/">&larr; Newer Posts</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/page3">Older Posts &rarr;</a>
+    </li>
+    
+</ul>
+
+
+    		</div>
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0005" 
+                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
+                    title="学习"
+                    rel="17">学习</a>
+        
+                <a data-sort="0018" 
+                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
+                    title="生活"
+                    rel="4">生活
+    </div>
+</section>
+
+
+                <!-- Short About -->
+                <section class="visible-md visible-lg">
+  <hr>
+  <h5><a href="/about/">ABOUT ME</a></h5>
+  <div class="short-about">
+    
+    <img src="/img/a-perfect-world.jpg" />
+    
+    
+    <p>没有对生活绝望，就不会爱生活。——阿尔贝·加缪</p>
+    
+    <!-- SNS Link -->
+    
+
+
+<ul class="list-inline">
+
+
+  
+  
+  <!-- add Douban by yycg-->
+  
+  <li>
+      <a target="_blank" href="https://www.douban.com/people/154702906">
+          <span class="fa-stack fa-lg">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa  fa-stack-1x fa-inverse">豆</i>
+          </span>
+      </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="http://weibo.com/5674063334">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/yycg">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+  </div>
+</section>
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="https://github.com/thisaway">Tob</a></li>
+  
+  <li><a href="https://github.com/MMochii">Mochiii</a></li>
+  
+</ul>
+
+    		</div>
+        
+	</div>
+</div>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <!-- add Douban by yycg-->
+  
+  <li>
+      <a target="_blank" href="https://www.douban.com/people/154702906">
+          <span class="fa-stack fa-lg">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa  fa-stack-1x fa-inverse">豆</i>
+          </span>
+      </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="http://weibo.com/5674063334">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/yycg">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; 盈盈冲哥的博客 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-49627206-1';
+    var _gaDomain = 'huangxuan.me';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+<!-- Side Catalog -->
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

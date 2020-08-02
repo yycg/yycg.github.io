@@ -26,7 +26,7 @@
     <link rel="manifest" href="/pwa/manifest.json">
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="shortcut icon" href="/img/letter-y.ico">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="http://localhost:4000/">
@@ -94,6 +94,10 @@
                     <li>
                         <a href="/archive/">Archive</a>
                     </li>
+                    
+                    
+                    
+                    
                     
                     
                     
@@ -171,7 +175,7 @@
 
 
 
-<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+<header class="intro-header" style="background-image: url('/img/2001-space-odyssey-sauna.jpg')">
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -203,129 +207,371 @@
             ">
     			
 <div class="post-preview">
-    <a href="/2020/01/16/leetcode/">
+    <a href="/2020/08/01/meituan/">
         <h2 class="post-title">
-            leetcode整理
+            美团的记忆
         </h2>
         
         <h3 class="post-subtitle">
-            
+            手如柔荑，肤如凝脂，领如蝤蛴，齿如瓠犀，螓首蛾眉，巧笑倩兮，美目盼兮。——诗经·卫风·硕人
         </h3>
         
         <div class="post-content-preview">
             
-                目录
+                
 
-
-  
-    基础
-  
-  
-    分治
-  
-
-
-基础
-
-主方法
-
-
-
-
-
-
-
-对于形式$T(n)=aT(n/b)+f(n)$的递归，分为3种情况：
-
-
-  
-    $f(n)=O(n^{log_ba-\varepsilon})$
-
-    $f(n)$增长多项式慢于$n^{log_ba}$（相差$n^\varepsilon$）
-
-    结论：$T(n)=\Theta(n...
             
         </div>
     </a>
     <p class="post-meta">
-        Posted by 盈盈冲哥 on January 16, 2020
+        Posted by 盈盈冲哥 on August 1, 2020
     </p>
 </div>
 <hr>
 
 <div class="post-preview">
-    <a href="/2020/01/15/postgraduate2/">
+    <a href="/2020/07/05/summary/">
         <h2 class="post-title">
-            研二的流水账
+            总结
         </h2>
         
         <h3 class="post-subtitle">
-            人被迫自由；因为从他被投进这个世界的那一刻起，就要对自己的一切行为负责。——萨特
+            
         </h3>
         
         <div class="post-content-preview">
             
-                电影
-20/1/3 首映日跟飞哥去电影院重温美丽人生，上次看还是六年前高三的寒假。电影里那首船歌首先出现在圭多和多拉定情之夜看的歌剧里，后来又在冰冷的集中营里通过广播播放。高中傍晚的校园里也常常响起这首歌，我的思绪不由地回到那个时代，虽然匆忙但是不乏纯真的友谊和轻松的时刻。据说斯皮尔伯格导演看这部电影时一度要怒而离场，身为犹太人固然格外敏感，认为纳粹题材须要严肃地演绎。但是今天重温还是使我泣...
+                分布式
+
+
+  
+    分层：应用层、服务层、数据层
+  
+  
+    如何优化性能？
+
+    
+      缓存：CDN、反向代理、分布式缓存（一致性Hash算法）
+      均衡负载：分布式（不同服务部署在不同）、集群（多台机器提供相同的服务）
+      异步（消息队列削峰、线程池）
+    
+  
+  
+    session管理：session复制、session绑定、利用...
             
         </div>
     </a>
     <p class="post-meta">
-        Posted by 盈盈冲哥 on January 15, 2020
+        Posted by 盈盈冲哥 on July 5, 2020
     </p>
 </div>
 <hr>
 
 <div class="post-preview">
-    <a href="/2019/08/19/postgraduate1/">
+    <a href="/2020/06/21/shell/">
         <h2 class="post-title">
-            研一的流水账
+            Shell
         </h2>
         
         <h3 class="post-subtitle">
-            世界上只有一种真正的英雄主义，就是认清了生活的真相后还依然热爱它。——罗曼·罗兰
+            
         </h3>
         
         <div class="post-content-preview">
             
-                游览
-18暑假 六月三十日共苗程骑自行车之故烧烤店傍之联通店。然後之华润超市傍联通店，正修路。还校之移动店。午後共程就货拉拉车适库所租屋，在江南大学南。共程骑青橘车还舍，是时苗已还。携物之校东门，天雨，就火车之京，转於南京，復遇復试所遇之乘务员。共程适超市购物。适北京西站携物还。初，共丁程适无锡火车站寄物，夜饭於校南门。世界杯决赛日共舍中同学饭於木屋烧烤，还观足球赛。共李熊适北海公园。七月廿...
+                
+  
+
+
+1
+  chmod +x ./test.sh  #使脚本具有执行权限
+
+
+不能写成test.sh，因为会去PATH里找。
+
+
+  使用变量
+
+
+$变量名
+
+${变量名}
+
+
+  字符串
+
+
+1
+2
+3
+  your_name='runoob'
+  str="Hello, I know you are \"$your_name\"! \n"
+  echo -e $str
+
+
+
+  ...
             
         </div>
     </a>
     <p class="post-meta">
-        Posted by 盈盈冲哥 on August 19, 2019
+        Posted by 盈盈冲哥 on June 21, 2020
     </p>
 </div>
 <hr>
 
 <div class="post-preview">
-    <a href="/2019/02/03/undergraduate/">
+    <a href="/2020/03/05/maven/">
         <h2 class="post-title">
-            大学的流水账
+            Maven
         </h2>
         
         <h3 class="post-subtitle">
-            一个人只要学会了回忆，就再不会孤独。——阿尔贝·加缪
+            
         </h3>
         
         <div class="post-content-preview">
             
-                电影
-16/11/18 观纪录片《宇宙时空之旅》。探索号去太阳系时，观地球犹黯淡蓝点(a pale blue dot)，而人生代代在此焉，何恨之多邪？
+                Maven学习笔记
+本笔记配合慕课网上maven视频使用效果最佳，链接如上
 
-16/12/4 观影《美国田园下的罪恶》。朱来观须臾，既查於网，惊曰：此犯罪片乎？初，母弃人之子以护子，然後弃子以护己，而曰：非我之过也。其子与他人不辨善恶，以虐待Sylvia为务。Sylvia之妹睹此而无所为，邻闻亦无所为。岂不谬哉！Sy...
+
+一.介绍
+—-
+
+Maven是基于项目对象模型（POM），可以通过一小段描述信息来管理项目的构建、报告和文档的软件项目管理工具。
+
+
+  bin目录是包含mvn的运行脚本
+  boot目录包含一个类加载器的框架，maven使用它加载自己的类库
+  conf配置文件
+  lib包含maven运行时的依赖类库
+
+
+二...
             
         </div>
     </a>
     <p class="post-meta">
-        Posted by 盈盈冲哥 on February 3, 2019
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/shiro/">
+        <h2 class="post-title">
+            Shiro
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                
+  https://www.cnblogs.com/wmyskxz/p/10229148.html
+
+
+
+  https://blog.csdn.net/qq_26648623/article/details/84062666
+
+
+
+  
+    应用安全的四大基石
+
+    认证：用户身份识别，通常被称为用户“登录”。
+
+    授权：访问控制。比如某个用户是否具有某个操作的使用权限。
+...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/os/">
+        <h2 class="post-title">
+            操作系统
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                
+  
+    什么是死锁？
+
+    
+      王道操作系统P114
+    
+
+    死锁是指多个进程因竞争资源而造成一种僵局（互相等待），若无外力作用，这些进程都无法向前推进。
+
+    例如，某计算机系统只有一台答应及和一台输入设备，进程P1正占用输入设备，同时又提出使用答应及的请求，但此时打印机正被进程P2所占用，而P2在未释放打印机之前，又提出请求使用正被P1占用着的输入设...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/network/">
+        <h2 class="post-title">
+            网络
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                网络概述
+
+
+  
+    TCP协议、IP协议、HTTP协议分别在哪一层？
+
+    运输层，网络层，应用层。
+
+    
+
+    
+      王道网络P15 ISO/OSI参考模型和TCP/IP模型
+    
+
+    OSI参考模型：物理层、数据链路层、网络层、运输层、会话层（会话管理）、表示层（数据格式转换）、应用层
+
+    TCP/IP模型：网络接口层、网际层、传输层、应用层...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/jvm/">
+        <h2 class="post-title">
+            JVM
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                JVM
+
+
+  
+    JVM加载class文件的原理
+
+    
+      https://www.cnblogs.com/Qian123/p/5707562.html
+    
+
+    Java中的所有类，都需要由类加载器装载到JVM中才能运行。类加载器本身也是一个类，而它的工作就是把class文件从硬盘读取到内存中。在写程序的时候，我们几乎不需要关心类的加载，因为这些都是隐式装载...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/java/">
+        <h2 class="post-title">
+            Java
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                基础
+
+
+  
+    Java简单类型
+
+    
+      byte：8位，最大存储数据量是255，存放的数据范围是-128~127之间。
+      short：16位，最大数据存储量是65536，数据范围是-32768~32767之间。
+      int：32位，最大数据存储容量是2的32次方减1，数据范围是负的2的31次方到正的2的31次方减1。
+      long：64位，...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2020/03/05/interview/">
+        <h2 class="post-title">
+            面试
+        </h2>
+        
+        <h3 class="post-subtitle">
+            
+        </h3>
+        
+        <div class="post-content-preview">
+            
+                项目介绍
+
+我负责智能执法平台里用户授权的工作，从用户查询到他所拥有的权限，开发接口管理用户角色、角色、权限的增删改查，和它们之间的多对多关系的增删改查。另外我还负责法规的检索和推荐的工作。
+
+项目的问题
+
+解决检索项目在服务器不能正常运行的问题
+
+(1) 页面的搜索结果不能正常显示，但是后台并没有报错。
+
+(2) 直接运行flask项目中的入口python文件没有问题，用uwsgi将配置文...
+            
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by 盈盈冲哥 on March 5, 2020
     </p>
 </div>
 <hr>
 
 
 <!-- Pager -->
+
+<ul class="pager">
+    
+    
+    <li class="next">
+        <a href="/page2">Older Posts &rarr;</a>
+    </li>
+    
+</ul>
 
 
     		</div>
@@ -351,10 +597,15 @@
         </a>
         
         
-                <a data-sort="0001" 
+                <a data-sort="0005" 
+                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
+                    title="学习"
+                    rel="17">学习</a>
+        
+                <a data-sort="0018" 
                     href="/archive/?tag=%E7%94%9F%E6%B4%BB"
                     title="生活"
-                    rel="3">生活
+                    rel="4">生活
     </div>
 </section>
 

@@ -1,0 +1,1054 @@
+I"�X<h2 id="jvm">JVM</h2>
+
+<ul>
+  <li>
+    <p>JVM加载class文件的原理</p>
+
+    <blockquote>
+      <p><a href="https://www.cnblogs.com/Qian123/p/5707562.html">https://www.cnblogs.com/Qian123/p/5707562.html</a></p>
+    </blockquote>
+
+    <p>Java中的所有类，都需要由类加载器装载到JVM中才能运行。类加载器本身也是一个类，而它的工作就是把class文件从硬盘读取到内存中。在写程序的时候，我们几乎不需要关心类的加载，因为这些都是隐式装载的，除非我们有特殊的用法，像是反射，就需要显式的加载所需要的类。</p>
+
+    <p>类装载方式，有两种</p>
+
+    <ol>
+      <li>隐式装载， 程序在运行过程中当碰到通过new 等方式生成对象时，隐式调用类装载器加载对应的类到jvm中，</li>
+      <li>显式装载， 通过class.forname()等方法，显式加载需要的类</li>
+    </ol>
+
+    <p>隐式加载与显式加载的区别：两者本质是一样?</p>
+
+    <p>Java类的加载是动态的，它并不会一次性将所有类全部加载后再运行，而是保证程序运行的基础类(像是基类)完全加载到jvm中，至于其他类，则在需要的时候才加载。这当然就是为了节省内存开销。</p>
+
+    <p>Java的类加载器有三个，对应Java的三种类:（java中的类大致分为三种：   1.系统类   2.扩展类 3.由程序员自定义的类 ）</p>
+
+    <pre><code class="language-​">     Bootstrap Loader  // 负责加载**系统类** (指的是内置类，像是String，对应于C#中的System类和C/C++标准库中的类)
+​            | 
+​          \- - ExtClassLoader   // 负责加载**扩展类**(就是继承类和实现类)
+​                          | 
+​                      \- - AppClassLoader   // 负责加载**应用类**(程序员自定义的类)
+</code></pre>
+
+    <p>三个加载器各自完成自己的工作，但它们是如何协调工作呢？哪一个类该由哪个类加载器完成呢？为了解决这个问题，Java采用了<strong>委托模型机制</strong>。</p>
+
+    <p><strong>委托模型机制的工作原理很简单：当类加载器需要加载类的时候，先请示其Parent(即上一层加载器)在其搜索路径载入，如果找不到，才在自己的搜索路径搜索该类。这样的顺序其实就是加载器层次上自顶而下的搜索，因为加载器必须保证基础类的加载。</strong> 之所以是这种机制，还有一个安全上的考虑：如果某人将一个恶意的基础类加载到jvm，委托模型机制会搜索其父类加载器，显然是不可能找到的，自然就不会将该类加载进来。</p>
+
+    <p>我们可以通过这样的代码来获取类加载器:</p>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nc">ClassLoader</span> <span class="n">loader</span> <span class="o">=</span> <span class="nc">ClassName</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">();</span>
+<span class="nc">ClassLoader</span> <span class="nc">ParentLoader</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="na">getParent</span><span class="o">();</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+
+    <p>注意一个很重要的问题，就是Java在逻辑上并不存在BootstrapLoader的实体！因为它是用C++编写的，所以打印其内容将会得到null。</p>
+
+    <p>前面是对类加载器的简单介绍，它的原理机制非常简单，就是下面几个步骤:</p>
+
+    <ol>
+      <li>
+        <p><strong>加载</strong>:查找和导入<strong>class文件</strong>;</p>
+      </li>
+      <li>
+        <p><strong>连接</strong>:</p>
+
+        <p>(1)<strong>验证</strong>:检查<strong>载入的class文件数据的正确性</strong>;</p>
+
+        <p>(2)<strong>准备</strong>:<strong>为类的静态变量分配存储空间</strong>;</p>
+
+        <p>(3)<strong>解析</strong>:<strong>将符号引用转换成直接引用</strong>(这一步是可选的)</p>
+      </li>
+      <li>
+        <p><strong>初始化</strong>:<strong>初始化静态变量</strong>，静态代码块。</p>
+      </li>
+    </ol>
+
+    <p>这样的过程在程序调用类的静态成员的时候开始执行，所以静态方法main()才会成为一般程序的入口方法。类的构造器也会引发该动作。</p>
+
+    <p><img src="https://uploadfiles.nowcoder.com/images/20180926/308572_1537962641528_95106A90F455887E4A4B298735A4641B" alt="img" /></p>
+
+    <blockquote>
+      <p>《深入理解JVM》P191 双亲委派模型</p>
+    </blockquote>
+
+    <p>绝大部分Java程序都会使用到以下三种系统提供的类加载器：</p>
+
+    <ul>
+      <li>启动类加载器(Bootstrap ClassLoader): 这个类加载器负责将存放在<code class="highlighter-rouge">&lt;JAVA_HOME&gt;\lib</code>目录中的，或者被-Xbootclasspath参数所指定的路径中的，并且是虚拟机识别的（仅按照文件名识别，如rt.jar，名字不符合的类库即使放在lib目录中也不会被加载）类库加载到虚拟机内存中。启动类加载器无法被Java程序直接使用。</li>
+      <li>扩展类加载器(Extension ClassLoader)：这个加载器由<code class="highlighter-rouge">sun.misc.Launcher$ExtClassLoader</code>实现，它负责加载<code class="highlighter-rouge">&lt;Java_HOME&gt;\lib\ext</code>目录中的，或者被<code class="highlighter-rouge">java.ext.dirs</code>系统变量所指定的路径中的所有类库，开发者可以直接使用扩展类加载器。</li>
+      <li>应用程序类加载器(Application ClassLoader)：这个类加载器由<code class="highlighter-rouge">sun.misc.Launcher$AppClassLoader</code>来实现。由于这个类加载器是ClassLoader中的<code class="highlighter-rouge">getSystemClassLoader()</code>方法的返回值，所以一般也称它为系统类加载器。它负责加载用户类路径(ClassPath)上所指定的类库，开发者可以直接使用这个类加载器，如果应用程序中没有定义过自己的类加载器，一般情况下这个就是程序中的默认的类加载器。</li>
+    </ul>
+
+    <p>我们的应用程序都是由者三种类加载器互相配合进行加载的，如果有必要，还可以加入自己定义的类加载器。</p>
+
+    <p><strong>双亲委派模型</strong>的工作过程是：如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委托给父类加载器去完成，每一个层次的类加载器都是如此，因此所有的加载器请求最终都应该传送到顶层的启动类加载器中，只有当父加载器自己无法完成这个加载请求（它的搜索范围中没有找到所需的类）时，子加载器才会尝试自己去加载。</p>
+
+    <blockquote>
+      <p>《深入理解JVM》P194 破坏双亲委派模型</p>
+    </blockquote>
+
+    <p>双亲委派模型主要出现过三次较大规模的“被破坏”情况。</p>
+
+    <p>第一次出现在双亲委派模型出现之前————即JDK1.2发布之前。由于双亲委派模型在JDK1.0时代就已经存在，面对已经存在的用户自定义类加载器的实现代码，Java设计者引入双亲委派模型时不得不做出一些妥协。为了向前兼容，JDK1.2之后的java.lang.ClassLoader添加了一个新的protected方法findClass()，在次之前，用户继承<strong>java.lang.ClassLoader的唯一目的就是重写loadClass()方法</strong>。</p>
+
+    <p><strong>JDK1.2之后已不提倡用户再去覆盖loadClass()方法，而应该把自己的类加载逻辑写到findClass()方法中，在loadClass()方法的逻辑里如果父类加载失败，则会调用自己的findClass()方法来完成加载</strong>，这样就可以保证新写出来的类加载器时符合双亲委派规则的。</p>
+
+    <p>第二次是<strong>由这个模型的自身的缺陷所导致</strong>的，基础类之所以被称为“基础”，是因为它们总是作为被用户代码调用的API，但如果<strong>基础类又要调用回用户的代码</strong>，那该怎么办？</p>
+
+    <p><strong>JNDI服务由启动类加载器去加载</strong>，但启动类加载器不可能“认识”这些代码啊！为了解决这个困境，Java设计团队只好引入了一个不太优雅的设计：<strong>线程上下文类加载器</strong>。JNDI服务使用这个线程上下文类加载器去加载所需要的SPI代码，也就是<strong>父类加载器请求子类加载器去完成类加载器</strong>的动作，这种行为实际上就是打通了双亲委派模型的层次结构来你想使用类加载器。</p>
+
+    <p>第三次是由于<strong>用户对程序动态性的追求</strong>而导致的，这里所说的“动态性”指的是当前一些非常“热”门的名词：代码热替换、模块热部署等，说白了就是希望应用程序能像我们的电脑外设那样，插上鼠标或U盘，不用重启机器就能立即使用，鼠标有问题或要升级就换个鼠标，不用停机也不用重启。</p>
+
+    <blockquote>
+      <p><a href="https://snailclimb.gitee.io/javaguide/#/docs/java/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8">https://snailclimb.gitee.io/javaguide/#/docs/java/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8</a></p>
+    </blockquote>
+
+    <p>双亲委派模型的好处</p>
+
+    <p>双亲委派模型保证了Java程序的稳定运行，<strong>可以避免类的重复加载</strong>（JVM 区分不同类的方式不仅仅根据类名，相同的类文件被不同的类加载器加载产生的是两个不同的类），<strong>也保证了 Java 的核心 API 不被篡改</strong>。如果没有使用双亲委派模型，而是每个类加载器加载自己的话就会出现一些问题，比如我们编写一个称为 java.lang.Object 类的话，那么程序运行的时候，系统就会出现多个不同的 Object 类。</p>
+  </li>
+  <li>
+    <p>OOM、CPU占用过高排查</p>
+
+    <ul>
+      <li>jps列出正在运行的虚拟机进程</li>
+      <li><strong>jstat统计信息，包括分区占用情况</strong></li>
+      <li><strong>jmap内存映像</strong></li>
+      <li><strong>jstack堆栈跟踪</strong></li>
+      <li><strong>VisualVM：生成浏览堆转储快照、分析CPU、内存性能</strong></li>
+      <li>top ps</li>
+    </ul>
+  </li>
+  <li>
+    <p>JVM是如何实现线程的？</p>
+
+    <blockquote>
+      <p>《深入理解JVM》P333 Java与线程</p>
+    </blockquote>
+
+    <blockquote>
+      <p><a href="https://blog.csdn.net/qq_33938256/article/details/52615257">https://blog.csdn.net/qq_33938256/article/details/52615257</a></p>
+    </blockquote>
+
+    <p>并发不一定要依赖多线程（如PHP中很常见的多进程并发），但是在Java里面谈论并发，大多数都与线程脱不开关系。</p>
+
+    <ul>
+      <li>
+        <p>线程的实现</p>
+
+        <p>线程是比进程更轻量级的调度执行单位，线程的引入，可以把一个进程的<strong>资源分配</strong>和<strong>执行调度</strong>分开，各个线程既可以共享进程资源（内存地址、文件I/O等），又可以独立调度（线程是CPU调度的最基本单位）。</p>
+
+        <p>主流的操作系统都提供了线程实现，Java语言则提供了在不同硬件和操作系统平台下对线程操作的同一处理，每个java.lang.Thread类的实例就代表了一个线程。<strong>Thread类的关键方法，都声明为Native</strong>。这意味着这个方法无法或没有使用平台无关的手段来实现，也可能是为了执行效率。</p>
+
+        <p>实现线程主要有三种方式：使用内核线程实现，使用用户线程实现，使用用户线程加轻量级进程混合实现。</p>
+
+        <ol>
+          <li>
+            <p><strong>使用内核线程实现</strong></p>
+
+            <p>内核线程就是直接由操作系统内核支持的线程。</p>
+
+            <ul>
+              <li><strong>由内核来完成线程切换</strong></li>
+              <li>内核通过调度器Scheduler调度线程，并将线程的任务映射到各个CPU上</li>
+              <li>程序使用<strong>内核线程的高级接口</strong>，<strong>轻量级进程</strong>(Light Weight Process,LWP)–&gt;(!!!名字是进程，实际是线程)</li>
+              <li><strong>用户态和内核态切换消耗内核资源</strong></li>
+              <li>轻量级进程与内核线程之间的1:1关系称为<strong>一对一线程模型</strong></li>
+            </ul>
+          </li>
+          <li>
+            <p><strong>使用用户线程实现</strong></p>
+
+            <ul>
+              <li><strong>系统内核不能感知线程存在的实现</strong></li>
+              <li><strong>用户线程的建立、同步、销毁和调度完全在用户态中完成</strong></li>
+              <li>所有线程操作需要用户程序自己处理，复杂度高</li>
+              <li>这种进程与线程之间1:N的关系称为<strong>一对多的线程模型</strong></li>
+            </ul>
+          </li>
+          <li>
+            <p><strong>混合实现</strong></p>
+
+            <ul>
+              <li>轻量级进程作为用户线程和内核线程之间的桥梁</li>
+              <li>混合模式中，用户线程与轻量级进程的数量比是不定的，是M:N的关系，称为<strong>多对多关系</strong></li>
+            </ul>
+          </li>
+          <li>
+            <p>Java线程的实现</p>
+
+            <p>对于Sun JDK来说，它的Windows版与Linux版都是使用一对一的线程模型来实现的，一条Java线程就映射到一条轻量级进程之中，因为Windows和Linux系统系统提供的线程模型就是一对一的。</p>
+          </li>
+        </ol>
+      </li>
+      <li>
+        <p>Java线程调度</p>
+
+        <p>线程调度是指系统为线程分配处理器使用权的过程，主要调度方式有两种，分别是协同式线程调度和抢占式线程调度。</p>
+
+        <ul>
+          <li>
+            <p>协同式调度：线程的执行时间由线程本身来控制，线程把自己的工作执行完了之后，要主动通知系统切换到另外一个线程上去。</p>
+
+            <p>优点：实现简单，而且由于线程要把自己的事情干完后才会进行线程切换，切换操作对线程自己是可知的，所以没有什么线程同步的问题。</p>
+
+            <p>缺点：线程执行时间不可控制，甚至如果一个线程编写有问题，一直不告知系统进行线程切换，那么程序就会一直阻塞在那里。</p>
+          </li>
+          <li>
+            <p>抢占式调度：每个线程将由系统来分配执行时间，线程的切换不由线程本身来决定。</p>
+
+            <p>在这种实现线程调度的方式下，线程的执行时间是系统可控的，也不会有一个线程导致整个进程阻塞的问题，Java使用的线程调度方式就是抢占式调度。</p>
+          </li>
+        </ul>
+
+        <p>虽然说Java线程调度是系统自动完成的，但是我们还是可以“建议”系统给某些线程多分配一点执行时间，另外的一些线程则可以少分配一点——这项操作可以通过设置线程优先级来完成。Java语言一共设置了10个级别的线程优先级。</p>
+
+        <p>不过，线程优先级并不是太靠谱，原因是Java的线程是被映射到系统原生线程上来实现的，所以线程调度最终还是有操作系统说了算，虽然现在很多操作系统都提供线程优先级的概念，但是并不见得能与Java线程的优先级一一对应。Windows只有7中优先级，比Java线程优先级少，不得不出现几个优先级相同的情况。还有其他情况让我们不能太依赖优先级：优先级可能会被系统自行改变。例如在Windows系统中存在一个名为“优先级推进器”的功能，它的大致作用就是当系统发现一个线程被执行得特别“勤奋努力”的话，可能会越过线程优先级去为它分配执行时间。</p>
+      </li>
+    </ul>
+
+    <blockquote>
+      <p>王道操作系统 P34</p>
+    </blockquote>
+
+    <ul>
+      <li>
+        <p>线程的实现方式</p>
+
+        <p>线程的实现可以分为两类，<strong>用户级线程</strong>和<strong>内核级线程</strong>。</p>
+
+        <p><strong>在用户级线程中，有关线程管理的所有工作都由应用程序完成，内核意识不到线程的存在。应用程序可以通过使用线程库设计成多线程程序。</strong>通常，应用程序从单线程起始，在该线程中开始运行，在其运行的任何时刻，可以通过调用线程库中的派生例程创建一个在相同进程中运行的新线程。</p>
+
+        <p><strong>在内核级线程中，线程管理的所有工作由内核完成，应用程序没有进行线程管理的代码，只有一个到内核级线程的编程接口。</strong>内核为进程及其内部的每个线程维护上下文信息，调度也是在内核基于线程架构的基础上完成。</p>
+
+        <p>在一些系统中，使用<strong>组合方式</strong>的多线程实现。线程创建完全在用户空间中完成，线程的调度和同步也在应用程序中进行，一个应用程序中的多个用户级线程被映射到一些内核级线程上。</p>
+      </li>
+      <li>
+        <p>多线程模型</p>
+
+        <p>有的系统同时支持用户线程和内核线程，由此产生了不同的多线程模型。</p>
+
+        <ol>
+          <li>
+            <p><strong>多对一模型</strong>。<strong>将多个用户级线程映射到一个内核级线程</strong>，线程管理在用户空间完成。</p>
+
+            <p>优点：线程管理是在用户空间进行的，因此效率比较高。</p>
+
+            <p>缺点：当一个线程在使用内核服务被阻塞，那么整个进程都会被阻塞；多个线程不能并行地运行在多处理器上。</p>
+          </li>
+          <li>
+            <p><strong>一对一模型</strong>。将每个用户及线程映射到一个内核级线程。</p>
+
+            <p>优点：当一个线程被阻塞后允许另一个线程继续执行，所以并发能力较强。</p>
+
+            <p>缺点：每创建一个用户及线程都需要创建一个内核级线程与其对应，这样创建线程的开销比较大，会影响到应用程序的性能。</p>
+          </li>
+          <li>
+            <p><strong>多对多模型</strong>。将$n$个用户及线程映射到$m$个内核级线程上，要求$m\le n$。</p>
+          </li>
+        </ol>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>什么是Java内存模型？</p>
+
+    <blockquote>
+      <p>《深入理解JVM》P318</p>
+    </blockquote>
+
+    <p><strong>Amdahl定律</strong></p>
+
+    <p>并发处理的广泛应用是使得Amdahl定律代替摩尔定律称为计算机性能发展源动力的根本原因，也是人类压榨计算机运算能力最有力的武器。（Amdahl定律通过系统中的并行化和串行化的比重来描述多处理器系统能获得的运算加速能力，摩尔定律则用于描述处理器晶体管数量与运算效率之间的发展关系。这两个定律的更替代表了近年来硬件发展从追求处理器频率到追求多核化并行处理的发展过程。）</p>
+
+    <p><strong>Java内存模型</strong></p>
+
+    <p>Java虚拟机规范中试图定义一种Java内存模型(JMM)来屏蔽掉各种硬件和操作系统的内存访问差异，以实现让Java程序在各种平台下都能达到一致的并发效果。</p>
+
+    <p>Java内存模型规定了所有的变量都存储在主内存中。每个线程还有自己的工作内存，线程的工作内存中给保存了被该线程使用到的变量的主内存副本拷贝，线程对变量的所有操作（读取、赋值等）都必须在工作内存中进行，而不能直接读取主内存中的变量。不同的线程之间也无法直接访问对方工作内存中的变量，线程间变量值的传递均需要通过主内存来完成。</p>
+
+    <p><strong>volatile</strong></p>
+
+    <p>当一个变量被定义成volatile之后，它将具备两种特性，<strong>第一是保证此变量对所有线程的可见性</strong>，这里的“可见性”是指当一条线程修改了这个变量的值，新值对于其他线程来说是可以立即得知的。</p>
+
+    <p>volatile变量在各个线程的工作内存中不存在一致性问题，<strong>但是Java里面的运算并非原子操作，导致volatile变量的运算在并发下一样是不安全的</strong>。（i++的例子）</p>
+
+    <p><strong>使用volatile变量的第二个语义是禁止指令重排序优化</strong>，普通的变量仅仅会保证在该方法的执行过程中所有依赖赋值结果的地方都能获取到正确的结果，而不能保证变量赋值操作的顺序与程序代码中的执行顺序一致。（例子：如果定义initialized变量时没有使用volatile修饰，就可能会由于指令重排序的优化，导致位于线程A中最后语句的代码initialized=true被提前执行，这样在线程B中使用配置信息的代码就可能出现错误，而volatile关键字则可以避免此类情况的发生）</p>
+
+    <p><strong>happens-before</strong></p>
+
+    <p>先行发生(happens-before)是Java内存模型中定义的两项操作之间的偏序关系，如果说操作A先行发生于操作B，其实就是说在发生操作B之前，操作A产生的影响能被操作B观察到，“影响”包括修改了内存中共享变量的值、发送了消息、调用了方法等。</p>
+
+    <p>下面是Java内存模型下一些“天然的”先行发生关系，这些先行发生关系无需任何同步器协助就已经存在，可以在编码中直接使用。</p>
+
+    <ul>
+      <li>程序次序规则：在一个线程内，按照程序代码顺序，书写在前面的操作先行发生于书写在后面的操作。准确地说应该是控制流顺序而不是程序代码顺序，因为要考虑分支、循环等结构。</li>
+      <li>管程锁定规则</li>
+      <li>volatile变量规则：对一个volatile变量的写操作先行发生于后面对这个变量的读操作，这里的“后面”同样是指时间上的先后顺序。</li>
+      <li>线程启动规则</li>
+      <li>线程终止规则</li>
+      <li>线程中断规则</li>
+      <li>对象终结规则</li>
+      <li>传递性</li>
+    </ul>
+
+    <blockquote>
+      <p><a href="https://blog.csdn.net/suifeng3051/article/details/52611310">https://blog.csdn.net/suifeng3051/article/details/52611310</a></p>
+    </blockquote>
+
+    <p>Java内存模型(简称JMM)。<strong>JMM决定一个线程对共享变量的写入何时对另一个线程可见</strong>。从抽象的角度来看，JMM定义了线程和主内存之间的抽象关系：<strong>线程之间的共享变量存储在主内存（main memory）中，每个线程都有一个私有的本地内存（local memory），本地内存中存储了该线程以读/写共享变量的副本</strong>。本地内存是JMM的一个抽象概念，并不真实存在。它涵盖了缓存，写缓冲区，寄存器以及其他的硬件和编译器优化。</p>
+
+    <p><img src="https://img-blog.csdn.net/20160921182337904" alt="这里写图片描述" /></p>
+
+    <p>从上图来看，线程A与线程B之间如要通信的话，必须要经历下面2个步骤：</p>
+
+    <ol>
+      <li>首先，线程A把本地内存A中更新过的共享变量刷新到主内存中去。</li>
+      <li>然后，线程B到主内存中去读取线程A之前已更新过的共享变量。</li>
+    </ol>
+
+    <p>下面通过示意图来说明这两个步骤：</p>
+
+    <p><img src="https://img-blog.csdn.net/20160921182748551" alt="这里写图片描述" /></p>
+
+    <p>如上图所示，本地内存A和B有主内存中共享变量x的副本。假设初始时，这三个内存中的x值都为0。线程A在执行时，把更新后的x值（假设值为1）临时存放在自己的本地内存A中。当线程A和线程B需要通信时，线程A首先会把自己本地内存中修改后的x值刷新到主内存中，此时主内存中的x值变为了1。随后，线程B到主内存中去读取线程A更新后的x值，此时线程B的本地内存的x值也变为了1。</p>
+
+    <p>从整体来看，这两个步骤实质上是线程A在向线程B发送消息，而且这个通信过程必须要经过主内存。JMM通过控制主内存与每个线程的本地内存之间的交互，来为java程序员提供内存可见性保证。</p>
+  </li>
+  <li>
+    <p>JVM运行时数据区域</p>
+
+    <blockquote>
+      <p><a href="https://snailclimb.gitee.io/javaguide/#/docs/java/jvm/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F?id=%e5%86%99%e5%9c%a8%e5%89%8d%e9%9d%a2-%e5%b8%b8%e8%a7%81%e9%9d%a2%e8%af%95%e9%a2%98">https://snailclimb.gitee.io/javaguide/#/docs/java/jvm/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F?id=%e5%86%99%e5%9c%a8%e5%89%8d%e9%9d%a2-%e5%b8%b8%e8%a7%81%e9%9d%a2%e8%af%95%e9%a2%98</a></p>
+    </blockquote>
+
+    <p><strong>线程私有的：</strong></p>
+
+    <ul>
+      <li><strong>程序计数器</strong></li>
+      <li><strong>虚拟机栈</strong></li>
+      <li><strong>本地方法栈</strong></li>
+    </ul>
+
+    <p><strong>线程共享的：</strong></p>
+
+    <ul>
+      <li><strong>堆</strong></li>
+      <li><strong>方法区</strong></li>
+      <li>直接内存 (非运行时数据区的一部分)</li>
+    </ul>
+
+    <p><img src="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-3/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F.png" alt="img" /></p>
+
+    <blockquote>
+      <p>《深入理解JVM》P25 运行时数据区域</p>
+    </blockquote>
+
+    <p>Java虚拟机在执行Java程序的过程中会把它所管理的内存划分为若干个不同的数据区域。</p>
+
+    <ul>
+      <li>
+        <p>程序计数器</p>
+
+        <p>程序计数器是一块较小的内存空间，它的作用可以看作是当前线程所执行的字节码的行号指示器。<strong>字节码解释器工作时通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等功能都需要依赖这个计数器来完成。</strong></p>
+
+        <p>另外，<strong>为了线程切换后能恢复到正确的执行位置，每条线程都需要有一个独立的程序计数器，各线程之间计数器互不影响，独立存储，我们称这类内存区域为“线程私有”的内存。</strong></p>
+
+        <p><strong>注意：程序计数器是唯一一个不会出现 OutOfMemoryError 的内存区域，它的生命周期随着线程的创建而创建，随着线程的结束而死亡。</strong></p>
+      </li>
+      <li>
+        <p>Java虚拟机栈</p>
+
+        <p><strong>与程序计数器一样，Java 虚拟机栈也是线程私有的，它的生命周期和线程相同，描述的是 Java 方法执行的内存模型，每次方法调用的数据都是通过栈传递的。</strong></p>
+
+        <p><strong>Java 内存可以粗糙的区分为堆内存（Heap）和栈内存 (Stack),其中栈就是现在说的虚拟机栈，或者说是虚拟机栈中局部变量表部分。</strong> （实际上，Java 虚拟机栈是由一个个栈帧组成，而每个栈帧中都拥有：局部变量表、操作数栈、动态链接、方法出口信息。）</p>
+
+        <p><strong>局部变量表主要存放了编译器可知的各种数据类型</strong>（boolean、byte、char、short、int、float、long、double）、<strong>对象引用</strong>（reference 类型，它不同于对象本身，可能是一个指向对象起始地址的引用指针，也可能是指向一个代表对象的句柄或其他与此对象相关的位置）。</p>
+
+        <p><strong>Java 虚拟机栈会出现两种错误：StackOverFlowError 和 OutOfMemoryError。</strong></p>
+
+        <ul>
+          <li><strong>StackOverFlowError：</strong> 若 Java 虚拟机栈的内存大小不允许动态扩展，那么当线程请求栈的深度超过当前 Java 虚拟机栈的最大深度的时候，就抛出 StackOverFlowError 错误。</li>
+          <li><strong>OutOfMemoryError：</strong> 若 Java 虚拟机栈的内存大小允许动态扩展，且当线程请求栈时内存用完了，无法再动态扩展了，此时抛出 OutOfMemoryError 错误。</li>
+        </ul>
+
+        <p>Java 虚拟机栈也是线程私有的，每个线程都有各自的 Java 虚拟机栈，而且随着线程的创建而创建，随着线程的死亡而死亡。</p>
+      </li>
+      <li>
+        <p>本地方法栈</p>
+
+        <p>和虚拟机栈所发挥的作用非常相似，区别是： <strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</p>
+
+        <p>本地方法被执行的时候，在本地方法栈也会创建一个栈帧，用于存放该本地方法的局部变量表、操作数栈、动态链接、出口信息。</p>
+
+        <p>方法执行完毕后相应的栈帧也会出栈并释放内存空间，也会出现 StackOverFlowError 和 OutOfMemoryError 两种错误。</p>
+
+        <blockquote>
+          <p><a href="https://blog.csdn.net/wike163/article/details/6635321">https://blog.csdn.net/wike163/article/details/6635321</a></p>
+        </blockquote>
+
+        <blockquote>
+          <p>一个Native Method是这样一个java的方法：该方法的实现由非java语言实现，比如C。</p>
+        </blockquote>
+      </li>
+      <li>
+        <p>Java堆</p>
+
+        <p>Java堆是被所有线程共享的一块内存区域，在虚拟机启动时创建。此内存区域的唯一目的就是存放对象实例，几乎所有的对象实例都是在这里分配内存。</p>
+
+        <p>Java堆是垃圾收集器管理的主要区域，因此很多时候也被称作“GC堆”。如果从内存回收的角度看，由于现在收集器基本都是采用的分代收集算法，所以Java堆中还可以细分为：新生代和老生代，再细致一点的有Eden空间、From Survivor空间、To Survivor空间等。</p>
+
+        <p>根据Java虚拟机规范的规定，Java堆可以处于物理上不连续的内存空间中，只要逻辑上是连续的即可，就像我们的磁盘空间一样。在实现时，既可以实现成固定大小的，也可以是可扩展的，不过当前主流的虚拟机都是按照可扩展来实现的（通过-Xmx和-Xms控制）。如果在堆中没有内存完成实例分配，并且堆也无法再扩展时，将会抛出OutOfMemoryError异常。</p>
+      </li>
+      <li>
+        <p>方法区</p>
+
+        <p>方法区与 Java 堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的<strong>类信息、常量、静态变量</strong>、即时编译器编译后的代码等数据。虽然 <strong>Java 虚拟机规范把方法区描述为堆的一个逻辑部分</strong>，但是它却有一个别名叫做 <strong>Non-Heap（非堆）</strong>，目的应该是与 Java 堆区分开来。</p>
+
+        <p>《Java 虚拟机规范》只是规定了有方法区这么个概念和它的作用，并没有规定如何去实现它。那么，在不同的 JVM 上方法区的实现肯定是不同的了。 <strong>方法区和永久代的关系很像 Java 中接口和类的关系，类实现了接口，而永久代就是 HotSpot 虚拟机对虚拟机规范中方法区的一种实现方式。</strong> 也就是说，永久代是 HotSpot 的概念，方法区是 Java 虚拟机规范中的定义，是一种规范，而永久代是一种实现，一个是标准一个是实现，其他的虚拟机实现并没有永久代这一说法。</p>
+
+        <p>根据Java虚拟机规范的规定，当方法区无法满足内存分配需求时，将抛出OutOfMemoryError异常。</p>
+      </li>
+      <li>
+        <p>运行时常量池</p>
+
+        <p>运行时常量池是方法区的一部分。Class 文件中除了有类的版本、字段、方法、接口等描述信息外，还有一项时常量池信息，用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后存放到方法区的运行时常量池中。</p>
+
+        <p>既然运行时常量池是方法区的一部分，自然受到方法区内存的限制，当常量池无法再申请到内存时会抛出 OutOfMemoryError 错误。</p>
+      </li>
+      <li>
+        <p>直接内存</p>
+
+        <p><strong>直接内存并不是虚拟机运行时数据区的一部分，也不是虚拟机规范中定义的内存区域，但是这部分内存也被频繁地使用。而且也可能导致 OutOfMemoryError 错误出现。</strong></p>
+
+        <p>JDK1.4 中新加入的 <strong>NIO(New Input/Output) 类</strong>，引入了一种基于<strong>通道（Channel）</strong> 与<strong>缓存区（Buffer）</strong> 的 I/O 方式，它可以直接使用 Native 函数库直接分配堆外内存，然后通过一个存储在 Java 堆中的 DirectByteBuffer 对象作为这块内存的引用进行操作。这样就能在一些场景中显著提高性能，因为<strong>避免了在 Java 堆和 Native 堆之间来回复制数据</strong>。</p>
+
+        <p>本机直接内存的分配不会受到 Java 堆的限制，但是，既然是内存就会受到本机总内存大小以及处理器寻址空间的限制。</p>
+      </li>
+      <li>
+        <p>jdk1.8：<strong>用元数据区替代永久代，实现方法区，并把字符串常量池和类静态变量迁移到堆中存放。</strong></p>
+
+        <p><img src="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-3Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9FJDK1.8.png" alt="img" /></p>
+
+        <p>元数据区直接存放在本地内存中，不在java虚拟机中，因此加载多少类的内存限制由系统实际的可用空间控制。</p>
+
+        <p>为什么要用元数据区（metadata）代替永久代</p>
+
+        <p>1、字符串存放在永久代，容易出现性能和内存溢出的问题</p>
+
+        <p>2、类信息比较难确定其大小，永久代空间分配困难</p>
+
+        <p>3、永久代为垃圾回收带来了不必要的复杂度，并且回收效率低</p>
+
+        <blockquote>
+          <p><strong>整个永久代有一个 JVM 本身设置固定大小上限，无法进行调整，而元空间使用的是直接内存，受本机可用内存的限制，虽然元空间仍旧可能溢出，但是比原来出现的几率会更小。</strong></p>
+        </blockquote>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>GC中如何判断对象是否需要被回收？</p>
+
+    <blockquote>
+      <p>《深入理解JVM》P44 对象已死？</p>
+
+      <p><a href="https://blog.csdn.net/u010126792/article/details/82855265">https://blog.csdn.net/u010126792/article/details/82855265</a> 判断一个对象是否可用（存活，可回收），GC回收对象的过程方式，finilized函数了解吗，调用了finilized函数的对象一定会被回收吗，可以主动调用finilized函数吗？</p>
+    </blockquote>
+
+    <ul>
+      <li>
+        <p>判断对象是否需要被回收</p>
+
+        <ul>
+          <li>
+            <p>引用计数算法</p>
+
+            <p>给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加1；当引用失效时，计数器值就减1；任何时候计数器都为0的对象就是不可能再被使用的。</p>
+
+            <p>Java语言中没有选用引用计数算法来管理内存，其中最主要的原因是它很难解决对象之间的相互循环引用的问题。但是它们的引用计数可能都不为0，计数引用算法无法通知GC收集器回收它们。</p>
+          </li>
+          <li>
+            <p>根搜索算法</p>
+
+            <p>在主流的商用程序语言中，都是使用<strong>根搜索算法</strong>判断对象是否存活。这个算法的基本思路就是通过一系列的名为”GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为引用链，当一个对象到GC Roots没有任何引用链相连（用图论的话来说就是从GC Roots到这个对象不可达）时，则证明此对象时不可用的。</p>
+
+            <p>在Java语言中，可作为GC Roots的对象包括下面几种：</p>
+
+            <ol>
+              <li><strong>虚拟机栈</strong>（栈帧中的本地变量表）中引用的对象</li>
+              <li><strong>方法区中的类静态变量</strong>引用的对象</li>
+              <li><strong>方法区中的常量</strong>引用的对象</li>
+              <li><strong>本地方法栈中JNI</strong>（即一般说的Native方法）的引用的变量</li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p>finalize()方法</p>
+
+        <p>在根搜索算法中不可达的对象，也并非是“非死不可”的，这时候它们暂时处于“缓刑”阶段，要真正宣告一个对象死亡，至少要经历两次标记过程：如果对象在进行根搜索后发现没有与GC Roots相连接的引用链，那它将会被第一次标记并且进行一次筛选，筛选的条件是此对象是否有必要执行finalize()方法。当对象没有覆盖finalize()方法，或者finalize()方法已被虚拟机调用过，虚拟机将这两种情况都视为“没有必要执行”。</p>
+
+        <p>如果这个对象被判定为有必要执行finalize()方法，那么这个对象将会被放置在一个名为F-Queue的队列之中，并在稍后由一条由虚拟机自动建立的、低优先级的Finalizer线程区执行。这里所谓的“执行”是指虚拟机会触发这个方法，但并不承诺会等待它运行结束。这样做的原因是，如果一个对象在finalize()方法中执行缓慢，或者发生了死循环（更极端的情况），将很可能会导致F-Queue队列中的其他对象永久处于等待状态，甚至导致整个内存回收系统崩溃。finalize()方法是对象逃脱死亡命运的最后一次机会，稍后GC将对F-Queue中的对象进行第二次小规模的标记，<strong>如果对象要在finalize()中成功拯救自己——只要重新与引用链上的任何一个对象建立关联即可，譬如把自己（this关键字）复制给某个类变量或对象的成员变量，那在第二次标记时它将被移除出“即将回收”的集合</strong>；如果对象这时候还没有逃脱，那它就真的离死不远了。</p>
+
+        <p>并不鼓励使用finalize()方法来拯救对象，因为它的运行代价高昂，不确定性大，无法保证各个对象的调用顺序。finalize()能做的所有工作，使用try-finally或其他方式都可以做得更好。</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Eden区和Survivor区的含义以及工作原理？</p>
+
+    <p>目前主流的虚拟机实现都采用了分代收集的思想，把整个堆区划分为新生代和老年代；新生代又被划分成Eden 空间、 From Survivor 和 To Survivor 三块区域。</p>
+
+    <p>我们把Eden : From Survivor : To Survivor 空间大小设成 8 : 1 : 1 ，对象总是在 Eden 区出生， From Survivor 保存当前的幸存对象， To Survivor 为空。一次 gc 发生后： 1）Eden 区活着的对象 ＋ From Survivor 存储的对象被复制到 To Survivor ；2) 清空 Eden 和 From Survivor ； 3) 颠倒 From Survivor 和 To Survivor 的逻辑关系： From 变 To ， To 变 From 。可以看出，只有在 Eden 空间快满的时候才会触发 Minor GC 。而 Eden 空间占新生代的绝大部分，所以 Minor GC 的频率得以降低。当然，使用两个 Survivor 这种方式我们也付出了一定的代价，如 10% 的空间浪费、复制对象的开销等。</p>
+
+    <blockquote>
+      <p>《深入理解JVM》P51 垃圾收集算法</p>
+    </blockquote>
+
+    <ul>
+      <li>
+        <p>标记-清除算法</p>
+
+        <p>算法分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，在标记完成后统一回收掉所有被标记的对象。</p>
+
+        <p>它的主要缺点有两个：一个是效率问题，标记和清除过程的效率都不高；另外一个是空间问题，标记清除之后会产生大量布莱纳许的内存碎片，空间碎片太多可能会导致，当程序在以后的运行过程中需要分配较大对象时无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。</p>
+      </li>
+      <li>
+        <p>复制算法</p>
+
+        <p>为了解决效率问题，一种称为“复制”的收集算法出现了，它将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。当这块用完了，就将还活着的对象复制到另外一块上面，然后再把已使用过的内存空间一次清理掉。这样是的每次都是对其中的一块进行内存回收，内存分配时也就不用考虑内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可，实现简单，运行高效。只是这种算法的代价时将内存缩小为原来的一半，未免太高了一点。</p>
+
+        <p>现在的商业虚拟机都采用这种收集算法来回收新生代，新生代中的对象98%是朝生夕死的，所以并不需要按照1:1的比例来划分内存空间，而是将内存分为一块较大的Eden空间和两块较小的Survivor空间，每次使用Eden和其中的一块Survivor。当回收时，将Eden和Survivor中还存活着的对象一次性地拷贝到另外一块Survivor空间上，最后清理掉Eden和刚才用过的Survivor的空间。HotSpot虚拟机默认Eden和Survivor的大小比例是8:1，也就是每次新生代中可用内存空间为整个新生代容量的90%(80%+10%)，只有10%的内存是会被“浪费”的。当然，98%的对象可回收只是一般场景下的数据，我们没有办法保证每次回收都只有不多于10%的对象存活，当Survivor空间不够时，需要依赖其他内存（这里指老年代）进行分配担保。</p>
+      </li>
+      <li>
+        <p>标记-整理算法</p>
+
+        <p>根据老年代的特点，有人提出了另外一种“标记-整理”算法，标记过程仍然与“标记-清除”算法一样，但后续步骤不是直接对可回收对象对象进行清理，而是所有存活的对象都向一端移动，然后直接清理掉段边界以外的内存。</p>
+      </li>
+      <li>
+        <p><strong>分代收集算法</strong></p>
+
+        <p>当前商业虚拟机的垃圾收集都采用“分代收集”算法，这种算法并没有什么新的思想，只是根据对象的存活周期的不同将内存划分为几块。一般是把Java堆分为新生代和老年代，这样就可以根据各个年代的特点采用最适当的收集算法。在新生代中，每次垃圾收集时都发现有大批对象死去，只有少量存活，那就选用复制算法，只需要付出少了存活对象的复制成本就可以完成收集。而老年代中因为对象存活率高、没有额外空间对它进行分配担保，就必须使用“标记-清理”或“标记-整理”算法来进行回收。</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>JVM的回收算法以及它的回收器是什么？CMS采用哪种回收算法？使用CMS怎样解决内存碎片的问题呢？</p>
+
+    <blockquote>
+      <p>《深入理解JVM》P55 垃圾收集器</p>
+
+      <p><a href="https://crowhawk.github.io/2017/08/15/jvm_3/">https://crowhawk.github.io/2017/08/15/jvm_3/</a></p>
+    </blockquote>
+
+    <p><strong>如果说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。</strong>Java虚拟机规范中对垃圾收集器应该如何实现并没有任何规定，因此不同的厂商、版本的虚拟机所提供的垃圾收集器都可能会有很大差别，并且一般都会提供参数供用户根据自己的应用特点和要求组合出各个年代所使用的收集器。接下来讨论的收集器基于JDK1.7 Update 14 之后的HotSpot虚拟机（在此版本中正式提供了商用的G1收集器，之前G1仍处于实验状态），该虚拟机包含的所有收集器如下图所示：</p>
+
+    <p><img src="https://pic.yupoo.com/crowhawk/56a02e55/3b3c42d2.jpg" alt="img" /></p>
+
+    <p>上图展示了7种作用于不同分代的收集器，如果两个收集器之间存在连线，就说明它们可以搭配使用。虚拟机所处的区域，则表示它是属于新生代收集器还是老年代收集器。Hotspot实现了如此多的收集器，正是因为目前并无完美的收集器出现，只是选择对具体应用最适合的收集器。</p>
+
+    <ul>
+      <li>
+        <p>相关概念</p>
+
+        <ul>
+          <li>
+            <p>并行和并发</p>
+
+            <ul>
+              <li><strong>并行（Parallel）</strong>：指多条垃圾收集线程并行工作，但此时用户线程仍然处于等待状态。</li>
+              <li><strong>并发（Concurrent）</strong>：指用户线程与垃圾收集线程同时执行（但不一定是并行的，可能会交替执行），用户程序在继续运行。而垃圾收集程序运行在另一个CPU上。</li>
+            </ul>
+          </li>
+          <li>
+            <p>吞吐量（Throughput）</p>
+
+            <p>吞吐量就是<strong>CPU用于运行用户代码的时间</strong>与<strong>CPU总消耗时间</strong>的比值，即</p>
+
+            <p><strong>吞吐量 = 运行用户代码时间 /（运行用户代码时间 + 垃圾收集时间）。</strong></p>
+
+            <p>假设虚拟机总共运行了100分钟，其中垃圾收集花掉1分钟，那吞吐量就是99%。</p>
+          </li>
+          <li>
+            <p>Minor GC 和 Full GC</p>
+            <ul>
+              <li><strong>新生代GC（Minor GC）</strong>：指发生在新生代的垃圾收集动作，因为Java对象大多都具备朝生夕灭的特性，所以Minor GC非常频繁，一般回收速度也比较快。具体原理见上一篇文章。</li>
+              <li><strong>老年代GC（Major GC / Full GC）</strong>：指发生在老年代的GC，出现了Major GC，经常会伴随至少一次的Minor GC（但非绝对的，在Parallel Scavenge收集器的收集策略里就有直接进行Major GC的策略选择过程）。Major GC的速度一般会比Minor GC慢10倍以上。</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p>新生代收集器</p>
+
+        <ul>
+          <li>
+            <p>Serial收集器</p>
+
+            <p><strong>Serial（串行）</strong>收集器是最基本、发展历史最悠久的收集器，它是采用<strong>复制算法</strong>的<strong>新生代收集器</strong>，曾经（JDK 1.3.1之前）是虚拟机<strong>新生代</strong>收集的唯一选择。它是一个单线程收集器，只会使用一个CPU或一条收集线程去完成垃圾收集工作，更重要的是<strong>它在进行垃圾收集时，必须暂停其他所有的工作线程，直至Serial收集器收集结束为止（“Stop The World”）</strong>。这项工作是由虚拟机在后台自动发起和自动完成的，在用户不可见的情况下把用户正常工作的线程全部停掉，这对很多应用来说是难以接收的。</p>
+
+            <p>下图展示了Serial 收集器（老年代采用Serial Old收集器）的运行过程：</p>
+
+            <p><img src="https://pic.yupoo.com/crowhawk/6b90388c/6c281cf0.png" alt="img" /></p>
+
+            <p>为了消除或减少工作线程因内存回收而导致的停顿，HotSpot虚拟机开发团队在JDK 1.3之后的Java发展历程中研发出了各种其他的优秀收集器，这些将在稍后介绍。但是这些收集器的诞生并不意味着Serial收集器已经“老而无用”，实际上到现在为止，它依然是<strong>HotSpot虚拟机运行在Client模式下的默认的新生代收集器</strong>。它也有着优于其他收集器的地方：<strong>简单而高效（与其他收集器的单线程相比），对于限定单个CPU的环境来说，Serial收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得更高的单线程收集效率。</strong></p>
+
+            <p>在用户的桌面应用场景中，分配给虚拟机管理的内存一般不会很大，收集几十兆甚至一两百兆的新生代（仅仅是新生代使用的内存，桌面应用基本不会再大了），停顿时间完全可以控制在几十毫秒最多一百毫秒以内，只要不频繁发生，这点停顿时间可以接收。所以，Serial收集器对于运行在Client模式下的虚拟机来说是一个很好的选择。</p>
+          </li>
+          <li>
+            <p>ParNew 收集器</p>
+
+            <p><strong>ParNew</strong>收集器就是Serial收集器的多线程版本，它也是一个<strong>新生代收集器</strong>。除了使用多线程进行垃圾收集外，其余行为包括Serial收集器可用的所有控制参数、收集算法（复制算法）、Stop The World、对象分配规则、回收策略等与Serial收集器完全相同，两者共用了相当多的代码。</p>
+
+            <p>ParNew收集器的工作过程如下图（老年代采用Serial Old收集器）：</p>
+
+            <p><img src="https://pic.yupoo.com/crowhawk/605f57b5/75122b84.png" alt="img" /></p>
+
+            <p>ParNew收集器除了使用多线程收集外，其他与Serial收集器相比并无太多创新之处，但它却是许多运行在Server模式下的虚拟机中首选的新生代收集器，其中有一个与性能无关的重要原因是，<strong>除了Serial收集器外，目前只有它能和CMS收集器（Concurrent Mark Sweep）配合工作</strong>，CMS收集器是JDK 1.5推出的一个具有划时代意义的收集器，具体内容将在稍后进行介绍。</p>
+
+            <p>ParNew 收集器在<strong>单CPU的环境</strong>中绝对不会有比Serial收集器有更好的效果，甚至由于存在线程交互的开销，该收集器在通过超线程技术实现的两个CPU的环境中都不能百分之百地保证可以超越。在<strong>多CPU环境</strong>下，随着CPU的数量增加，它对于GC时系统资源的有效利用是很有好处的。它默认开启的收集线程数与CPU的数量相同，在CPU非常多的情况下可使用<strong>-XX:ParallerGCThreads</strong>参数设置。</p>
+          </li>
+          <li>
+            <p>Parallel Scavenge 收集器</p>
+
+            <p><strong>Parallel Scavenge</strong>收集器也是一个<strong>并行</strong>的<strong>多线程新生代</strong>收集器，它也使用<strong>复制算法</strong>。Parallel Scavenge收集器的特点是它的关注点与其他收集器不同，CMS等收集器的关注点是尽可能缩短垃圾收集时用户线程的停顿时间，而Parallel Scavenge收集器的目标是<strong>达到一个可控制的吞吐量（Throughput）</strong>。</p>
+
+            <p><strong>停顿时间越短就越适合需要与用户交互的程序</strong>，良好的响应速度能提升用户体验。而<strong>高吞吐量</strong>则可以高效率地利用CPU时间，尽快完成程序的运算任务，主要适合<strong>在后台运算而不需要太多交互的任务</strong>。</p>
+
+            <p>Parallel Scavenge收集器除了会显而易见地提供可以精确控制吞吐量的参数，还提供了一个参数<strong>-XX:+UseAdaptiveSizePolicy</strong>，这是一个开关参数，打开参数后，就不需要手工指定新生代的大小（-Xmn）、Eden和Survivor区的比例（-XX:SurvivorRatio）、晋升老年代对象年龄（-XX:PretenureSizeThreshold）等细节参数了，虚拟机会根据当前系统的运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或者最大的吞吐量，这种方式称为<strong>GC自适应的调节策略（GC Ergonomics）</strong>。自适应调节策略也是Parallel Scavenge收集器与ParNew收集器的一个重要区别。</p>
+
+            <p>另外值得注意的一点是，Parallel Scavenge收集器无法与CMS收集器配合使用，所以在JDK 1.6推出Parallel Old之前，如果新生代选择Parallel Scavenge收集器，老年代只有Serial Old收集器能与之配合使用。</p>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p>老年代收集器</p>
+
+        <ul>
+          <li>
+            <p>Serial Old收集器</p>
+
+            <p>Serial Old 是 Serial收集器的老年代版本，它同样是一个<strong>单线程收集器</strong>，使用<strong>“标记-整理”（Mark-Compact）</strong>算法。</p>
+
+            <p>此收集器的主要意义也是在于给Client模式下的虚拟机使用。如果在Server模式下，它还有两大用途：</p>
+
+            <ul>
+              <li>在JDK1.5 以及之前版本（Parallel Old诞生以前）中与Parallel Scavenge收集器搭配使用。</li>
+              <li>作为CMS收集器的后备预案，在并发收集发生<strong>Concurrent Mode Failure</strong>时使用。</li>
+            </ul>
+
+            <p>它的工作流程与Serial收集器相同，这里再次给出Serial/Serial Old配合使用的工作流程图：</p>
+
+            <p><img src="https://pic.yupoo.com/crowhawk/6b90388c/6c281cf0.png" alt="img" /></p>
+          </li>
+          <li>
+            <p>Parallel Old收集器</p>
+
+            <p>Parallel Old收集器是Parallel Scavenge收集器的老年代版本，使用<strong>多线程</strong>和<strong>“标记-整理”</strong>算法。前面已经提到过，这个收集器是在JDK 1.6中才开始提供的，在此之前，如果新生代选择了Parallel Scavenge收集器，老年代除了Serial Old以外别无选择，所以在Parallel Old诞生以后，<strong>“吞吐量优先”收集器</strong>终于有了比较名副其实的应用组合，在<strong>注重吞吐量</strong>以及<strong>CPU资源敏感</strong>的场合，都可以优先考虑Parallel Scavenge加Parallel Old收集器。Parallel Old收集器的工作流程与Parallel Scavenge相同，这里给出Parallel Scavenge/Parallel Old收集器配合使用的流程图：</p>
+
+            <p><img src="https://pic.yupoo.com/crowhawk/9a6b1249/b1800d45.png" alt="img" /></p>
+          </li>
+          <li>
+            <p>CMS收集器</p>
+
+            <p><strong>CMS（Concurrent Mark Sweep）</strong>收集器是一种以<strong>获取最短回收停顿时间</strong>为目标的收集器，它非常符合那些集中在互联网站或者B/S系统的服务端上的Java应用，这些应用都非常重视服务的响应速度。从名字上（“Mark Sweep”）就可以看出它是基于<strong>“标记-清除”</strong>算法实现的。</p>
+
+            <p>CMS收集器工作的整个流程分为以下4个步骤：</p>
+
+            <ul>
+              <li><strong>初始标记（CMS initial mark）</strong>：仅仅只是标记一下GC Roots能直接关联到的对象，速度很快，需要“Stop The World”。</li>
+              <li><strong>并发标记（CMS concurrent mark）</strong>：进行<strong>GC Roots Tracing</strong>的过程，在整个过程中耗时最长。</li>
+              <li><strong>重新标记（CMS remark）</strong>：为了修正并发标记期间因用户程序继续运作而导致标记产生变动的那一部分对象的标记记录，这个阶段的停顿时间一般会比初始标记阶段稍长一些，但远比并发标记的时间短。此阶段也需要“Stop The World”。</li>
+              <li><strong>并发清除（CMS concurrent sweep）</strong></li>
+            </ul>
+
+            <p>由于整个过程中耗时最长的并发标记和并发清除过程收集器线程都可以与用户线程一起工作，所以，从总体上来说，CMS收集器的内存回收过程是与用户线程一起并发执行的。通过下图可以比较清楚地看到CMS收集器的运作步骤中并发和需要停顿的时间：</p>
+
+            <p><img src="https://pic.yupoo.com/crowhawk/fffcf9a2/f60599b2.png" alt="img" /></p>
+
+            <p><strong>优点</strong></p>
+
+            <p>CMS是一款优秀的收集器，它的主要<strong>优点</strong>在名字上已经体现出来了：<strong>并发收集</strong>、<strong>低停顿</strong>，因此CMS收集器也被称为<strong>并发低停顿收集器（Concurrent Low Pause Collector）</strong>。</p>
+
+            <p><strong>缺点</strong></p>
+
+            <ul>
+              <li><strong>对CPU资源非常敏感</strong> 其实，面向并发设计的程序都对CPU资源比较敏感。在并发阶段，它虽然不会导致用户线程停顿，但会因为占用了一部分线程（或者说CPU资源）而导致应用程序变慢，总吞吐量会降低。<strong>CMS默认启动的回收线程数是（CPU数量+3）/4</strong>，也就是当CPU在4个以上时，并发回收时垃圾收集线程不少于25%的CPU资源，并且随着CPU数量的增加而下降。但是<strong>当CPU不足4个时（比如2个），CMS对用户程序的影响就可能变得很大</strong>，如果本来CPU负载就比较大，还要分出一半的运算能力去执行收集器线程，就可能导致用户程序的执行速度忽然降低了50%，其实也让人无法接受。</li>
+              <li><strong>无法处理浮动垃圾（Floating Garbage）</strong> 可能出现“Concurrent Mode Failure”失败而导致另一次Full GC的产生。<strong>由于CMS并发清理阶段用户线程还在运行着，伴随程序运行自然就还会有新的垃圾不断产生。</strong>这一部分垃圾出现在标记过程之后，CMS无法再当次收集中处理掉它们，只好留待下一次GC时再清理掉。这一部分垃圾就被称为<strong>“浮动垃圾”</strong>。也是由于在垃圾收集阶段用户线程还需要运行，那也就还需要预留有足够的内存空间给用户线程使用，因此CMS收集器不能像其他收集器那样等到老年代几乎完全被填满了再进行收集，需要预留一部分空间提供并发收集时的程序运作使用。</li>
+              <li><strong>标记-清除算法导致的空间碎片</strong> CMS是一款基于“标记-清除”算法实现的收集器，这意味着收集结束时会有大量空间碎片产生。空间碎片过多时，将会给大对象分配带来很大麻烦，往往出现老年代空间剩余，但无法找到足够大连续空间来分配当前对象，不得不提前触发一次Full GC。为了解决这个问题，CMS收集器提供了一个-XX:+UseCMSCompactAtFullCollection开关参数，用于在“享受”完Full GC服务之后额外免费附送一个碎片整理过程，内存整理的过程是无法并发的。空间碎片问题没有了，但停顿时间不得不变长了。虚拟机设计者还提供了另外一个参数-XX:CMSFullGCsBeforeCompaction，这个参数用于设置在执行多少次不压缩的Full GC后，跟着来一次带压缩的。</li>
+            </ul>
+          </li>
+          <li>
+            <p>G1收集器</p>
+
+            <p><strong>G1（Garbage-First）</strong>收集器是当今收集器技术发展最前沿的成果之一，它是一款<strong>面向服务端应用</strong>的垃圾收集器，HotSpot开发团队赋予它的使命是（在比较长期的）未来可以替换掉JDK 1.5中发布的CMS收集器。与其他GC收集器相比，G1具备如下特点：</p>
+
+            <ul>
+              <li><strong>并行与并发</strong> G1 能充分利用多CPU、多核环境下的硬件优势，使用多个CPU来缩短“Stop The World”停顿时间，部分其他收集器原本需要停顿Java线程执行的GC动作，G1收集器仍然可以通过并发的方式让Java程序继续执行。</li>
+              <li><strong>分代收集</strong> 与其他收集器一样，分代概念在G1中依然得以保留。虽然G1可以不需要其他收集器配合就能独立管理整个GC堆，但它能够采用不同方式去处理新创建的对象和已存活一段时间、熬过多次GC的旧对象来获取更好的收集效果。</li>
+              <li><strong>空间整合</strong> G1从整体来看是基于<strong>“标记-整理”</strong>算法实现的收集器，从局部（两个Region之间）上来看是基于<strong>“复制”</strong>算法实现的。这意味着G1运行期间不会产生内存空间碎片，收集后能提供规整的可用内存。此特性有利于程序长时间运行，分配大对象时不会因为无法找到连续内存空间而提前触发下一次GC。</li>
+              <li><strong>可预测的停顿</strong> 这是G1相对CMS的一大优势，降低停顿时间是G1和CMS共同的关注点，但G1除了降低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为M毫秒的时间片段内，消耗在GC上的时间不得超过N毫秒，这几乎已经是实时Java（RTSJ）的垃圾收集器的特征了。</li>
+            </ul>
+
+            <p><strong>横跨整个堆内存</strong></p>
+
+            <p>在G1之前的其他收集器进行收集的范围都是整个新生代或者老生代，而G1不再是这样。G1在使用时，Java堆的内存布局与其他收集器有很大区别，它<strong>将整个Java堆划分为多个大小相等的独立区域（Region）</strong>，虽然还保留新生代和老年代的概念，但<strong>新生代和老年代不再是物理隔离的了，而都是一部分Region（不需要连续）的集合</strong>。</p>
+
+            <p><strong>建立可预测的时间模型</strong></p>
+
+            <p>G1收集器之所以能建立可预测的停顿时间模型，是因为它可以<strong>有计划地避免在整个Java堆中进行全区域的垃圾收集</strong>。G1跟踪各个Region里面的垃圾堆积的价值大小（回收所获得的空间大小以及回收所需时间的经验值），<strong>在后台维护一个优先列表</strong>，每次根据允许的收集时间，<strong>优先回收价值最大的Region（这也就是Garbage-First名称的来由）</strong>。这种使用Region划分内存空间以及有优先级的区域回收方式，保证了G1收集器在有限的时间内可以获取尽可能高的收集效率。</p>
+
+            <p><strong>避免全堆扫描——Remembered Set</strong></p>
+
+            <p>G1把Java堆分为多个Region，就是“化整为零”。但是Region不可能是孤立的，一个对象分配在某个Region中，可以与整个Java堆任意的对象发生引用关系。在做可达性分析确定对象是否存活的时候，需要扫描整个Java堆才能保证准确性，这显然是对GC效率的极大伤害。</p>
+
+            <p>为了避免全堆扫描的发生，虚拟机<strong>为G1中每个Region维护了一个与之对应的Remembered Set</strong>。虚拟机发现程序在对Reference类型的数据进行写操作时，会产生一个Write Barrier暂时中断写操作，检查Reference引用的对象是否处于不同的Region之中（在分代的例子中就是检查是否老年代中的对象引用了新生代中的对象），如果是，便通过CardTable<strong>把相关引用信息记录到被引用对象所属的Region的Remembered Set之中</strong>。当进行内存回收时，在GC根节点的枚举范围中加入Remembered Set即可保证不对全堆扫描也不会有遗漏。</p>
+          </li>
+        </ul>
+
+        <hr />
+
+        <p>如果不计算维护Remembered Set的操作，G1收集器的运作大致可划分为以下几个步骤：</p>
+
+        <ul>
+          <li><strong>初始标记（Initial Marking）</strong> 仅仅只是标记一下GC Roots 能直接关联到的对象，并且修改<strong>TAMS（Nest Top Mark Start）</strong>的值，让下一阶段用户程序并发运行时，能在正确可以的Region中创建对象，此阶段需要<strong>停顿线程</strong>，但耗时很短。</li>
+          <li><strong>并发标记（Concurrent Marking）</strong> 从GC Root 开始对堆中对象进行<strong>可达性分析</strong>，找到存活对象，此阶段耗时较长，但<strong>可与用户程序并发执行</strong>。</li>
+          <li><strong>最终标记（Final Marking）</strong> 为了修正在并发标记期间因用户程序继续运作而导致标记产生变动的那一部分标记记录，虚拟机将这段时间对象变化记录在<strong>线程的Remembered Set Logs</strong>里面，最终标记阶段需要<strong>把Remembered Set Logs的数据合并到Remembered Set中</strong>，这阶段需要<strong>停顿线程</strong>，但是<strong>可并行执行</strong>。</li>
+          <li><strong>筛选回收（Live Data Counting and Evacuation）</strong> 首先对各个Region中的回收价值和成本进行排序，根据用户所期望的GC 停顿是时间来制定回收计划。此阶段其实也可以做到与用户程序一起并发执行，但是因为只回收一部分Region，时间是用户可控制的，而且停顿用户线程将大幅度提高收集效率。</li>
+        </ul>
+
+        <p>通过下图可以比较清楚地看到G1收集器的运作步骤中并发和需要停顿的阶段（Safepoint处）：</p>
+
+        <p><img src="https://pic.yupoo.com/crowhawk/53b7a589/0bce1667.png" alt="img" /></p>
+      </li>
+      <li>
+        <p>总结</p>
+
+        <p><strong>新生代的收集器有Serial、ParNew、Parallel Scavenge。Serial收集器是串行、单线程的收集器，在收集垃圾时需要暂停其他所有的工作，stop the world，使用复制算法。ParNew收集器是Serial的并行、多线程版本，可以配合CMS使用。Parallel Scavenge收集器目标是达到高吞吐量，可以配合Parallel Old使用。</strong></p>
+
+        <p><strong>老年代的收集器有Serial Old、Parallel Old、CMS、G1算法。Serial Old收集器是Serial收集器的老年代版本，使用标记-整理算法。Parallel Old收集器是Parallel Scavenge的老年代版本，使用多线程和标记-整理算法。</strong></p>
+
+        <p><strong>CMS收集器的目标是低停顿、高响应速度，基于标记-清除算法，步骤分为初始标记（标记GC Roots能关联到的对象，速度很快，需要stop the world）、并发标记（GC Root Tracing，耗时最长）、重新标记（修复并发标记期间改动的标记，需要stop the world）、并发清除。</strong></p>
+
+        <p><strong>G1收集器使命是在未来替  uio代CMS。G1将整个Java堆划分为多个大小相等的独立区域（Region），每个Region维护了一个与之对应的Remembered Set，把相关引用信息记录到被引用对象所属的Region的Remembered Set之中。从整体来看基于标记-整理算法，从局部（两个Region之间）来看基于复制算法。步骤分为：初始标记、并发标记、最终标记（将变动合并到Remember Set中）、筛选回收（回收一部分Region）。</strong></p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>收集器</th>
+              <th>串行、并行or并发</th>
+              <th>新生代/老年代</th>
+              <th>算法</th>
+              <th>目标</th>
+              <th>适用场景</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Serial</strong></td>
+              <td><strong>串行</strong></td>
+              <td>新生代</td>
+              <td>复制算法</td>
+              <td>响应速度优先</td>
+              <td>单CPU环境下的Client模式</td>
+            </tr>
+            <tr>
+              <td><strong>ParNew</strong></td>
+              <td><strong>并行</strong></td>
+              <td>新生代</td>
+              <td>复制算法</td>
+              <td>响应速度优先</td>
+              <td>多CPU环境时在Server模式下<strong>与CMS配合</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Parallel Scavenge</strong></td>
+              <td>并行</td>
+              <td>新生代</td>
+              <td>复制算法</td>
+              <td><strong>吞吐量优先</strong></td>
+              <td>在后台运算而不需要太多交互的任务</td>
+            </tr>
+            <tr>
+              <td><strong>Serial Old</strong></td>
+              <td>串行</td>
+              <td>老年代</td>
+              <td>标记-整理</td>
+              <td>响应速度优先</td>
+              <td>单CPU环境下的Client模式、CMS的后备预案</td>
+            </tr>
+            <tr>
+              <td><strong>Parallel Old</strong></td>
+              <td>并行</td>
+              <td>老年代</td>
+              <td>标记-整理</td>
+              <td>吞吐量优先</td>
+              <td>在后台运算而不需要太多交互的任务</td>
+            </tr>
+            <tr>
+              <td><strong>CMS</strong></td>
+              <td><strong>并发</strong></td>
+              <td>老年代</td>
+              <td><strong>标记-清除</strong></td>
+              <td><strong>响应速度优先</strong></td>
+              <td>集中在互联网站或B/S系统服务端上的Java应用</td>
+            </tr>
+            <tr>
+              <td><strong>G1</strong></td>
+              <td>并发</td>
+              <td>both</td>
+              <td>标记-整理+复制算法</td>
+              <td>响应速度优先</td>
+              <td>面向服务端应用，将来替换CMS</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Minor GC和Full GC触发条件</p>
+
+    <p>Minor GC触发条件：当<strong>Eden区满时</strong>，触发Minor GC。</p>
+
+    <p>Full GC触发条件：</p>
+    <ul>
+      <li><strong>调用System.gc时，系统建议执行Full GC，但是不必然执行</strong></li>
+      <li><strong>老年代空间不足</strong></li>
+      <li><strong>方法区空间不足</strong></li>
+      <li>通过Minor GC后进入老年代的平均大小大于老年代的可用内存</li>
+      <li><strong>由Eden区、From Space区向To Space区复制时，对象大小大于To Space可用内存，则把该对象转存到老年代，且老年代的可用内存小于该对象大小</strong></li>
+    </ul>
+  </li>
+  <li>
+    <p>什么时候触发MinorGC?什么时候触发FullGC?</p>
+
+    <blockquote>
+      <p><a href="https://www.cnblogs.com/williamjie/p/9516367.html">https://www.cnblogs.com/williamjie/p/9516367.html</a></p>
+    </blockquote>
+
+    <p><strong>触发MinorGC(Young GC)</strong></p>
+
+    <p>虚拟机在进行minorGC之前会判断老年代最大的可用连续空间是否大于新生代的所有对象总空间</p>
+
+    <p>1、如果大于的话，直接执行minorGC</p>
+
+    <p>2、如果小于，判断是否开启HandlerPromotionFailure，没有开启直接FullGC</p>
+
+    <p>3、如果开启了HanlerPromotionFailure, JVM会判断老年代的最大连续内存空间是否大于历次晋升的大小，如果小于直接执行FullGC</p>
+
+    <p>4、如果大于的话，执行minorGC</p>
+
+    <p><strong>触发FullGC</strong></p>
+
+    <ul>
+      <li>
+        <p>老年代空间不足</p>
+
+        <p>如果创建一个大对象，Eden区域当中放不下这个大对象，会直接保存在老年代当中，如果老年代空间也不足，就会触发Full GC。为了避免这种情况，最好就是不要创建太大的对象。</p>
+      </li>
+      <li>
+        <p>持久代空间不足</p>
+
+        <p>如果有持久代空间的话，系统当中需要加载的类，调用的方法很多，同时持久代当中没有足够的空间，就出触发一次Full GC</p>
+      </li>
+      <li>
+        <p>YGC出现promotion failure</p>
+
+        <p>promotion failure发生在Young GC, 如果Survivor区当中存活对象的年龄达到了设定值，会就将Survivor区当中的对象拷贝到老年代，如果老年代的空间不足，就会发生promotion failure， 接下去就会发生Full GC.</p>
+      </li>
+      <li>
+        <p>统计YGC发生时晋升到老年代的平均总大小大于老年代的空闲空间</p>
+
+        <p>在发生YGC是会判断，是否安全，这里的安全指的是，当前老年代空间可以容纳YGC晋升的对象的平均大小，如果不安全，就不会执行YGC,转而执行Full GC。</p>
+      </li>
+      <li>
+        <p>显示调用System.gc</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>什么原因会导致minor gc运行频繁？同样的，什么原因又会导致minor gc运行很慢？</p>
+
+    <blockquote>
+      <p><a href="https://www.nowcoder.com/questionTerminal/b3cd86f89d6c4b1ab54252b49a6bff57">https://www.nowcoder.com/questionTerminal/b3cd86f89d6c4b1ab54252b49a6bff57</a></p>
+    </blockquote>
+
+    <p>什么原因会导致minor gc运行频繁？</p>
+
+    <ol>
+      <li>
+        <p><strong>产生了太多朝生夕灭的对象导致需要频繁minor gc</strong></p>
+      </li>
+      <li>
+        <p><strong>新生代空间设置的比较小</strong></p>
+      </li>
+    </ol>
+
+    <p>什么原因会导致minor gc运行很慢？</p>
+
+    <ol>
+      <li>
+        <p><strong>新生代空间设置过大。</strong></p>
+      </li>
+      <li>
+        <p><strong>对象引用链较长，进行可达性分析时间较长。</strong></p>
+      </li>
+      <li>
+        <p>新生代survivor区设置的比较小，清理后剩余的对象不能装进去需要移动到老年代，造成移动开销。</p>
+      </li>
+      <li>
+        <p>内存分配担保失败，由minor gc转化为full gc</p>
+      </li>
+      <li>
+        <p><strong>采用的垃圾收集器效率较低，比如新生代使用serial收集器</strong></p>
+      </li>
+    </ol>
+
+    <blockquote>
+      <p>《深入理解JVM》P65 内存分配与回收策略</p>
+    </blockquote>
+
+    <ul>
+      <li>
+        <p><strong>对象优先在Eden分配</strong></p>
+
+        <p>大多数情况下，对象在新生代Eden区中分配。当Eden区没有足够的空间进行分配时，虚拟机将发起一次Minor GC。</p>
+      </li>
+      <li>
+        <p><strong>大对象直接进入老年代</strong></p>
+
+        <p>大对象对虚拟机的内存分配来说是个坏消息，经常出现大对象容易导致内存还有不少空间时就提前触发垃圾收集以获取足够的连续空间来“安置”它们。</p>
+      </li>
+      <li>
+        <p><strong>长期存活的对象将进入老年代</strong></p>
+
+        <p>虚拟机既然采用了分代收集的思想来管理内存，那内存回收时就必须能识别哪些对象应该放在新生代，哪些对象应该放在老年代。为了做到这点，虚拟机给每个对象定义了一个对象年龄计数器。如果对象在Eden出生并经过第一次Minor GC后仍然存活，并且能被Survivor区中每熬过一次Minor GC，年龄就增加1岁，当它的年龄增加到一定程度（默认为15岁）时，就会被晋升到老年代中。对象今生老年代的年龄阈值，可以通过参数-XX:MaxTenuringThreshold来设置。</p>
+      </li>
+      <li>
+        <p><strong>动态对象年龄判定</strong></p>
+
+        <p>为了能更好地适应不同程序的内存状况，虚拟机并不总是要求对象的年龄必须达到MaxTenuringThreshold才能晋升老年代，<strong>如果在Survivor空间中相同年龄所有对象大小的总和大于Survivor空间的一半，年龄大于或等于该年龄的对象就可以直接进入老年代</strong>，无需等到MaxTenuringThreshold中要求的年龄。</p>
+      </li>
+      <li>
+        <p><strong>空间分配担保</strong></p>
+
+        <p>在发生Minor GC时，虚拟机会检测之前每次晋升到老年代的平均大小是否大于老年代的剩余空间大小，如果大于，则改为直接进行一次Full GC。如果小于，则查看HandlePromotionFailure设置是否允许担保失败；如果允许，那只会进行Minor GC；如果不允许，则也要改为进行一次Full GC。</p>
+
+        <p>前面提到过，新生代使用复制收集算法，但为了内存利用率，<strong>只使用其中一个Survivor空间来作为轮换备份，因此当出现大量对象在Minor GC后仍然存活的情况时（最极端就是内存回收后新生代中所有对象都存活），就需要老年代进行分配担保，让Survivor无法容纳的对象直接进入老年代。</strong>与生活中的贷款担保类似，老年代要进行这样的担保，前提是老年代本身还有容纳这些对象的空间，一共有多少对象会活下来，在实际完成内存回收之前是无法明确知道的，所以只好取之前每一次回收晋升到老年代对象容量的平均大小值作为经验值，与老年代的剩余空间进行比较，决定是否进行Full GC来让老年代腾出更多空间。</p>
+
+        <p>取平均值进行比较其实仍然是一种动态概率的手段，也就是说如果某次Minor GC存活后的对象突增，远远高于平均值的话，依然会导致担保失败。如果出现了HandlePromotionFailure失败，那就只好在失败后重新发起一次Full GC。虽然担保失败时绕的圈子是最大的，但大部分情况下都还是会将HandlePromotionFailure开关打开，避免Full GC过于频繁。</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>java.lang.String写个一模一样的可以运行吗，会报错吗</p>
+
+    <blockquote>
+      <p>《深入理解JVM》P193</p>
+    </blockquote>
+
+    <p>使用双亲委派模型来组织类和加载器之间的关系，有一个显而易见的好处就是Java类随着它的类加载器一起具备了一种带有优先级的层次关系。例如<code class="highlighter-rouge">Java.lang.Object</code>，它存放在<code class="highlighter-rouge">rt.jar</code>之中，无论哪一个类加载器要加载这个类，最终都是委派给启动类加载器进行加载，因此Object类在程序的各种累加器环境中都是同一个类。相反，如果没有使用双亲委派模型，由各个类加载器自行区加载的话，如果用户自己写了一个名为<code class="highlighter-rouge">Java.lang.Object</code>的类，并放在程序的ClassPath中，那系统中将会出现多个不同的Object类，Java类型体系中最基础的行为也就无从保证，应用程序也将会变得一片混乱。可以尝试区写一个与<code class="highlighter-rouge">rt.jar</code>类库中已有类重名的Java类，将会发现可以正常编译，但永远无法被加载运行。（即使自定义了自己的加载器，强行用defineClass()方法去加载一个以<code class="highlighter-rouge">Java.lang</code>开头的类也不会成功。如果读者尝试这样做的话，将会收到一个由虚拟机自己抛出的<code class="highlighter-rouge">java.lang.SecurityException: Prohibited package name: java.lang</code>异常。）</p>
+
+    <blockquote>
+      <p><a href="https://blog.csdn.net/tang9140/article/details/42738433">https://blog.csdn.net/tang9140/article/details/42738433</a></p>
+    </blockquote>
+  </li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>
+    <p>什么是Java虚拟机？为什么Java被称作是“平台无关的编程语言”？</p>
+
+    <blockquote>
+      <p><a href="https://www.nowcoder.com/questionTerminal/a90230b35b5f4a7287f779ecdd88841d">https://www.nowcoder.com/questionTerminal/a90230b35b5f4a7287f779ecdd88841d</a></p>
+    </blockquote>
+
+    <p>java的跨平台不是java源程序的跨平台 ，如果是这样，那么所有语言都是跨平台的， java源程序先经过javac编译器编译成二进制的.class字节码文件（java的跨平台指的就是.class字节码文件的跨平台，.class字节码文件是与平台无关的），.class文件再运行在jvm上，java解释器（jvm的一部分）会将其解释成对应平台的机器码执行，所以java所谓的跨平台就是在不同平台上安装了不同的jvm，而在不同平台上生成的.class文件都是一样的，而.class文件再由对应平台的jvm解释成对应平台的机器码执行。</p>
+
+    <p>最后解释下机器码和字节码的区别:</p>
+
+    <p>一，机器码，完全依附硬件而存在～并且不同硬件由于内嵌指令集不同，即使相同的0 1代码 意思也可能是不同的～换句话说，根本不存在跨平台性～比如～不同型号的CPU,你给他个指令10001101，他们可能会解析为不同的结果～</p>
+
+    <p>二，我们知道JAVA是跨平台的，为什么呢？因为他有一个jvm,不论哪种硬件，只要你装有jvm,那么他就认识这个JAVA字节码～～～～至于底层的机器码，咱不用管，有jvm搞定，他会把字节码再翻译成所在机器认识的机器码～～～</p>
+  </li>
+  <li>
+    <p>JVM最大内存限制多少？</p>
+
+    <blockquote>
+      <p><a href="https://blog.csdn.net/lengyuhong/article/details/6044894">https://blog.csdn.net/lengyuhong/article/details/6044894</a></p>
+    </blockquote>
+
+    <p>没想到第一个实验的程序，跑了几个小时，就遇到了Out of Memory Exception了。看看自己的虚拟机设置，我设置的是-Xms512M -Xmx1024M。想都没想，直接改成-Xms512M -Xmx2048M，结果直接就Could not reserve enough space for object heap。程序都起不来了。这才发现原来最大内存还有限制。上网搜了一下，发现很多讨论这个问题的文章。最终在BEA的DEV2DEV论坛发现了最有用的一篇</p>
+
+    <p>这里的版主YuLimin 做了<a href="http://softtest.chinaitlab.com/">测试</a>，得出结论：</p>
+
+    <p>　　公司 JVM版本                  最大内存(兆)client    最大内存(兆)server</p>
+
+    <p>　　SUN 1.5.x                          1492                            1520</p>
+
+    <p>　　SUN 1.5.5(Linux)             2634                            2660</p>
+
+    <p>　　SUN 1.4.2                          1564                            1564</p>
+
+    <p>　　SUN 1.4.2(Linux)             1900                            1260</p>
+
+    <p>　　IBM 1.4.2(Linux)             2047                             N/A</p>
+
+    <p>　　BEA JRockit 1.5 (U3)      1909                             1902</p>
+
+    <blockquote>
+      <p><a href="https://www.nowcoder.com/questionTerminal/855006adab6b45afb9fe98e3c72b90d6">https://www.nowcoder.com/questionTerminal/855006adab6b45afb9fe98e3c72b90d6</a></p>
+    </blockquote>
+
+    <p>首先JVM内存限制于实际的最大物理内存了 假设物理内存无限大的话 JVM内存的最大值跟操作系统有很大的关系 简单的说就32位处理器虽然可控内存空间有4GB,但是具体的操作系统会给一个限制，这个限制一般是2GB-3GB（一般来说Windows系统下为1.5G-2G Linux系统 下为2G-3G） 而64bit以上的处理器就不会有限制了</p>
+  </li>
+  <li>
+    <p>假设一个场景，要求stop the world时间非常短，你会怎么设计垃圾回收机制？</p>
+
+    <p>ParNew + CMS</p>
+  </li>
+  <li>
+    <p>垃圾回收器的基本原理是什么？垃圾回收器可以马上回收内存吗？并且有什么办法可以主动通知虚拟机进行垃圾回收呢？</p>
+
+    <p>对于GC来说，当程序员创建对象时，GC就开始监控这个对象的地址、大小以及使用情况。通常，GC采用有向图的方式记录和管理堆(heap)中的所有对象。通过这种方式确定哪些对象是”可达的”，哪些对象是”不可达的”。当GC确定一些对象为”不可达”时，GC就有责任回收这些内存空间。可以。程序员可以手动执行System.gc()，通知GC运行，但是Java语言规范并不保证GC一定会执行。</p>
+  </li>
+  <li>
+    <p>在java中会存在内存泄漏吗？</p>
+
+    <blockquote>
+      <p><a href="https://blog.csdn.net/m0_37204491/article/details/64500151">https://blog.csdn.net/m0_37204491/article/details/64500151</a></p>
+    </blockquote>
+
+    <p><strong>内存泄露</strong>就是指一个不再被程序使用的对象或变量一直被占据在内存中。java中有垃圾回收机制，它可以保证一对象不再被引用的时候，即对象变成了孤儿的时候，对象将自动被垃圾回收器从内存中清除掉。由于Java 使用有向图的方式进行垃圾回收管理，可以消除引用循环的问题，例如有两个对象，相互引用，只要它们和根进程不可达的，那么GC也是可以回收它们的。</p>
+
+    <p><strong>java中的内存泄露的情况</strong>：</p>
+
+    <ol>
+      <li>
+        <p>长生命周期的对象持有短生命周期对象的引用就很可能发生内存泄露，尽管短生命周期对象已经不再需要，但是因为长生命周期对象持有它的引用而导致不能被回收，这就是java中内存泄露的发生场景，通俗地说，就是<strong>程序员可能创建了一个对象，以后一直不再使用这个对象，这个对象却一直被引用，即这个对象无用但是却无法被垃圾回收器回收的</strong>，这就是java中可能出现内存泄露的情况，例如，缓存系统，我们加载了一个对象放在缓存中(例如放在一个全局map对象中)，然后一直不再使用它，这个对象一直被缓存引用，但却不再被使用。</p>
+
+        <p>检查java中的内存泄露，一定要让程序将各种分支情况都完整执行到程序结束，然后看某个对象是否被使用过，如果没有，则才能判定这个对象属于内存泄露。</p>
+      </li>
+      <li>
+        <p>如果一个外部类的实例对象的方法返回了一个内部类的实例对象，这个内部类对象被长期引用了，即使那个外部类实例对象不再被使用，但由于内部类持久外部类的实例对象，这个外部类对象将不会被垃圾回收，这也会造成内存泄露。</p>
+      </li>
+      <li>
+        <p>当一个对象被存储进HashSet集合中以后，就不能修改这个对象中的那些参与计算哈希值的字段了，否则，对象修改后的哈希值与最初存储进HashSet集合中时的哈希值就不同了，在这种情况下，即使在contains方法使用该对象的当前引用作为的参数去HashSet集合中检索对象，也将返回找不到对象的结果，这也会导致无法从HashSet集合中单独删除当前对象，造成内存泄露。</p>
+      </li>
+    </ol>
+  </li>
+  <li>
+    <p>垃圾回收的优点以及原理</p>
+
+    <p>Java 语言中一个显著的特点就是引入了垃圾回收机制，使c++程序员最头疼的内存管理的问题迎刃而解，它使得Java程序员在编写程序的时候不再需要考虑内存管理。由于有个垃圾回收机制，Java中的对象不再有”作用域”的概念，只有对象的引用才有”作用域”。垃圾回收可以有效的防止内存泄露，有效的使用可以使用的内存。垃圾回收器通常是作为一个单独的低级别的线程运行，不可预知的情况下对内存堆中已经死亡的或者长时间没有使用的对象进行清楚和回收，程序员不能实时的调用垃圾回收器对某个对象或所有对象进行垃圾回收。回收机制有分代复制垃圾回收和标记垃圾回收，增量垃圾回收。</p>
+  </li>
+  <li>
+    <p>Java中的对象一定在堆上分配吗</p>
+
+    <p><a href="https://blog.csdn.net/zhaohong_bo/article/details/89419480">https://blog.csdn.net/zhaohong_bo/article/details/89419480</a></p>
+  </li>
+</ul>
+:ET

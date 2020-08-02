@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="没有对生活绝望，就不会爱生活。——阿尔贝·加缪">
+    <meta name="keywords"  content="">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Maven - 盈盈冲哥的博客">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="Maven学习笔记
+本笔记配合慕课网上maven视频使用效果最佳，链接如上
+">
+    
+    <meta property="article:published_time" content="2020-03-05T20:00:00Z">
+    
+    
+    <meta property="article:author" content="盈盈冲哥">
+    
+    
+    <meta property="article:tag" content="学习">
+    
+    
+    <meta property="og:image" content="http://localhost:4000/img/a-perfect-world.jpg">
+    <meta property="og:url" content="http://localhost:4000/2020/03/05/maven/">
+    <meta property="og:site_name" content="盈盈冲哥的博客">
+    
+    <title>Maven - 盈盈冲哥的博客</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/letter-y.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2020/03/05/maven/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">盈盈冲哥的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/fleabag.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/fleabag.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=%E5%AD%A6%E4%B9%A0" title="学习">学习</a>
+                        
+                    </div>
+                    <h1>Maven</h1>
+                    
+                    <h2 class="subheading"></h2>
+                    <span class="meta">Posted by 盈盈冲哥 on March 5, 2020</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<h1 id="maven学习笔记">Maven学习笔记</h1>
+<p>本笔记配合慕课网上maven视频使用效果最佳，链接如上</p>
+
+<hr />
+<p>一.介绍
+—-</p>
+
+<p><strong>Maven</strong>是基于项目对象模型（POM），可以通过一小段描述信息来管理项目的构建、报告和文档的软件项目管理工具。</p>
+
+<ol>
+  <li>bin目录是包含mvn的运行脚本</li>
+  <li>boot目录包含一个类加载器的框架，maven使用它加载自己的类库</li>
+  <li>conf配置文件</li>
+  <li>lib包含maven运行时的依赖类库</li>
+</ol>
+
+<h2 id="二环境变量的配置">二.环境变量的配置</h2>
+
+<p><a href="http://maven.apache.org/download.cgi" title="下载地址">点击下载</a><br />
+<strong>maven</strong>环境配置，增加一个环境变量<strong>MAVEN_HOME</strong>,值是maven的安装路径（<code class="highlighter-rouge">C:\Program Files\apache-maven-3.5.0-bin\apache-maven-3.5.0</code>）
+修改path则是在path最后面添加<code class="highlighter-rouge">;%MAVEN_HOME%\bin</code>。</p>
+
+<h3 id="maven的项目结构">Maven的项目结构</h3>
+
+<pre><code class="language-cmd">项目名
+	-src 
+	   -main
+	        -java
+	             -package
+	   -test
+	        -java
+	             -package
+	-pom.xml
+</code></pre>
+
+<h2 id="三常用命令">三.常用命令</h2>
+<pre><code class="language-cmd">    mvn -v 		查看 maven 版本
+	 compile	编译
+	 test		测试
+	 package	打包
+
+	 clean		删除 target
+	 install	安装 jar 包到本地仓库
+</code></pre>
+
+<h3 id="maven快速创建项目骨架目录">maven快速创建项目骨架目录</h3>
+<p><strong>两种方式：</strong></p>
+
+<pre><code class="language-cmd">1.  mvn archetype:generate 按照提示进行选择
+2.  mvn archetype:generate  -DgroupId=com.imooc.maven   -DartifactId=
+  maven-service   -Dversion=1.0.0SNAPSHOT   -Dpackage=com.imooc.maven.demo
+	1. -DgroupId=组织名，公司网址反写+项目名
+	2. -DartifactId=项目名+模块名
+	3. -Dversion=版本号
+	4. -Dpackage=代码所存在的包名
+</code></pre>
+<p>四.Maven中的坐标和仓库
+————–</p>
+
+<p><strong>构件坐标:</strong></p>
+
+<pre><code class="language-cmd">    	1. groupId:公司名字+项目名
+    	2. artifactId：项目名+模块名
+    	3. varsion:版本号
+</code></pre>
+
+<p><strong>仓库：</strong></p>
+
+<pre><code class="language-cmd">		1. 本地仓库
+		2. 远程仓库
+		3. 镜像仓库
+</code></pre>
+
+<h2 id="五更改仓库默认路径">五.更改仓库默认路径</h2>
+<p>已安装到本地仓库中的jar包位置：</p>
+
+<pre><code class="language-cmd">C:\Users\用户\.m2\repository\com\tiakon\demo
+</code></pre>
+
+<p>安装路径conf文件夹下settings.xml文件
+打开找到这段备注是的代码：</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="c">&lt;!-- localRepository
+     | The path to the local repository maven will use to store artifacts.
+     | Default: ${user.home}/.m2/repository
+    &lt;localRepository&gt;/path/to/local/repo&lt;/localRepository&gt;
+--&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>复制粘贴出来</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;localRepository&gt;</span>/path/to/local/repo<span class="nt">&lt;/localRepository&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><strong>将localRepository便签内的值替换成新路径即可。</strong></p>
+
+<h2 id="六maven生命周期">六.maven生命周期</h2>
+
+<p>完整的项目构建过程包括：
+<strong>清理、编译、测试、打包、集成测试、验证、部署</strong></p>
+
+<p><strong>maven三套独立的生命周期</strong></p>
+
+<pre><code class="language-cmd">	clean 	清理项目
+			1.pre-clean	执行清理前的工作
+			2.clean		清理上一次构建生成的所有文件
+			3.post-clean 	执行清理后的文件
+
+	default 构建项目（最核心）
+			compile test package install
+
+	site 	生成项目站点
+			1. pre-site 	在生成项目站点前要完成的工作
+			2. site 	生成项目的站点文档
+			3. post-site	在生成项目站点后要完成的工作
+			4. site-deploy	发布生成的站点到服务器上
+</code></pre>
+
+<h2 id="七maven中pomxml常见元素介绍">七.maven中pom.xml常见元素介绍</h2>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+</pre></td><td class="rouge-code"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span>
+         <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+         <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--指定了当前pom的版本--&gt;</span>
+    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+
+    <span class="nt">&lt;groupId&gt;</span>反写的公司网址+项目名<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>项目名+模块名<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="c">&lt;!--
+        第一个0表示大版本号
+        第二个0表示分支版本号
+        第三个0表示小版本号
+        0.0.1
+        snapshot    快照
+        alpha       内部测试
+        beta        公测
+        Release     稳定
+        GA          正式发布
+    --&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+    <span class="c">&lt;!-- 打包方式:默认是jar,可选war、zip、pom --&gt;</span>
+    <span class="nt">&lt;packaging&gt;&lt;/packaging&gt;</span>
+    
+
+    <span class="c">&lt;!--指定编码格式--&gt;</span>
+    <span class="nt">&lt;properties&gt;</span>
+        <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+    <span class="nt">&lt;/properties&gt;</span>
+
+    <span class="c">&lt;!-- 项目名 --&gt;</span>
+    <span class="nt">&lt;name&gt;&lt;/name&gt;</span>
+    <span class="c">&lt;!-- 项目地址 --&gt;</span>
+    <span class="nt">&lt;url&gt;&lt;/url&gt;</span>
+    <span class="c">&lt;!-- 项目描述 --&gt;</span>
+    <span class="nt">&lt;description&gt;&lt;/description&gt;</span>
+    <span class="c">&lt;!-- 开发人员列表 --&gt;</span>
+    <span class="nt">&lt;developers&gt;&lt;/developers&gt;</span>
+    <span class="c">&lt;!-- 许可证信息 --&gt;</span>
+    <span class="nt">&lt;licenses&gt;&lt;/licenses&gt;</span>
+    <span class="c">&lt;!-- 组织信息 --&gt;</span>
+    <span class="nt">&lt;organization&gt;&lt;/organization&gt;</span>
+
+    <span class="c">&lt;!--依赖列表--&gt;</span>
+    <span class="nt">&lt;dependencies&gt;</span>
+        <span class="c">&lt;!--依赖项--&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>RELEASE<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;type&gt;&lt;/type&gt;</span>
+            <span class="c">&lt;!--依赖范围--&gt;</span>
+            <span class="nt">&lt;scope&gt;&lt;/scope&gt;</span>
+            <span class="c">&lt;!--设置依赖是否可选（默认）false--&gt;</span>
+            <span class="nt">&lt;optional&gt;&lt;/optional&gt;</span>
+            <span class="c">&lt;!--排斥依赖传递列表--&gt;</span>
+            <span class="nt">&lt;exclusions&gt;</span>
+                <span class="nt">&lt;exclusion&gt;</span>
+                <span class="nt">&lt;/exclusion&gt;</span>
+            <span class="nt">&lt;/exclusions&gt;</span>
+            
+        <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;/dependencies&gt;</span>
+    <span class="c">&lt;!--依赖的管理，作用主要定义在父模块中，对子模块进行管理--&gt;</span>
+    <span class="nt">&lt;dependencyManagement&gt;</span>
+        <span class="nt">&lt;dependencies&gt;</span>
+
+        <span class="nt">&lt;/dependencies&gt;</span>
+    <span class="nt">&lt;/dependencyManagement&gt;</span>
+       
+    <span class="c">&lt;!--对构件的行为提供相应的支持--&gt;</span>
+    <span class="nt">&lt;build&gt;</span>
+        <span class="c">&lt;!--插件列表--&gt;</span>
+        <span class="nt">&lt;plugins&gt;</span>
+            <span class="nt">&lt;plugin&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>maven-source-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                <span class="nt">&lt;version&gt;</span>3.0.1<span class="nt">&lt;/version&gt;</span>
+
+                <span class="c">&lt;!-- &lt;executions&gt;
+                    &lt;execution&gt;
+                        &lt;phase&gt;package&lt;/phase&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;
+                                jar-no-fork
+                            &lt;/goal&gt;
+                        &lt;/goals&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt; --&gt;</span>
+            <span class="nt">&lt;/plugin&gt;</span>
+        <span class="nt">&lt;/plugins&gt;</span>
+    <span class="nt">&lt;/build&gt;</span>
+    <span class="c">&lt;!--通常用于子模块对父模块pom的继承--&gt;</span>
+    <span class="nt">&lt;parent&gt;&lt;/parent&gt;</span>
+    <span class="c">&lt;!--用来聚合运行Maven项目，指定多个模块一起编译--&gt;</span>
+    <span class="nt">&lt;modules&gt;</span>
+        <span class="nt">&lt;module&gt;&lt;/module&gt;</span>
+    <span class="nt">&lt;/modules&gt;</span>
+       
+<span class="nt">&lt;/project&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="八maven的依赖范围">八.Maven的依赖范围</h2>
+
+<pre><code class="language-cmd">三种 classpath
+	1. 编译
+	2. 测试
+	3. 运行
+</code></pre>
+
+<p><strong>maven提供了6种可选依赖范围:</strong></p>
+
+<pre><code class="language-cmd">1. compile:	默认范围，编译测试运行都有效。
+2. provided:	在编译和测试时有效。（比如说在做 web 时，你在本地运行的 servlet ，
+是需要调用已添加到项目中的 servlet-api.jar 这个 jar 包的。这个过程就包含了编译【就是
+把 Java 文件编译成 class 文件的过程中也要调用】和测试【测试就是在本地运行】，那么他说
+的运行是指，整个项目已开发完成，编译、测试通过后，将 class 文件或包含有 class 文件的 war 包
+发布到服务器上的 Tomcat 中运行，这时启动项目，就可以直接调 Tomcat 中的 servlet-api.jar ，
+不必再将自己的 jar 包添加到项目中去。也就是说当你选择 provided 时，项目发布时 Maven 不会将
+你添加的 jar 包，加入到项目中。）
+3. runtime:	在测试和运行时有效。(典型例子：JDBC驱动的实现。)
+4. test:	只在测试是有效。
+5. system:	类似 provided，与本机系统相关联，可移植性差。
+6. import:	导入范围，他只是用在 dependencyManagement 中，表示从其他的 pom 中导
+入dependecy的配置。（以下引用官网案例并不难理解。）
+</code></pre>
+
+<p>九.依赖传递</p>
+
+<exclusions> 排除依赖
+
+十.依赖冲突
+------
+
+```cmd
+1.短路优先:
+
+	C-&gt;B-&gt;A-&gt;X1(jar)
+	C-&gt;B-&gt;X2(jar)
+
+【C依赖B,B依赖A,A和B都包含同一个不同版本的Jar,则取B的依赖版本。（c的pom.xml中不必注明jar坐标）】
+
+2.先声明先优先
+
+	如果路径相同长度相同，则谁先声明，先解析谁。
+
+【C依赖A和B,A和B都包含同一个不同版本的Jar,谁依赖在前取谁的依赖版本。】
+```
+
+十一.聚合与继承
+-------
+### 聚合 ###
+
+```xml
+<packaging>pom</packaging>
+<modules>
+    <module>../HoictasStudio-MavenDemo01</module>
+    <module>../HoictasStudio-MavenDemo02</module>
+    <module>../HoictasStudio-MavenDemo03</module>
+</modules>
+```
+
+假设在**HoictasStudio-MavenParent**模块中添如以上代码，输入`clean install`命令后，即可同时安装多个jar到本地仓库中
+
+```markdown
+    [INFO] HoictasStudio-MavenDemo01 .......................... SUCCESS [  4.618 s]
+    [INFO] HoictasStudio-MavenDemo02 .......................... SUCCESS [  0.828 s]
+    [INFO] HoictasStudio-MavenDemo03 .......................... SUCCESS [  0.923 s]
+    [INFO] HoictasStudio-MavenParent .......................... SUCCESS [  0.021 s]
+```
+
+
+### 继承 ###
+
+**根据官方文档说明继承会根据父模块与子模块的包含与否，对pom.xml的写法则有两种。**
+
+#### 第一种写法 ####
+
+假设我们有两个模块，前一个叫 `com.mycompany.app:my-app:1`，后一个叫`com.mycompany.app:my-module:1`。
+
+my-app的pom文件为：
+
+```xml
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <version>1</version>
+</project>
+```
+
+my-module的pom文件为：
+
+```xml
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-module</artifactId>
+  <version>1</version>
+</project>
+```
+
+我们指定如下项目结构：
+
+```xml
+	.
+	 |-- my-module
+	 |   `-- pom.xml
+	 `-- pom.xml
+```
+
+那么，我们需要`my-module`去继承`my-app`，则需要在`my-module`的pom文件中添加以下代码：
+
+```xml
+	<project>
+	  <parent>
+	    <groupId>com.mycompany.app</groupId>
+	    <artifactId>my-app</artifactId>
+	    <version>1</version>
+	  </parent>
+	  <modelVersion>4.0.0</modelVersion>
+	  <groupId>com.mycompany.app</groupId>
+	  <artifactId>my-module</artifactId>
+	  <version>1</version>
+	</project>
+```
+
+#### 第二种写法 ####
+
+```cmd
+However, that would work if the parent project was already installed inour local repository or was in that specific 
+directory structure (parent pom.xml is one directory higher than that of the module's pom.xml). But what if the parent 
+is not yet installed and if the directory structure is
+.
+```
+ 	 |-- my-module
+ 	 |   `-- pom.xml
+ 	 `-- parent
+	     `-- pom.xml	
+
+上一段话摘自官网对继承的介绍，就是说如果你的父模块已在本地安装或者父模块不包含子模块，目录级别甚至是
+比子模块的还要高，就在第一种写法上添加`<relativePath>`标签。
+​	
+
+```xml
+	<project>
+		  <parent>
+		    <groupId>com.mycompany.app</groupId>
+		    <artifactId>my-app</artifactId>
+		    <version>1</version>
+		    <relativePath>../parent/pom.xml</relativePath>
+		  </parent>
+		  <modelVersion>4.0.0</modelVersion>
+		  <artifactId>my-module</artifactId>
+	</project>
+```
+
+
+
+笔者在看视频时就发现，当父模块与子模块处于同一级别时，在按照视频中的写法（第一种写法）test时就会报错，
+而此时的情况是不包含子模块，所以应该在`<parent>`标签中添加`<relativePath>`标签即可测试通过。
+
+十二.maven配置阿里云镜像
+-------
+
+修改`setting.xml`文件，添加镜像地址
+
+```xml
+ <mirrors>
+      <mirror>
+	<id>nexus-aliyun</id>
+	<mirrorOf>*</mirrorOf>
+	<name>Nexus aliyun</name>
+	<url>http://maven.aliyun.com/nexus/content/groups/public</url>
+      </mirror>
+  </mirrors>
+```
+
+&gt; 这个地址下载 jar 包的速度，谁用谁知道！
+
+&gt; [https://blog.csdn.net/weixin_37766296/article/details/79594837](https://blog.csdn.net/weixin_37766296/article/details/79594837)
+
+**优点**
+
+1. Maven是一个项目管理和综合工具。Maven提供了开发人员构建一个完整的生命周期框架。
+2. 在多个开发团队环境时，Maven可以设置按标准在非常短的时间里完成配置工作，使开发人员的工作更加轻松。
+3. Maven增加可重用性并负责建立相关的任务。
+
+&gt; [https://www.cnblogs.com/sgh1023/p/10900130.html](https://www.cnblogs.com/sgh1023/p/10900130.html)
+
+**Maven常用命令**
+
+clean：删除项目中已经编译好的信息，删除target目录
+
+compile：Maven工程的编译命令，用于编译项目的源代码，将src/main/java下的文件编译成class文件输出到target目录下。
+
+test：使用合适的单元测试框架运行测试。
+
+package：将编译好的代码打包成可分发的格式，如JAR，WAR。
+
+install：安装包至本地仓库，以备本地的其它项目作为依赖使用。
+
+deploy：复制最终的包至远程仓库，共享给其它开发人员和项目（通常和一次正式的发布相关）。
+
+每一个构建项目的命令都对应了maven底层一个插件。
+
+**Maven命令package、install、deploy的联系与区别**
+
+mvn clean package依次执行了clean、resources、compile、testResources、testCompile、test、jar(打包)等7个阶段。
+
+mvn clean install依次执行了clean、resources、compile、testResources、testCompile、test、jar(打包)、install等8个阶段。
+
+mvn clean deploy依次执行了clean、resources、compile、testResources、testCompile、test、jar(打包)、install、deploy等9个阶段。
+
+主要区别：
+
+package命令完成了项目编译、单元测试、打包功能，但没有把打好的可执行jar包（war包或其它形式的包）布署到本地maven仓库和远程maven私服仓库。
+
+install命令完成了项目编译、单元测试、打包功能，同时把打好的可执行jar包（war包或其它形式的包）布署到本地maven仓库，但没有布署到远程maven私服仓库。
+
+deploy命令完成了项目编译、单元测试、打包功能，同时把打好的可执行jar包（war包或其它形式的包）布署到本地maven仓库和远程maven私服仓库。　
+
+**Maven生命周期**
+
+清理生命周期：运行mvn clean将调用清理生命周期 。
+
+默认生命周期：是一个软件应用程序构建过程的总体模型 。
+
+compile，test，package，install，deploy
+
+站点生命周期：为一个或者一组项目生成项目文档和报告，使用较少。
+
+&gt; [https://blog.csdn.net/noaman_wgs/article/details/81137893](https://blog.csdn.net/noaman_wgs/article/details/81137893)
+
+Maven中 jar包冲突原理与解决办法
+</relativePath></parent></relativePath></exclusions>
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/03/05/shiro/" data-toggle="tooltip" data-placement="top" title="Shiro">
+                        Previous<br>
+                        <span>Shiro</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/06/21/shell/" data-toggle="tooltip" data-placement="top" title="Shell">
+                        Next<br>
+                        <span>Shell</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0005" 
+                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
+                    title="学习"
+                    rel="17">学习</a>
+        
+                <a data-sort="0018" 
+                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
+                    title="生活"
+                    rel="4">生活
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="https://github.com/thisaway">Tob</a></li>
+  
+  <li><a href="https://github.com/MMochii">Mochiii</a></li>
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    SVG: {
+      scale: 90
+    },
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true,
+    }
+  });
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG">
+</script>
+
+
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'right',
+          // icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <!-- add Douban by yycg-->
+  
+  <li>
+      <a target="_blank" href="https://www.douban.com/people/154702906">
+          <span class="fa-stack fa-lg">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa  fa-stack-1x fa-inverse">豆</i>
+          </span>
+      </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="http://weibo.com/5674063334">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/yycg">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; 盈盈冲哥的博客 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-49627206-1';
+    var _gaDomain = 'huangxuan.me';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+<!-- Side Catalog -->
+
+<script type="text/javascript">
+    function generateCatalog (selector) {
+
+        // interop with multilangual 
+        if ('' == 'true') {
+            _containerSelector = 'div.post-container.active'
+        } else {
+            _containerSelector = 'div.post-container'
+        }
+
+        // init
+        var P = $(_containerSelector),a,n,t,l,i,c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        // clean
+        $(selector).html('')
+
+        // appending
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#"+$(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="'+i+'" rel="nofollow">'+t+'</a>');
+            l = $('<li class="'+n+'_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    // toggle side catalog
+    $(".catalog-toggle").click((function(e){
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    /*
+     * Doc: https://github.com/davist11/jQuery-One-Page-Nav
+     * Fork by Hux to support padding
+     */
+    async("/js/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

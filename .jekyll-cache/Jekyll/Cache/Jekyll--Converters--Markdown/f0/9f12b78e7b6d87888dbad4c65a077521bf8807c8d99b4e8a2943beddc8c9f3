@@ -1,0 +1,83 @@
+I"�<ol>
+  <li></li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>  <span class="nb">chmod</span> +x ./test.sh  <span class="c">#使脚本具有执行权限</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>不能写成test.sh，因为会去PATH里找。</p>
+
+<ol>
+  <li>使用变量</li>
+</ol>
+
+<p>$变量名</p>
+
+<p>${变量名}</p>
+
+<ol>
+  <li>字符串</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>  <span class="nv">your_name</span><span class="o">=</span><span class="s1">'runoob'</span>
+  <span class="nv">str</span><span class="o">=</span><span class="s2">"Hello, I know you are </span><span class="se">\"</span><span class="nv">$your_name</span><span class="se">\"</span><span class="s2">! </span><span class="se">\n</span><span class="s2">"</span>
+  <span class="nb">echo</span> <span class="nt">-e</span> <span class="nv">$str</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<ul>
+  <li>双引号可以有变量、转义字符</li>
+  <li>字符串长度</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre>  <span class="nb">echo</span> <span class="k">${#</span><span class="nv">string</span><span class="k">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>字符串截取</p>
+
+<p>echo ${string:1:4}</p>
+
+<ol>
+  <li>数组</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>  <span class="nv">array_name</span><span class="o">=(</span>value0 value1 value2 value3<span class="o">)</span>
+  <span class="nv">valuen</span><span class="o">=</span><span class="k">${</span><span class="nv">array_name</span><span class="p">[n]</span><span class="k">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>数组中的所有元素</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>  <span class="k">${</span><span class="nv">my_array</span><span class="p">[*]</span><span class="k">}</span>
+  <span class="k">${</span><span class="nv">my_array</span><span class="p">[@]</span><span class="k">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>获取数组的长度</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>  <span class="k">${#</span><span class="nv">my_array</span><span class="p">[*]</span><span class="k">}</span>
+  <span class="k">${#</span><span class="nv">my_array</span><span class="p">[@]</span><span class="k">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<ol>
+  <li>传递参数</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>  <span class="nb">echo</span> <span class="s2">"第一个参数为：</span><span class="nv">$1</span><span class="s2">"</span><span class="p">;</span>
+  <span class="nb">echo</span> <span class="s2">"参数个数为：$#"</span><span class="p">;</span>
+  <span class="nb">echo</span> <span class="s2">"传递的参数作为一个字符串显示：</span><span class="nv">$*</span><span class="s2">"</span><span class="p">;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p><code class="highlighter-rouge">$*</code>和<code class="highlighter-rouge">$@</code>的区别：如果传入3个参数，<code class="highlighter-rouge">$*</code>是一个参数，<code class="highlighter-rouge">$@</code>是3个参数</p>
+:ET

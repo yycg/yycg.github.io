@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="没有对生活绝望，就不会爱生活。——阿尔贝·加缪">
+    <meta name="keywords"  content="">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="ElasticSearch - 盈盈冲哥的博客">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="ElasticSearch &amp; Solr
+">
+    
+    <meta property="article:published_time" content="2020-03-05T20:00:00Z">
+    
+    
+    <meta property="article:author" content="盈盈冲哥">
+    
+    
+    <meta property="article:tag" content="学习">
+    
+    
+    <meta property="og:image" content="http://localhost:4000/img/a-perfect-world.jpg">
+    <meta property="og:url" content="http://localhost:4000/2020/03/05/elasticsearch/">
+    <meta property="og:site_name" content="盈盈冲哥的博客">
+    
+    <title>ElasticSearch - 盈盈冲哥的博客</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/letter-y.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2020/03/05/elasticsearch/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">盈盈冲哥的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/fleabag.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/fleabag.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=%E5%AD%A6%E4%B9%A0" title="学习">学习</a>
+                        
+                    </div>
+                    <h1>ElasticSearch</h1>
+                    
+                    <h2 class="subheading"></h2>
+                    <span class="meta">Posted by 盈盈冲哥 on March 5, 2020</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<h4 id="elasticsearch--solr">ElasticSearch &amp; Solr</h4>
+
+<ul>
+  <li>
+    <p>常见问题</p>
+
+    <ul>
+      <li>lucena引擎，一次查询的过程</li>
+      <li>近实时刷新的原理</li>
+      <li>
+        <p>分页怎么使用的，各个查询的原理，为什么有不同</p>
+      </li>
+      <li>底层原理</li>
+      <li>常用的命令</li>
+      <li>倒排索引</li>
+      <li>es的打分机制，tfidf</li>
+      <li>分页命令、scroll命令</li>
+      <li>还有一些命令的区别，match啊什么的条件命令(https://www.cnblogs.com/caoweixiong/p/11792049.html)</li>
+      <li>怎么在java里使用的</li>
+      <li>跟关系型 数据库的差别， 这些mysql不行嘛</li>
+      <li>es优化</li>
+      <li>es基本的查询原理，一次查询的过程</li>
+      <li>es高并发会不会数据冲突(https://blog.csdn.net/r_p_j/article/details/78388783)</li>
+      <li>es为什么是近实时的</li>
+      <li>
+        <p>具体使用没问，就是几个命令的区别，这还是美团面试官问的，阿里只问原理</p>
+      </li>
+      <li>
+        <p>目录</p>
+
+        <ul>
+          <li>ES和MySQL的区别</li>
+          <li>ES的原理，lucene原理</li>
+          <li>分布式架构的原理</li>
+          <li>写入（近实时刷新）、查询、搜索的过程（搜索类型和原理）</li>
+          <li>如何优化提高搜索性能</li>
+        </ul>
+      </li>
+      <li>
+        <p>ES和MySQL的区别</p>
+
+        <ol>
+          <li>
+            <p>一个ES集群可以包含多个<strong>索引（数据库）</strong>，每个索引又包含了很多<strong>类型（表）</strong>，类型中包含了很多<strong>文档（行）</strong>，每个文档使用 JSON 格式存储数据，包含了很多<strong>字段（列）</strong>。</p>
+          </li>
+          <li>
+            <p>ES<strong>分布式搜索（一个索引包含多个分片，分片包括主分片和副本分片；选举master结点）</strong>，传统数据库遍历式搜索</p>
+          </li>
+          <li>
+            <p>ES采用<strong>倒排索引（单词到文档）</strong>，传统数据库采用B+树索引</p>
+          </li>
+          <li>
+            <p>ES<strong>没有用户验证和权限控制</strong></p>
+          </li>
+          <li>
+            <p>ES<strong>没有事务</strong>的概念，不支持回滚，误删不能恢复</p>
+          </li>
+        </ol>
+      </li>
+      <li>
+        <p>elasticsearch的倒排索引是什么</p>
+
+        <p>传统的我们的检索是通过文章，逐个遍历找到对应关键词的位置。而倒排索引，是通过分词策略，形成了词和文章的映射关系表，这种词典+映射表即为倒排索引。有了倒排索引，就能实现o（1）时间复杂度 的效率检索文章了，极大的提高了检索效率。</p>
+
+        <p>倒排索引的底层实现是基于：<strong>FST（Finite State Transducer）数据结构</strong>。lucene从4+版本后开始大量使用的数据结构是FST。FST有两个优点：</p>
+
+        <p>1）<strong>空间占用小。通过对词典中单词前缀和后缀的重复利用，压缩了存储空间；</strong></p>
+
+        <p>2）<strong>查询速度快。O(len(str))的查询时间复杂度。</strong></p>
+
+        <blockquote>
+          <p>列式存储DocValues：分组统计</p>
+        </blockquote>
+      </li>
+      <li>
+        <p>elasticsearch是如何实现master选举的</p>
+
+        <p>选举流程大致描述如下：</p>
+
+        <p>第一步：确认候选主节点数达标，elasticsearch.yml设置的值discovery.zen.minimum_master_nodes；</p>
+
+        <p>第二步：比较：先判定是否具备master资格，具备候选主节点资格的优先返回；若两节点都为候选主节点，则id小的值会主节点。注意这里的id为string类型。</p>
+      </li>
+      <li>
+        <p>Elasticsearch的分布式架构原理是什么?</p>
+
+        <p>Elasticsearch是分布式的, 在多台机器上启动ES进程实例, 组成一个ES集群. <strong>ES集群中的节点会选举出一个master节点来管理集群, 比如负责索引的创建与删除, 负责主分片与副本分片的身份切换等等.</strong> ES集群的master节点选举算法如下:</p>
+
+        <ul>
+          <li>查找当前活跃的Master节点.</li>
+          <li>如果存在活跃的Master节点, 选择其中nodeId最小的那个作为Master节点. (脑裂问题可能导致多个Master节点)</li>
+          <li>如果不存在活跃的Master节点, 则获取集群中活跃的Master Eligible Nodes, 进行投票选举.</li>
+          <li>如果集群中活跃的候选节点数超过一半(正常情况下候选节点数的一半), 则选择clusterStateVersion(集群状态版本)最新的那个作为Master节点. 如果clusterStateVersion相同, 则选择nodeId最小的那个作为Master节点.</li>
+          <li>如果如果集群中活跃的候选节点数没有超过一半, 则无法选举.</li>
+        </ul>
+
+        <p><strong>ES存储数据的基本单位是索引, 每个索引都会被拆分为多个分片, 每个分片分布在不同节点上. 同时为了保证可用性, 每个分片都会设置副本, 主分片提供读写服务, 副本分片提供读服务.</strong> 当主分片所在的节点宕机后, master节点会从副本分片中选出一个作为主分片, 然后当宕机的节点修复后, master节点会将缺失的副本分片分配过去, 同步数据后, 集群恢复正常.</p>
+      </li>
+      <li>
+        <p>详细描述一下Elasticsearch索引文档的过程</p>
+
+        <p>这里的索引文档应该理解为文档写入ES，创建索引的过程。</p>
+
+        <p>第一步：客户写集群某节点写入数据，发送请求。（如果没有指定路由/协调节点，请求的节点扮演路由节点 的角色。）</p>
+
+        <p>第二步：节点1接受到请求后，使用文档_id来确定文档属于分片0。请求会被转到另外的节点，假定节点3。因此分片0的主分片分配到节点3上。</p>
+
+        <p>第三步：节点3在主分片上执行写操作，如果成功，则将请求并行转发到节点1和节点2的副本分片上，等待结果返回。所有的副本分片都报告成功，节点3将向协调节点（节点1）报告成功，节点1向请求客户端报告写入成功。</p>
+
+        <p>如果面试官再问：第二步中的文档获取分片的过程？回答：借助路由算法获取，路由算法就是根据路由和文档id计算目标的分片id的过程。</p>
+
+        <p><code class="highlighter-rouge">1shard = hash(_routing) % (num_of_primary_shards)</code></p>
+      </li>
+      <li>
+        <p>详细描述一下Elasticsearch搜索的过程？</p>
+
+        <p><strong>搜索拆解为“query then fetch” 两个阶段。query阶段的目的：定位到位置，但不取。</strong>步骤拆解如下：</p>
+
+        <p>1）假设一个索引数据有5主+1副本 共10分片，一次请求会命中（主或者副本分片中）的一个。</p>
+
+        <p>2）每个分片在本地进行查询，结果返回到本地有序的优先队列中。</p>
+
+        <p>3）第2）步骤的结果发送到协调节点，协调节点产生一个全局的排序列表。</p>
+
+        <p><strong>fetch阶段的目的：取数据。路由节点获取所有文档，返回给客户端。</strong></p>
+      </li>
+      <li>
+        <p>Elasticsearch写入数据的工作原理, 查询数据的工作原理, 搜索数据的工作原理分别是什么?</p>
+
+        <p><strong>Elasticsearch写入数据的工作原理</strong></p>
+
+        <ul>
+          <li><strong>客户端发送请求到任意一个协调节点(Coordinating Node), 然后协调节点将请求转发给master节点.</strong></li>
+          <li><strong>master节点对document进行路由, 将document写入主分片.</strong></li>
+          <li><strong>document写入主分片后, 将数据同步到副本分片.</strong></li>
+          <li>主分片和副本分片都写入成功后, 返回响应结果给客户端.</li>
+        </ul>
+
+        <p>(1) document写入主分片的详细过程</p>
+
+        <ul>
+          <li><strong>Document写入Index Buffer(ES进程缓冲), 同时将写命令记录到Transaction Log.</strong></li>
+          <li><strong>每隔1秒或Index Buffer空间被占满后, Index Buffer中的数据被写入新的Segment中, 并进入OS Cache, 这个过程叫Refresh.</strong> (此时倒排索引已创建, 存在OS Cache中, 数据可被搜索)</li>
+          <li>重复前面两个步骤.</li>
+          <li>每隔30分钟或Transaction Log占满后, 先进行Refresh操作, 然后将OS Cache中的Segment刷入磁盘, 这个过程叫Flush.</li>
+          <li>删除旧Transaction Log, 创建一个新的Transaction Log.</li>
+          <li>ES定期合并磁盘中的Segment File, 同时清除那些被标记为delete的文档.</li>
+        </ul>
+
+        <p>(2) <strong>ES被称为近实时(Near Realtime)的原因</strong></p>
+
+        <p><strong>从上文”document写入主分片的详细过程”中可以知道, Refresh操作每秒执行一次, 只有执行Refresh操作之后, 倒排索引才会被创建, 数据才能被搜索, 这就是ES被称为近实时的原因.</strong></p>
+
+        <p>(3) ES存在数据丢失的问题</p>
+
+        <p>从上文”document写入主分片的详细过程”中可以知道, document写入Index Buffer的同时会将写命令记录到Transaction Log, 目的是如果数据落盘之前机器宕机了, 可以从Transaction Log中恢复数据. 但在旧版本中Transaction Log不是默认落盘的, 它会先写入OS Cache中, 每隔5s才会被刷入磁盘, 所以如果在Transaction Log落盘前机器宕机了, 数据就完全丢失了.</p>
+
+        <p>在新版本7.x中, Transaction Log是默认落盘的, 也就不会有数据丢失的问题. (index.translog.durability, index.translog.sync_interval)</p>
+
+        <p><strong>Elasticsearch查询数据的工作原理(Get查询)</strong></p>
+
+        <ul>
+          <li><strong>客户端发送请求到任意一个协调节点(Coordinating Node).</strong></li>
+          <li><strong>协调节点根据id进行路由, 找到对应的分片.</strong></li>
+          <li><strong>根据round-robin随机轮询算法, 在主分片和其他副本分片中随机选择一个, 进行查询.</strong></li>
+          <li>将对应的document返回给协调节点.</li>
+          <li>协调节点返回document给客户端.</li>
+        </ul>
+
+        <p><strong>Elasticsearch搜索数据的工作原理</strong></p>
+
+        <ul>
+          <li><strong>客户端发送请求到任意一个协调节点(Coordinating Node).</strong></li>
+          <li><strong>协调节点将搜索请求转发给所有分片(主分片和副本分片采用随机轮询算法选一个)</strong></li>
+          <li><strong>每个分片将自己的搜素结果(这里只有id)返回给协调节点</strong></li>
+          <li><strong>协调节点对搜索结果进行合并, 排序, 分页等操作, 得出最终结果.</strong></li>
+          <li><strong>协调节点根据最终结果的id去各个分片上拉取document, 返回给客户端.</strong></li>
+        </ul>
+      </li>
+      <li>
+        <p>Elasticsearch之四种搜索类型和搜索原理</p>
+
+        <p><strong>Elasticsearch在搜索过程中存在以下几个问题：</strong></p>
+
+        <p>第一、 <strong>数量问题</strong>。 比如， 用户需要搜索”衣服”， 要求返回符合条件的前 10 条。 但在 5个分片中， 可能都存储着衣服相关的数据。 所以 ES 会向这 5 个分片都发出查询请求， 并且要求每个分片都返回符合条件的 10 条记录。当ES得到返回的结果后，进行整体排序，然后取最符合条件的前10条返给用户。 这种情况， ES 中 5 个 shard 最多会收到 10*5=50条记录， 这样返回给用户的结果数量会多于用户请求的数量。</p>
+
+        <p>第二、 <strong>排名问题</strong>。 上面说的搜索， 每个分片计算符合条件的前 10 条数据都是基于自己分片的数据进行打分计算的。计算分值使用的词频和文档频率等信息都是基于自己分片的数据进行的， 而 ES 进行整体排名是基于每个分片计算后的分值进行排序的(相当于打分依据就不一样， 最终对这些数据统一排名的时候就不准确了)， 这就可能会导致排名不准确的问题。如果我们想更精确的控制排序， 应该先将计算排序和排名相关的信息（ 词频和文档频率等打分依据） 从 5 个分片收集上来， 进行统一计算， 然后使用整体的词频和文档频率为每个分片中的数据进行打分， 这样打分依据就一样了。</p>
+
+        <p><strong>Elasticsearch的搜索类型（SearchType类型）</strong></p>
+
+        <p>1、 query and fetch</p>
+
+        <p>向索引的所有分片 （ shard）都发出查询请求， 各分片返回的时候把元素文档 （ document）和计算后的排名信息一起返回。</p>
+
+        <p>这种搜索方式是最快的。 因为相比下面的几种搜索方式， 这种查询方法只需要去 shard查询一次。 但是各个 shard 返回的结果的数量之和可能是用户要求的 size 的 n 倍。</p>
+
+        <p>优点：这种搜索方式是最快的。因为相比后面的几种es的搜索方式，这种查询方法只需要去shard查询一次。</p>
+
+        <p>缺点：返回的数据量不准确， 可能返回(N*分片数量)的数据并且数据排名也不准确，同时各个shard返回的结果的数量之和可能是用户要求的size的n倍。</p>
+
+        <p>2、 query then fetch（ es 默认的搜索方式）</p>
+
+        <p>如果你搜索时， 没有指定搜索方式， 就是使用的这种搜索方式。 这种搜索方式， 大概分两个步骤：</p>
+
+        <p>第一步， 先向所有的 shard 发出请求， 各分片只返回文档 id(注意， 不包括文档 document)和排名相关的信息(也就是文档对应的分值)， 
+然后按照各分片返回的文档的分数进行重新排序和排名， 取前 size 个文档。
+　　
+第二步， 根据文档 id 去相关的 shard 取 document。 这种方式返回的 document 数量与用户要求的大小是相等的。</p>
+
+        <p>优点：返回的数据量是准确的。
+　　
+缺点：性能一般，并且数据排名不准确。</p>
+
+        <p>3、 DFS query and fetch
+　　
+这种方式比第一种方式多了一个 DFS 步骤，有这一步，可以更精确控制搜索打分和排名。也就是在进行查询之前， 先对所有分片发送请求， 把所有分片中的词频和文档频率等打分依据全部汇总到一块， 再执行后面的操作。</p>
+
+        <p>优点：数据排名准确</p>
+
+        <p>缺点：性能一般；返回的数据量不准确， 可能返回(N*分片数量)的数据</p>
+
+        <p>4、 DFS query then fetch
+　　
+比第 2 种方式多了一个 DFS 步骤。也就是在进行查询之前， 先对所有分片发送请求， 把所有分片中的词频和文档频率等打分依据全部汇总到一块， 再执行后面的操作。</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>　　优点：返回的数据量是准确的，数据排名准确</p>
+
+<p>　　缺点：性能最差【 这个最差只是表示在这四种查询方式中性能最慢， 也不至于不能忍受，如果对查询性能要求不是非常高， 而对查询准确度要求比较高的时候可以考虑这个】</p>
+
+<p>　　DFS 是一个什么样的过程？</p>
+
+<p>　　从 es 的官方网站我们可以发现， DFS 其实就是在进行真正的查询之前， 先把各个分片的词频率和文档频率收集一下， 然后进行词搜索的时候， 各分片依据全局的词频率和文档频率进行搜索和排名。 显然如果使用 DFS_QUERY_THEN_FETCH 这种查询方式， 5效率是最低的，因为一个搜索， 可能要请求 3 次分片。 但， 使用 DFS 方法， 搜索精度是最高的。</p>
+
+<ul>
+  <li>
+    <p>Elasticsearch在数据量很大的情况下（数十亿级别）如何提高搜索性能?</p>
+
+    <p>(1) 善于利用OS Cache</p>
+
+    <p>如果Elasticsearch的每次搜索都要落盘, 那搜索性能肯定很差, 将达到秒级. 但<strong>如果ES集群中的数据量等于OS Cache的容量, 那每次搜索都会直接走OS Cache, 这样性能就会很高, 达到毫秒级.</strong></p>
+
+    <p>ES集群中的数据量最好不要超过OS Cache的容量, 最低要求也不能超过OS Cache的两倍. 比如我们ES集群有3台机器, 每台机器64G内存, 为每个节点的ES JVM Heap分配32G内存, 最终集群的OS Cache为 32G * 3 = 96G内存. 我们ES集群中的数据量最优情况是不超过96G, 最低要求的情况是不超过192G.</p>
+
+    <p>(2) 数据建模</p>
+
+    <p>从上文”善于利用OS Cache”中我们知道, 我们要保证ES集群中的数据量不超过OS Cache的容量, 那么我们在数据建模的时候就要注意两点:</p>
+
+    <ul>
+      <li><strong>不要将MySQL表中的所有字段都写入ES, 只写入一部分会被搜索的字段.</strong></li>
+      <li><strong>对于MySQL中具有关联关系的表, 我们直接将关联字段写入ES中或在应用端处理关联关系, 禁止在ES中处理关联关系.</strong></li>
+    </ul>
+
+    <p>(3) 数据预热</p>
+
+    <p>如果我们无法做到让ES集群中的数据量不超过OS Cache的容量, <strong>那我们做一个缓存预热子系统, 定时搜索”热数据”, 让其进入OS Cache.</strong></p>
+
+    <p>(4) 冷热分离</p>
+
+    <p>在数据预热的基础上我们还可以进行冷热数据分离, 比如我们有6台机器, 创建两个索引, 每个索引3个分片, <strong>一个索引放热数据, 一个索引放冷数据</strong>. 热数据量一般只占总数据量的10%, 这样我们就能保证热数据都在OS Cache中. 而冷数据虽然占总数据的90%, 但却只有10%的用户访问, 性能差点是可以接受的.</p>
+
+    <p>(5) 分页性能优化</p>
+
+    <p><strong>深度分页的性能是很差的, 我们要防止出现深度分页的情况, 用滚动翻页来代替深度分页.</strong></p>
+
+    <ul>
+      <li>search after</li>
+      <li>scroll</li>
+    </ul>
+  </li>
+  <li>
+    <p>ES分页</p>
+
+    <p>Elasticsearch分页api有三种:</p>
+
+    <ul>
+      <li>from/size（深度分页。当我们进行一个分页查询from=990, size=10时:首先在每个分片上先都获取 1000 个文档，通过 Coordinating Node 聚合所有结果，再通过排序选取前 1000 个文档。页数越深，占用内存就越多。）</li>
+      <li>search after（用来实时的获取下一页文档信息, 它不支持指定页数(from), 只能往下翻.）</li>
+      <li>scroll（用来处理大数据量的分页搜索, 不适用于实时的分页搜索. scroll分页搜索每次都会创建一个快照, 新数据写入只能影响到后续的分页搜索.）</li>
+    </ul>
+  </li>
+  <li>
+    <p>Elasticsearch生产集群的部署架构是什么？每个索引的数据量大概有多少？每个索引大概有多少个分片？</p>
+
+    <p>(1) ES生产集群我们部署了5台机器, 每台机器是6核64G的, 集群总内存是320G.</p>
+
+    <p>(2) 我们ES集群的日增量数据大概是2000万条, 500MB左右; 每月增量数据大概是6亿条, 15G左右. 目前系统已经运行了几个月, 现在ES集群里数据总量大概是100G左右.</p>
+
+    <p>(3) 目前线上有5个索引（这个结合你们自己业务来, 看看自己有哪些数据可以放ES的）, 每个索引的数据量大概是20G, 所以这个数据量之内, 我们每个索引分配的是8个shard, 比默认的5个shard多了3个shard.</p>
+  </li>
+</ul>
+
+<blockquote>
+  <p><a href="https://www.cnblogs.com/jajian/p/9801154.html">https://www.cnblogs.com/jajian/p/9801154.html</a></p>
+</blockquote>
+
+<p>全文搜索引擎的索引建立都是根据<strong>倒排索引</strong>的方式生成索引。</p>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/playgrrrrr/article/details/79008124">https://blog.csdn.net/playgrrrrr/article/details/79008124</a></p>
+</blockquote>
+
+<p>ES和MySQL的区别</p>
+
+<blockquote>
+  <p><a href="https://juejin.im/entry/5c46d7c2e51d4551df6f2338">https://juejin.im/entry/5c46d7c2e51d4551df6f2338</a></p>
+</blockquote>
+
+<p>ES面试题</p>
+
+<blockquote>
+  <p><a href="https://developer.51cto.com/art/201904/594615.htm">https://developer.51cto.com/art/201904/594615.htm</a></p>
+</blockquote>
+
+<p>ES原理</p>
+
+<blockquote>
+  <p><a href="https://www.cnblogs.com/sessionbest/articles/8689030.html">https://www.cnblogs.com/sessionbest/articles/8689030.html</a></p>
+</blockquote>
+
+<p>Lucene原理</p>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/litianxiang_kaola/article/details/104147340">https://blog.csdn.net/litianxiang_kaola/article/details/104147340</a></p>
+</blockquote>
+
+<p>Elasticsearch面试必知必会</p>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/wangyunpeng0319/article/details/78218332">https://blog.csdn.net/wangyunpeng0319/article/details/78218332</a></p>
+</blockquote>
+
+<p>Elasticsearch之四种查询类型和搜索原理</p>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/zkyfcx/article/details/79998197">https://blog.csdn.net/zkyfcx/article/details/79998197</a></p>
+</blockquote>
+
+<p>ElasticSearch底层原理浅析</p>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/litianxiang_kaola/article/details/103808522">https://blog.csdn.net/litianxiang_kaola/article/details/103808522</a></p>
+</blockquote>
+
+<p>ES分页</p>
+
+<blockquote>
+  <p><a href="https://blog.csdn.net/chen_2890/article/details/83895646">https://blog.csdn.net/chen_2890/article/details/83895646</a></p>
+</blockquote>
+
+<p>SpringBoot整合Elasticsearch</p>
+
+<h4 id="分词算法">分词算法</h4>
+
+<blockquote>
+  <p><a href="https://zhuanlan.zhihu.com/p/33261835">https://zhuanlan.zhihu.com/p/33261835</a></p>
+</blockquote>
+
+<ul>
+  <li>基于词表的分词方法
+    <ul>
+      <li>正向最大匹配法(forward maximum matching method, FMM)</li>
+      <li>逆向最大匹配法(backward maximum matching method, BMM)</li>
+      <li>N-最短路径方法</li>
+    </ul>
+  </li>
+  <li>基于统计模型的分词方法
+    <ul>
+      <li>基于N-gram语言模型的分词方法</li>
+    </ul>
+  </li>
+  <li>基于序列标注的分词方法
+    <ul>
+      <li>基于HMM的分词方法</li>
+      <li>基于CRF的分词方法</li>
+      <li>基于词感知机的分词方法</li>
+      <li>基于深度学习的端到端的分词方法</li>
+    </ul>
+  </li>
+</ul>
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/03/05/designpattern/" data-toggle="tooltip" data-placement="top" title="设计模式">
+                        Previous<br>
+                        <span>设计模式</span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/03/05/framework/" data-toggle="tooltip" data-placement="top" title="架构">
+                        Next<br>
+                        <span>架构</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0005" 
+                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
+                    title="学习"
+                    rel="17">学习</a>
+        
+                <a data-sort="0018" 
+                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
+                    title="生活"
+                    rel="4">生活
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="https://github.com/thisaway">Tob</a></li>
+  
+  <li><a href="https://github.com/MMochii">Mochiii</a></li>
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+    SVG: {
+      scale: 90
+    },
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      displayMath: [ ['$$','$$'] ],
+      processEscapes: true,
+    }
+  });
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG">
+</script>
+
+
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'right',
+          // icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <!-- add Douban by yycg-->
+  
+  <li>
+      <a target="_blank" href="https://www.douban.com/people/154702906">
+          <span class="fa-stack fa-lg">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa  fa-stack-1x fa-inverse">豆</i>
+          </span>
+      </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="http://weibo.com/5674063334">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/yycg">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; 盈盈冲哥的博客 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-49627206-1';
+    var _gaDomain = 'huangxuan.me';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+<!-- Side Catalog -->
+
+<script type="text/javascript">
+    function generateCatalog (selector) {
+
+        // interop with multilangual 
+        if ('' == 'true') {
+            _containerSelector = 'div.post-container.active'
+        } else {
+            _containerSelector = 'div.post-container'
+        }
+
+        // init
+        var P = $(_containerSelector),a,n,t,l,i,c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        // clean
+        $(selector).html('')
+
+        // appending
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#"+$(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="'+i+'" rel="nofollow">'+t+'</a>');
+            l = $('<li class="'+n+'_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    // toggle side catalog
+    $(".catalog-toggle").click((function(e){
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    /*
+     * Doc: https://github.com/davist11/jQuery-One-Page-Nav
+     * Fork by Hux to support padding
+     */
+    async("/js/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

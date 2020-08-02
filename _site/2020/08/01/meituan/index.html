@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="没有对生活绝望，就不会爱生活。——阿尔贝·加缪">
+    <meta name="keywords"  content="">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="美团的记忆 - 盈盈冲哥的博客">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="没有对生活绝望，就不会爱生活。——阿尔贝·加缪">
+    
+    <meta property="og:image" content="http://localhost:4000/img/a-perfect-world.jpg">
+    <meta property="og:url" content="http://localhost:4000/2020/08/01/meituan/">
+    <meta property="og:site_name" content="盈盈冲哥的博客">
+    
+    <title>美团的记忆 - 盈盈冲哥的博客</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/pwa/manifest.json">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/img/letter-y.ico">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://localhost:4000/2020/08/01/meituan/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">盈盈冲哥的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                        <a href="/archive/">Archive</a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    var __HuxNav__ = {
+        close: function(){
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        },
+        open: function(){
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+
+    // Bind Event
+    $toggle.addEventListener('click', function(e){
+        if ($navbar.className.indexOf('in') > 0) {
+            __HuxNav__.close()
+        }else{
+            __HuxNav__.open()
+        }
+    })
+
+    /**
+     * Since Fastclick is used to delegate 'touchstart' globally
+     * to hack 300ms delay in iOS by performing a fake 'click',
+     * Using 'e.stopPropagation' to stop 'touchstart' event from 
+     * $toggle/$collapse will break global delegation.
+     * 
+     * Instead, we use a 'e.target' filter to prevent handler
+     * added to document close HuxNav.  
+     *
+     * Also, we use 'click' instead of 'touchstart' as compromise
+     */
+    document.addEventListener('click', function(e){
+        if(e.target == $toggle) return;
+        if(e.target.className == 'icon-bar') return;
+        __HuxNav__.close();
+    })
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/library-2.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+
+
+
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/library-2.jpg');
+        background: ;
+    }
+
+    
+</style>
+
+<header class="intro-header" >
+
+    <div class="header-mask"></div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/archive/?tag=%E7%94%9F%E6%B4%BB" title="生活">生活</a>
+                        
+                    </div>
+                    <h1>美团的记忆</h1>
+                    
+                    <h2 class="subheading">手如柔荑，肤如凝脂，领如蝤蛴，齿如瓠犀，螓首蛾眉，巧笑倩兮，美目盼兮。——诗经·卫风·硕人</h2>
+                    <span class="meta">Posted by 盈盈冲哥 on August 1, 2020</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!-- Multi-Lingual -->
+                
+
+				<div id="encrypted_content">
+  <form id="encrypt_form" action="#" method="post">
+    <input id="encrypt_password"
+           type="password"
+           name="password"
+           placeholder="Password"
+           autofocus />
+
+    <input type="submit" value="Unlock"/>
+  </form>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+  <script>
+    document.getElementById('encrypt_form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var passphrase = document.getElementById('encrypt_password').value,
+          encryptedMsg = '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',
+          encryptedHMAC = encryptedMsg.substring(0, 64),
+          encryptedHTML = encryptedMsg.substring(64),
+          decryptedHMAC = CryptoJS.HmacSHA256(encryptedHTML, CryptoJS.SHA256(passphrase).toString()).toString();
+
+      if (decryptedHMAC !== encryptedHMAC) {
+        alert('Bad passphrase!');
+        return;
+      }
+
+      var plainHTML = CryptoJS.AES.decrypt(encryptedHTML, passphrase).toString(CryptoJS.enc.Utf8);
+      document.getElementById('encrypted_content').innerHTML = plainHTML;
+    });
+  </script>
+</div>
+
+
+                <hr style="visibility: hidden;">
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/07/05/summary/" data-toggle="tooltip" data-placement="top" title="总结">
+                        Previous<br>
+                        <span>总结</span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+                <hr style="visibility: hidden;">
+
+                
+
+                
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+        
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+
+<section>
+    
+        <hr class="hidden-sm hidden-xs">
+    
+    <h5><a href="/archive/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+        
+        
+        </a>
+        
+        
+                <a data-sort="0005" 
+                    href="/archive/?tag=%E5%AD%A6%E4%B9%A0"
+                    title="学习"
+                    rel="17">学习</a>
+        
+                <a data-sort="0018" 
+                    href="/archive/?tag=%E7%94%9F%E6%B4%BB"
+                    title="生活"
+                    rel="4">生活
+    </div>
+</section>
+
+
+                <!-- Friends Blog -->
+                
+<hr>
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+  
+  <li><a href="https://github.com/thisaway">Tob</a></li>
+  
+  <li><a href="https://github.com/MMochii">Mochiii</a></li>
+  
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- add support for mathjax by voleking-->
+
+
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'right',
+          // icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <!-- SNS Link -->
+                
+
+
+<ul class="list-inline text-center">
+
+
+  
+  
+  <!-- add Douban by yycg-->
+  
+  <li>
+      <a target="_blank" href="https://www.douban.com/people/154702906">
+          <span class="fa-stack fa-lg">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa  fa-stack-1x fa-inverse">豆</i>
+          </span>
+      </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="http://weibo.com/5674063334">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+  
+  <li>
+    <a target="_blank" href="https://github.com/yycg">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+                <p class="copyright text-muted">
+                    Copyright &copy; 盈盈冲哥的博客 2020
+                    <br>
+                    Powered by <a href="http://huangxuan.me">Hux Blog</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huxpro&repo=huxpro.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<!-- Currently, only navbar scroll-down effect at desktop still depends on this -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js "></script>
+
+<!-- Service Worker -->
+
+<script src="/js/snackbar.js "></script>
+<script src="/js/sw-registration.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!--
+     Because of the native support for backtick-style fenced code blocks
+     right within the Markdown is landed in Github Pages,
+     From V1.6, There is no need for Highlight.js,
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/
+     - https://github.com/jneen/rouge/wiki/list-of-supported-languages-and-lexers
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+
+
+
+<!--fastClick.js -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-49627206-1';
+    var _gaDomain = 'huangxuan.me';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+<!-- Side Catalog -->
+
+<script type="text/javascript">
+    function generateCatalog (selector) {
+
+        // interop with multilangual 
+        if ('' == 'true') {
+            _containerSelector = 'div.post-container.active'
+        } else {
+            _containerSelector = 'div.post-container'
+        }
+
+        // init
+        var P = $(_containerSelector),a,n,t,l,i,c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        // clean
+        $(selector).html('')
+
+        // appending
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#"+$(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="'+i+'" rel="nofollow">'+t+'</a>');
+            l = $('<li class="'+n+'_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    // toggle side catalog
+    $(".catalog-toggle").click((function(e){
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    /*
+     * Doc: https://github.com/davist11/jQuery-One-Page-Nav
+     * Fork by Hux to support padding
+     */
+    async("/js/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+<!-- Multi-Lingual -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
