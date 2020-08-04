@@ -198,6 +198,77 @@ tags:
 
 ## Java 
 
+1. 简单类型8种：short, int, long, float, double, boolean, byte, char
+
+2. NIO：非阻塞IO，调用者不用一直等着结果返回。线程控制选择器，选择不同的通道来读取缓存区。
+
+3. Linux的5中IO模型：阻塞、非阻塞、异步、IO复用、信号驱动IO
+
+4. select, poll, epoll的区别
+
+  - select需要把文件描述符(fd)集合从用户态拷贝到内核态，并在内核态遍历文件描述符。
+  - poll与select类似，文件描述符集合的描述结构不同。
+  - epoll会在注册时吧所有文件描述符拷贝进内核，每个文件描述符只会拷贝一次，挂到等待队列上。
+
+5. Object类方法：hashCode(), equals(), notify(), wait(), toString(), clone(), getClass(), finalize()
+
+6. 接口和抽象类的区别：方法再接口中不能有实现；一个类可以实现多个接口，但只能继承一个抽象类。
+
+7. String：不可变
+StringBuffer：可变，线程安全synchronized
+StringBuilder：可变，线程不安全
+
+8. final
+
+  - 修饰变量：值再初始化后不能更改
+  - 修饰类：类不能被继承，所有成员方法都会被隐式指定为final
+
+9. static
+
+  - 修饰成员变量和方法
+  - 静态代码块
+  - 静态内部类（不能引用外部非static成员变量和方法）
+
+10. 通配符?用于实例化泛型对象，T用于定义泛型类
+
+11. List, Set, Map
+
+  - List: ArrayList, Vector, LinkedList
+  - Set, Map: HashMap, HashTable. LinkedHashMap, TreeMap
+
+12. HashMap
+
+  - hash = h ^ (h >>> 16)，高16位和低16位都反映到低位上，使hash更均匀
+  - 到table[(n-1)&hash]取值（取hash的低位）
+  - 扩容：新数组newTable为原数组的2倍；如果节点是TreeNode，分成2棵树；如果是节点，hash&oldCap==0放在原索引，否则原索引+oldCap.
+  - JDK 8前，并发扩容产生循环链表，get时死循环。JDK 8不会死循环，但仍然会产生数据丢失。
+
+13. ==和equals()的区别
+
+  - ==判断2个对象的地址是否相等
+  - equals()没有重写时等价于==，可以重写
+
+14. hashCode()和equals()
+
+  - HashMap比较key是否相同时，先判断hashCode是否相同，再比较equals()是否相同。
+  - 2个对象相等，散列码相同。
+  - equals()重写过，hashCode()也要重写，否则有可能2个对象相同散列码不同，散列到不同的散列桶中找不到key
+
+15. 重写equals()的约定
+
+  (1) 使用==操作符检查参数是否时这个对象的引用
+  (2) 使用instance检查是否为正确的类型
+  (3) 把参数转换成正确的类型
+  (4) 比较每个关键域是否匹配
+  (5) 死牢equals()方法是否满足自反性、对称性、传递性、一致性、非空性
+
+16. 重写hashCode
+
+  (1) int result = 17;
+  (2) 对于每个关键域：
+  a. 计算关键域int类型的散列码c，float, double转成int, long, long: (int) (f^(f>>>32))
+  b. result=31*result+c
+
 ## 并发
 
 ## JVM
