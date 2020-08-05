@@ -350,6 +350,77 @@ StringBuilder：可变，线程不安全
   (1) 线程A把本地内存A中更新过的共享变量刷新到主内存中去。
   (2) 线程B到主内存中去读取线程A之前已经更新过的共享变量。
 
+8. 为什么要使用多线程
+
+  - 单核时代提高CPU和IO的综合利用率
+  - 多核时代提高CPU利用率
+  - 业务更快的响应时间
+
+9. 设置线程优先级时，针对频繁阻塞的线程需设置较高的优先级，而偏重计算的线程设置较低的优先级，确保处理器不会被独占。
+
+10. 线程的状态
+
+  - NEW
+  - TERMINATED
+  - RUNNABLE：运行中，包括就绪和运行
+  - BLOCKED：阻塞于锁
+  - WAITING：等待其他线程通知
+  - TIME_WAITING：超时等待，可以在指定时间自行返回
+
+11. 当一个Java虚拟机中不存在非Daemon线程时，Java虚拟机将会退出。
+
+12. 线程通过方法isInterrupted()来判断是否被中断，也可以调用静态方法Thread.interrupted()对当前线程的中断标志位进行复位。
+
+13. 除了中断以外，还可以利用一个boolean变量来控制是否需要停止任务并终止该线程。
+
+14. suspend()调用后不会释放已经占有的资源（比如锁），而是占有着资源进入睡眠状态。
+
+  stop()终结一个线程时不会保证线程资源正常释放
+  
+  yield()方法会临时暂停正在执行的线程，来让有同样优先级的线程有机会执行。yield()方法不保证当前的线程会暂停或停止，但是可以保证当前线程调用yield方法时会放弃CPU。
+
+15. 线程间通信
+
+  - wait/notify
+  - volatile/synchronized
+  - join
+  - countdownlatch/cyclicbarrier
+
+16. Fork/Join框架
+
+  FOrk就是把一个大任务切分成若干子任务，Join就是合并这些子任务的执行结果。
+  
+  工作窃取算法是指某个线程从其他队列中窃取任务来执行。充分利用线程进行并行计算，减少了线程的竞争。
+
+17. AtomicInteger
+
+ ```java
+ public final int getAndIncrement() {
+     for (;;) {
+         int current = get();
+	 int next = current + 1;
+	 if (compareAndSet(current, next)) {
+	     return current;
+	 }
+     }
+ }
+ 
+ public final boolean compareAndSet(int expect, int update) {
+     return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+ }
+ ```
+
+18. 线程池的好处
+
+  - 降低资源消耗
+  - 提高响应速度
+  - 提高线程的可管理性
+   
+19. 线程池的参数
+
+  (1) corePoolSize：核心线程数
+  (2) runnable
+
 ## JVM
 
 ## Spring
