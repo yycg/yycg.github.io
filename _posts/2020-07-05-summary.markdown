@@ -419,7 +419,113 @@ StringBuilder：可变，线程不安全
 19. 线程池的参数
 
   (1) corePoolSize：核心线程数
-  (2) runnable
+
+  (2) runnableTaskQueue：任务队列
+
+  ArrayBockingQueue：有界
+
+  LinkedBlockingQueue：有界，默认Integer.MAX_VALUE
+
+  SynchronousQUeue：不存储元素
+
+  PriorityBlockingQueue：具有优先级、无限
+
+  (3) maxPoolSize：线程池的最大数量
+
+  (4) ThreadFactory：创建线程的工厂
+
+  (5) RejectExxcutionHandler 饱和策略
+
+  AbortPolicy 直接抛出异常
+
+  CallerRunPolicy 调用者所用线程
+
+  DiscardOldestPolicy 丢弃最早
+
+  DiscardPolicy 丢弃
+
+  (6) keepAliveTime 线程池工作线程空闲后，保持存活的时间
+
+20. 线程池提交任务
+
+  execute()提交不需要返回值的任务，输入Runnable类实例
+
+  submit()提交需要返回值的任务，输入Runnale或Callable，返回一个future对象，future的get()方法会阻塞到任务完成并返回返回值
+
+21. 关闭线程池
+
+  RUNNING
+
+  SHUTDOWN(shutdown) 继续处理等待队列
+
+  STOP(shutdownNow)不在处理等待队列，中断正在执行的线程
+
+22. CPU密集型任务应配置尽可能小的线程，如N_CPU+1;IO密集型任务线程并不是一直在执行任务，应配置尽可能多的线程，如2N_CPU.
+
+23. Executor
+
+  (1) FixedThreadPool
+  (2) SingleThreadExecutor
+  (3) CachedThreadExecutor
+  (4) ScheduledTHreadExecutor
+
+24. Future接口和实现Future接口的FUtureTask类用来表示异步计算的结果。
+
+25. Runnable接口不会返回结果，而Callable接口可以返回结果。
+
+26. CopyOnWriteArrayList：修改时，复制原有数据，将修改内容写入副本。写完后再去替换原来的数据。
+
+27. java.util.comncurrent并发包
+
+  并发容器 concurrentHashMap
+
+  原子变量 AtomicInteger
+
+  显式锁 lock
+
+  同步工具 semaphore, countdownlatch, cyclicbarrier
+
+	线程池
+
+28. 可重入锁独有的功能
+
+	- 指定公平锁还是非公平锁
+	- Condition条件类，分组环形需要唤醒的线程
+	- 中断等待锁
+
+29. ThreadLocal内存泄漏
+
+	key为弱引用，value为强引用，key被清理掉，value未被清理
+
+30. 强引用：不会被清理
+
+  弱引用：生存到下一次垃圾收集发生之前
+	
+	软引用：系统将要内存溢出异常前回收
+
+	虚引用：唯一目的就是被回收前收到一个系统通知
+
+31. CountDownLatch: countDown()，方法技术减1，一等多
+
+  CyclicBarrier: await()计数减1，多个线程互相等待
+
+32. 创建线程的方法
+
+	- 继承Thread类
+	- 实现Runnable接口，传进Thread
+	- 实现Callable接口，传进Thread
+	- 线程池
+
+33. 线程同步的方法
+
+  - synchronized
+	- volatile
+	- 重入锁
+	- ThreadLocal
+	- 阻塞队列
+	- 原子变量
+
+34. 重入：获取锁的操作粒度是线程而不是调用
 
 ## JVM
 
@@ -529,6 +635,10 @@ StringBuilder：可变，线程不安全
 ## Spring
 
 ## 操作系统
+
+	1. 死锁
+
+		-
 
 ## 数据结构
 
