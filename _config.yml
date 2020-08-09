@@ -106,5 +106,8 @@ friends: [
     {
         title: "LancetHazel",
         href: "https://github.com/LancetHazel"
+    }, {
+        title: "LancetHazel博客",
+        href: "https://me.csdn.net/LancetHazel?tdsourcetag=s_pctim_aiomsg"
     }
 ]
