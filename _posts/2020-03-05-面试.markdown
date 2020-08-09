@@ -13,7 +13,7 @@ tags:
 
 #### 面经
 
-> https://github.com/yycg/interview/blob/master/interview.md
+> [https://github.com/yycg/interview/blob/master/interview.md](https://github.com/yycg/interview/blob/master/interview.md)
 
 - 20/7/24 美团转正面试
 
@@ -36,6 +36,7 @@ tags:
 - 20/7/26 字节跳动一面
 
   - 用户、角色、权限，用过属性权限管理吗，角色相同用户不同需要有不同的权限怎么办
+  - 用户登录，加盐的作用
   - 死锁的条件，怎么检测（jstack），jstack怎么检测的
   - String为什么是final（https://blog.csdn.net/qq_29663071/article/details/81318907）
   - 检索优化是怎么做的，关键词检索不用ES原来是怎么做的，ES为什么能提高检索性能
@@ -52,6 +53,9 @@ tags:
   - B树和B+树的区别，为什么要用B+树（范围查询）
   - 聚簇索引和非聚簇索引，主键索引和非主键索引
   - HTTPS的过程
+  - CSRF
+  - 策略模式
+  - 学到什么编程技巧：DDD
   - 算法题：给出字母板，判断单词是否在其中
 
 - 20/7/31 字节跳动三面

@@ -104,10 +104,7 @@ page-mathjax: false
 # Friends
 friends: [
     {
-        title: "Tob",
-        href: "https://github.com/thisaway"
-    },{
-        title: "Mochiii",
-        href: "https://github.com/MMochii"
+        title: "Lancet Hazel",
+        href: "https://github.com/LancetHazel"
     }
 ]
