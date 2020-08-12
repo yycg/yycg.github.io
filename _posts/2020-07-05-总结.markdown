@@ -858,19 +858,19 @@ tags:
 
 12. RPC
 
-  https://snailclimb.gitee.io/javaguide/#/docs/system-design/data-communication/dubbo
-
   https://snailclimb.gitee.io/javaguide/#/docs/system-design/data-communication/why-use-rpc
-
-  https://blog.csdn.net/testcs_dn/article/details/78050590
-
-  https://blog.csdn.net/kesonyk/article/details/50924489
 
   https://blog.csdn.net/top_code/article/details/54615853
 
 12. Dubbo
 
+  https://snailclimb.gitee.io/javaguide/#/docs/system-design/data-communication/dubbo
+
 12. Thrift
+
+  https://blog.csdn.net/kesonyk/article/details/50924489
+ 
+  https://www.jianshu.com/p/15dbc8665648
 
 13. Redis
 
@@ -888,11 +888,11 @@ tags:
 
   - 超卖
 
-  https://blog.csdn.net/glamour2015/article/details/105179738/
+    https://blog.csdn.net/glamour2015/article/details/105179738/
 
-  https://hacpai.com/article/1536335417613
+    https://hacpai.com/article/1536335417613
 
-  https://www.jianshu.com/p/39b3a95240c4
+    https://www.jianshu.com/p/39b3a95240c4
 
 ## 网络
 
