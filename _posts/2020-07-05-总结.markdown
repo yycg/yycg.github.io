@@ -1720,7 +1720,7 @@ StringBuilder：可变，线程不安全
 
 35. AQS
 
-  https://www.cnblogs.com/waterystone/p/4920797.html
+  https://snailclimb.gitee.io/javaguide/#/docs/java/Multithread/AQS
 
 ## JVM
 
