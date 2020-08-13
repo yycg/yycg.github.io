@@ -1405,10 +1405,6 @@ tags:
 
 ## 数据库
 
-https://github.com/hanggegreat/CS-Tree/blob/master/%E6%8E%98%E9%87%91Mysql%E5%B0%8F%E5%86%8C%E7%B2%BE%E7%AE%80/21.%20%E9%94%81.md
-
-https://www.cnblogs.com/winclpt/articles/7511672.html
-
 ## Java 
 
 1. 简单类型8种：short, int, long, float, double, boolean, byte, char
@@ -1860,11 +1856,15 @@ StringBuilder：可变，线程不安全
 
 ## Spring
 
-https://github.com/hanggegreat/CS-Tree/blob/master/Java/Spring/Spring.md
+> [spring](https://github.com/hanggegreat/CS-Tree/blob/master/Java/Spring/Spring.md)
 
-https://snailclimb.gitee.io/javaguide/#/docs/system-design/framework/mybatis/mybatis-interview
+> [mybatis interview](https://snailclimb.gitee.io/javaguide/#/docs/system-design/framework/mybatis/mybatis-interview)
+
+> [mybatis缓存机制详解](https://www.cnblogs.com/winclpt/articles/7511672.html)
 
 ## 操作系统
+
+> [操作系统](https://snailclimb.gitee.io/javaguide/#/docs/operating-system/basis?id=_11-%e4%bb%80%e4%b9%88%e6%98%af%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f%ef%bc%9f)
 
 1. 死锁：互斥、不剥夺、请求保持（一次申请完所需的全部资源）、循环等待（顺序资源分配法）
 
