@@ -1862,6 +1862,130 @@ StringBuilder：可变，线程不安全
 
 > [mybatis缓存机制详解](https://www.cnblogs.com/winclpt/articles/7511672.html)
 
+- #{}和${}的区别是什么？
+
+  ${}是 Properties 文件中的变量占位符，它可以用于标签属性值和 sql 内部，属于静态文本替换，比如${driver}会被静态替换为com.mysql.jdbc.Driver。
+
+  #{}是 sql 的参数占位符，Mybatis 会将 sql 中的#{}替换为?号，在 sql 执行前会使用 PreparedStatement 的参数设置方法，按序给 sql 的?号占位符设置参数值，比如 ps.setInt(0, parameterValue)，#{item.name} 的取值方式为使用反射从参数对象中获取 item 对象的 name 属性值，相当于 param.getItem().getName()。
+
+- mybatis缓存
+
+  mybatis提供了缓存机制减轻数据库压力，提高数据库性能
+
+  mybatis的缓存分为两级：一级缓存、二级缓存
+
+  一级缓存是SqlSession级别的缓存，缓存的数据只在SqlSession内有效
+
+  二级缓存是mapper级别的缓存，同一个namespace公用这一个缓存，所以对SqlSession是共享的
+
+- Xml 映射文件中，除了常见的 select|insert|updae|delete 标签之外，还有哪些标签？
+
+  还有很多其他的标签，<resultMap>、<parameterMap>、<sql>、<include>、<selectKey>，加上动态 sql 的 9 个标签，trim|where|set|foreach|if|choose|when|otherwise|bind等，其中为 sql 片段标签，通过<include>标签引入 sql 片段，<selectKey>为不支持自增的主键生成策略标签。
+
+- 最佳实践中，通常一个 Xml 映射文件，都会写一个 Dao 接口与之对应，请问，这个 Dao 接口的工作原理是什么？Dao 接口里的方法，参数不同时，方法能重载吗？
+
+  Dao 接口，就是人们常说的 Mapper接口，接口的全限名，就是映射文件中的 namespace 的值，接口的方法名，就是映射文件中MappedStatement的 id 值，接口方法内的参数，就是传递给 sql 的参数。Mapper接口是没有实现类的，当调用接口方法时，接口全限名+方法名拼接字符串作为 key 值，可唯一定位一个MappedStatement，举例：com.mybatis3.mappers.StudentDao.findStudentById，可以唯一找到 namespace 为com.mybatis3.mappers.StudentDao下面id = findStudentById的MappedStatement。在 Mybatis 中，每一个<select>、<insert>、<update>、<delete>标签，都会被解析为一个MappedStatement对象。
+
+  Dao 接口里的方法，是不能重载的，因为是全限名+方法名的保存和寻找策略。
+
+  Dao 接口的工作原理是 JDK 动态代理，Mybatis 运行时会使用 JDK 动态代理为 Dao 接口生成代理 proxy 对象，代理对象 proxy 会拦截接口方法，转而执行MappedStatement所代表的 sql，然后将 sql 执行结果返回。
+
+- mybatis和hibernate, jdbc的区别；mybatis解决了什么问题，mybatis有什么缺点
+
+  > [JDBC、MyBatis、Hibernate的区别](https://www.cnblogs.com/kingofjava/p/10651093.html)
+
+  JDBC
+
+  1.使用JDBC编程需要链接数据库，注册驱动和数据库信息。
+
+  2.操作Connection，打开Statement对象。
+
+  3.通过Statement执行SQL语句，返回结果放到ResultSet对象。
+
+  4.使用ResultSet读取数据。
+
+  5.关闭数据库相关的资源。
+
+  JDBC缺点：
+
+  工作量比较大，需要连接，然后处理jdbc底层事务，处理数据类型，还需要操作Connection，Statement对象和ResultSet对象去拿数据并关闭他们
+
+  没有使用框架的时候 sql语句是和java语句一起写在dao层 耦合度高，维护不易而且实际开发中sql是会变的，需要频繁修改 当你要替换某个sql代码的时候
+
+  ，需要对整个项目 进行操作，极不方便。
+
+  JDBC优点：
+
+  接近底层，理论上效率最高
+
+  MyBatis
+
+  半自动化的持久层框架 半自动 轻量级 
+
+  1.SQLSessionFactoryBuilder(构造器):它会根据配置信息或者代码生成SqlSessionFactory。
+
+  2.SqlSessionFactory(工厂接口)：依靠工厂生成SqlSession。
+
+  3.SqlSession(会话)：是一个既可以发送SQL去执行并且返回结果，也可以获取Mapper接口。
+
+  4.SQL Mapper:是由一个JAVA接口和XML文件(或注解)构成，需要给出对应的SQL和映射规则。SQL是由Mapper发送出去，并且返回结果。
+
+  Mybatis的优点：
+
+  1、易于上手和掌握，提供了数据库查询的自动对象绑定功能，而且延续了很好的SQL使用经验，对于没有那么高的对象模型要求的项目来说，相当完美。
+
+  2、sql写在xml里，便于统一管理和优化， 解除sql与程序代码的耦合。
+
+  3、提供映射标签，支持对象与数据库的orm字段关系映射
+
+  4、 提供对象关系映射标签，支持对象关系组建维护
+
+  5、提供xml标签，支持编写动态sql。
+
+  6、速度相对于Hibernate的速度较快
+
+  Mybatis的缺点：
+
+  1、关联表多时，字段多的时候，sql工作量很大。
+
+  2、sql依赖于数据库，导致数据库移植性差。
+
+  3、由于xml里标签id必须唯一，导致DAO中方法不支持方法重载。
+
+  4、对象关系映射标签和字段映射标签仅仅是对映射关系的描述，具体实现仍然依赖于sql。
+
+  5、DAO层过于简单，对象组装的工作量较大。
+
+  6、不支持级联更新、级联删除。
+
+  7、Mybatis的日志除了基本记录功能外，其它功能薄弱很多。
+
+  8、编写动态sql时,不方便调试，尤其逻辑复杂时。
+
+  9、提供的写动态sql的xml标签功能简单，编写动态sql仍然受限，且可读性低。
+
+  Hibernate
+
+  Hibernate的优点：
+
+  1、hibernate是全自动，hibernate完全可以通过对象关系模型实现对数据库的操作，拥有完整的JavaBean对象与数据库的映射结构来自动生成sql。
+
+  2、功能强大，数据库无关性好，O/R映射能力强，需要写的代码很少，开发速度很快。
+
+  3、有更好的二级缓存机制，可以使用第三方缓存。
+
+  4、数据库移植性良好。
+
+  5、hibernate拥有完整的日志系统，hibernate日志系统非常健全，涉及广泛，包括sql记录、关系异常、优化警告、缓存提示、脏数据警告等
+
+  Hibernate的缺点：
+
+  1、学习门槛高，精通门槛更高，程序员如何设计O/R映射，在性能和对象模型之间如何取得平衡，以及怎样用好Hibernate方面需要的经验和能力都很强才行
+
+  2、hibernate的sql很多都是自动生成的，无法直接维护sql；虽然有hql查询，但功能还是不及sql强大，见到报表等变态需求时，hql查询要虚，也就是说hql查询是有局限的；hibernate虽然也支持原生sql查询，但开发模式上却与orm不同，需要转换思维，因此使用上有些不方便。总之写sql的灵活度上hibernate不及mybatis。
+
+- mapper中的sql语句怎么转化成代码中的sql的
+
 ## 操作系统
 
 > [操作系统](https://snailclimb.gitee.io/javaguide/#/docs/operating-system/basis?id=_11-%e4%bb%80%e4%b9%88%e6%98%af%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f%ef%bc%9f)
