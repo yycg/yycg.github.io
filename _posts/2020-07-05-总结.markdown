@@ -1495,28 +1495,39 @@ StringBuilder：可变，线程不安全
 
 15. 重写equals()的约定
 
-  (1) 使用==操作符检查参数是否时这个对象的引用
-  (2) 使用instance检查是否为正确的类型
-  (3) 把参数转换成正确的类型
-  (4) 比较每个关键域是否匹配
-  (5) 死牢equals()方法是否满足自反性、对称性、传递性、一致性、非空性
+    (1) 使用==操作符检查参数是否时这个对象的引用
+
+    (2) 使用instance检查是否为正确的类型
+
+    (3) 把参数转换成正确的类型
+
+    (4) 比较每个关键域是否匹配
+
+    (5) 思考equals()方法是否满足自反性、对称性、传递性、一致性、非空性
 
 16. 重写hashCode
 
-  (1) int result = 17;
-  (2) 对于每个关键域：
-  a. 计算关键域int类型的散列码c，float, double转成int, long, long: (int) (f^(f>>>32))
-  b. result=31*result+c
+    (1) int result = 17;
+
+    (2) 对于每个关键域：
+
+    a. 计算关键域int类型的散列码c，float, double转成int, long, long: (int) (f^(f>>>32))
+    
+    b. result=31*result+c
 
 17. TreeMap的底层实现是红黑树，AVL树是严格平衡，红黑树是弱平衡
 
 18. 红黑树性质
 
-  (1) 每个节点要么是红色，要么是黑色
-  (2) 根节点永远是黑色的
-  (3) 叶结点是空节点，并且是黑色的
-  (4) 每个红色节点的2个子节点都是黑色的
-  (5)从任一节点到其子树的每个叶结点都包含相同数量的黑色节点
+    (1) 每个节点要么是红色，要么是黑色
+
+    (2) 根节点永远是黑色的
+
+    (3) 叶结点是空节点，并且是黑色的
+
+    (4) 每个红色节点的2个子节点都是黑色的
+    
+    (5)从任一节点到其子树的每个叶结点都包含相同数量的黑色节点
 
 19. Java 8
 
@@ -1602,10 +1613,11 @@ StringBuilder：可变，线程不安全
   - volatile/synchronized
   - join
   - countdownlatch/cyclicbarrier
+  - semaphore
 
 16. Fork/Join框架
 
-  FOrk就是把一个大任务切分成若干子任务，Join就是合并这些子任务的执行结果。
+  Fork就是把一个大任务切分成若干子任务，Join就是合并这些子任务的执行结果。
   
   工作窃取算法是指某个线程从其他队列中窃取任务来执行。充分利用线程进行并行计算，减少了线程的竞争。
 
@@ -1615,10 +1627,10 @@ StringBuilder：可变，线程不安全
   public final int getAndIncrement() {
       for (;;) {
           int current = get();
-    int next = current + 1;
-    if (compareAndSet(current, next)) {
-        return current;
-    }
+          int next = current + 1;
+          if (compareAndSet(current, next)) {
+              return current;
+          }
       }
   }
  
@@ -1643,7 +1655,7 @@ StringBuilder：可变，线程不安全
 
   LinkedBlockingQueue：有界，默认Integer.MAX_VALUE
 
-  SynchronousQUeue：不存储元素
+  SynchronousQueue：不存储元素
 
   PriorityBlockingQueue：具有优先级、无限
 
@@ -1675,18 +1687,18 @@ StringBuilder：可变，线程不安全
 
   SHUTDOWN(shutdown) 继续处理等待队列
 
-  STOP(shutdownNow)不在处理等待队列，中断正在执行的线程
+  STOP(shutdownNow) 不再处理等待队列，中断正在执行的线程
 
-22. CPU密集型任务应配置尽可能小的线程，如N_CPU+1;IO密集型任务线程并不是一直在执行任务，应配置尽可能多的线程，如2N_CPU.
+22. CPU密集型任务应配置尽可能小的线程，如N_CPU+1; IO密集型任务线程并不是一直在执行任务，应配置尽可能多的线程，如2N_CPU.
 
 23. Executor
 
   (1) FixedThreadPool
   (2) SingleThreadExecutor
   (3) CachedThreadExecutor
-  (4) ScheduledTHreadExecutor
+  (4) ScheduledThreadExecutor
 
-24. Future接口和实现Future接口的FUtureTask类用来表示异步计算的结果。
+24. Future接口和实现Future接口的FutureTask类用来表示异步计算的结果。
 
 25. Runnable接口不会返回结果，而Callable接口可以返回结果。
 
@@ -1694,7 +1706,7 @@ StringBuilder：可变，线程不安全
 
 27. java.util.comncurrent并发包
 
-  并发容器 concurrentHashMap
+  并发容器 concurrentHashMap, copyOnWriteArrayList
 
   原子变量 AtomicInteger
 
@@ -1707,7 +1719,7 @@ StringBuilder：可变，线程不安全
 28. 可重入锁独有的功能
 
 	- 指定公平锁还是非公平锁
-	- Condition条件类，分组环形需要唤醒的线程
+	- Condition条件类，分组唤醒需要唤醒的线程
 	- 中断等待锁
 
 29. ThreadLocal内存泄漏
@@ -1722,9 +1734,9 @@ StringBuilder：可变，线程不安全
 
 	虚引用：唯一目的就是被回收前收到一个系统通知
 
-31. CountDownLatch: countDown()，方法技术减1，一等多
+31. CountDownLatch: countDown()计数减1，计数为0时释放等待线程，一等多
 
-  CyclicBarrier: await()计数减1，多个线程互相等待
+  CyclicBarrier: await()计数减1，计数为0时释放等待线程，多个线程互相等待
 
 32. 创建线程的方法
 
@@ -2020,7 +2032,11 @@ StringBuilder：可变，线程不安全
 
 > [操作系统](https://snailclimb.gitee.io/javaguide/#/docs/operating-system/basis?id=_11-%e4%bb%80%e4%b9%88%e6%98%af%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f%ef%bc%9f)
 
-1. 死锁：互斥、不剥夺、请求保持（一次申请完所需的全部资源）、循环等待（顺序资源分配法）
+1. 死锁
+
+  - 死锁预防：互斥、不剥夺、请求保持（一次申请完所需的全部资源）、循环等待（顺序资源分配法）
+  - 死锁避免：银行家算法
+  - 死锁检测与解除：资源分配图、死锁定理
 
 2. 页式存储
 
