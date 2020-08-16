@@ -1,0 +1,175 @@
+---
+layout:     post
+title:      "Java并发编程的艺术"
+subtitle:   ""
+date:       2020-03-05 12:00:00
+author:     "盈盈冲哥"
+header-img: "img/fleabag.jpg"
+mathjax: true
+catalog: true
+tags:
+    - 学习
+---
+
+1. 并发执行有可能比串行慢，因为线程有创建和上下文切换的开销
+
+2. 使用Lmbench测量上下文切换时长，vmstat测量上下文切换的次数
+
+3. 如何减少上下文切换
+
+  - CAS算法，不用加锁
+  - 使用最少线程
+  - 协程：在单线程里实现多任务的调度，并在单线程里维持多个任务间的切换
+
+4. synchronized
+
+  - 3种形式
+  
+    - 对于普通的同步方法，锁的是当前实例对象
+    - 对于静态同步方法，锁的是当前类的Class对象
+    - 对于同步方法块，锁的是synchronized括号里配置的对象
+  
+  - JVM基于进入和退出Monitor对象来实现方法同步和代码块同步。代码块同步是使用monitorenter和monitorexit指令实现的，而方法同步时使用ACC_SYNCHRONIZED标志位实现的。
+
+5. Java对象头的Mark Word中存储对象的hashCode、分代年龄和锁标记位。
+
+  - 偏向锁：Mark Word中存储指向当前线程的偏向锁。
+  - 轻量级锁：线程尝试使用CAS将对象头中的MarkWord替换为指向锁记录的指针。
+  - 重量级锁
+
+6. CAS的三大问题
+
+  (1) ABA问题
+  (2) 循环时间长开销大
+  (3) 只能保证一个共享变量的原子操作
+
+7. JMM定义了线程和主内存之间的抽象关系：线程之间的共享变量存储在主内存中，每个线程都有一个私有的本地内存，本地内存中存储了该线程以读/写共享变量的副本。
+
+  如果线程A要和B通信，必须要经历下面2个步骤：
+  
+  (1) 线程A把本地内存A中更新过的共享变量刷新到主内存中去。
+  (2) 线程B到主内存中去读取线程A之前已经更新过的共享变量。
+
+8. 为什么要使用多线程（主要原因是IO阻塞和多CPU）
+
+  - 单核时代提高CPU和IO的综合利用率
+  - 多核时代提高CPU利用率
+  - 业务更快的响应时间
+
+9. 设置线程优先级时，针对频繁阻塞的线程需设置较高的优先级，而偏重计算的线程设置较低的优先级，确保处理器不会被独占。
+
+10. 线程的状态
+
+  - NEW
+  - TERMINATED
+  - RUNNABLE：运行中，包括就绪和运行
+  - BLOCKED：阻塞于锁
+  - WAITING：等待其他线程通知
+  - TIME_WAITING：超时等待，可以在指定时间自行返回
+
+11. 当一个Java虚拟机中不存在非Daemon线程时，Java虚拟机将会退出。
+
+12. 线程通过方法isInterrupted()来判断是否被中断，也可以调用静态方法Thread.interrupted()对当前线程的中断标志位进行复位。
+
+13. 除了中断以外，还可以利用一个boolean变量来控制是否需要停止任务并终止该线程。
+
+14. suspend()调用后不会释放已经占有的资源（比如锁），而是占有着资源进入睡眠状态。
+
+  stop()终结一个线程时不会保证线程资源正常释放
+  
+  yield()方法会临时暂停正在执行的线程，来让有同样优先级的线程有机会执行。yield()方法不保证当前的线程会暂停或停止，但是可以保证当前线程调用yield方法时会放弃CPU。
+
+15. 线程间通信
+
+  - wait/notify
+  - volatile/synchronized
+  - join
+  - countdownlatch/cyclicbarrier
+  - semaphore
+
+16. Fork/Join框架
+
+  Fork就是把一个大任务切分成若干子任务，Join就是合并这些子任务的执行结果。
+  
+  工作窃取算法是指某个线程从其他队列中窃取任务来执行。充分利用线程进行并行计算，减少了线程的竞争。
+
+17. AtomicInteger
+
+  ```java
+  public final int getAndIncrement() {
+      for (;;) {
+          int current = get();
+          int next = current + 1;
+          if (compareAndSet(current, next)) {
+              return current;
+          }
+      }
+  }
+ 
+  public final boolean compareAndSet(int expect, int update) {
+      return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+  }
+  ```
+
+18. 线程池的好处
+
+  - 降低资源消耗
+  - 提高响应速度
+  - 提高线程的可管理性
+   
+19. 线程池的参数
+
+  (1) corePoolSize：核心线程数
+
+  (2) runnableTaskQueue：任务队列
+
+  ArrayBockingQueue：有界
+
+  LinkedBlockingQueue：有界，默认Integer.MAX_VALUE
+
+  SynchronousQueue：不存储元素
+
+  PriorityBlockingQueue：具有优先级、无限
+
+  (3) maxPoolSize：线程池的最大数量
+
+  (4) ThreadFactory：创建线程的工厂
+
+  (5) RejectExxcutionHandler 饱和策略
+
+  AbortPolicy 直接抛出异常
+
+  CallerRunPolicy 调用者所用线程
+
+  DiscardOldestPolicy 丢弃最早
+
+  DiscardPolicy 丢弃
+
+  (6) keepAliveTime 线程池工作线程空闲后，保持存活的时间
+
+20. 线程池提交任务
+
+  execute()提交不需要返回值的任务，输入Runnable类实例
+
+  submit()提交需要返回值的任务，输入Runnale或Callable，返回一个future对象，future的get()方法会阻塞到任务完成并返回返回值
+
+21. 关闭线程池
+
+  RUNNING
+
+  SHUTDOWN(shutdown) 继续处理等待队列
+
+  STOP(shutdownNow) 不再处理等待队列，中断正在执行的线程
+
+22. CPU密集型任务应配置尽可能小的线程，如N_CPU+1; IO密集型任务线程并不是一直在执行任务，应配置尽可能多的线程，如2N_CPU.
+
+23. Executor
+
+  (1) FixedThreadPool
+  (2) SingleThreadExecutor
+  (3) CachedThreadExecutor
+  (4) ScheduledThreadExecutor
+
+24. Future接口和实现Future接口的FutureTask类用来表示异步计算的结果。
+
+25. Runnable接口不会返回结果，而Callable接口可以返回结果。

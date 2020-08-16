@@ -14,169 +14,6 @@ tags:
 
 #### Spring
 
-> Spring揭秘
-
-- 三种注入方式的比较
-
-  - 接口注入。从注入方式的使用上来说，接口注入是现在不甚提倡的一种方式，基本处于“退役状态”。因为它强制被注入对象实现不必要的接口，带有侵入性。而构造方法注入和setter方法注入则不需要如此。
-  - 构造方法注入。这种注入方式的优点就是，对象在构造完成之后，即已进入就绪状态，可以马上使用。缺点就是，当依赖对象比较多的时候，构造方法的参数列表会比较长。而通过反射构造对象的时候，对相同类型的参数的处理会比较困难，维护和使用上也比较麻烦。而且在Java中，构造方法无法被继承，无法设置默认值。对于非必须的依赖处理，可能需要引入多个构造方法，而参数数量的变动可能造成维护上的不便。
-  - setter方法注入。因为方法可以命名，所以setter方法注入在描述性上要比构造方法注入好一些。另外，setter方法可以被继承，允许设置默认值，而且有良好的IDE支持。缺点当然就是对象无法在构造完成后马上进入就绪状态。
-
-- Spring提供了两种容器类型：BeanFactory和ApplicationContext
-
-  - BeanFactory: 默认采用延迟初始化策略。容器启动初期速度较快，所需要的资源有限。
-  - ApplicationContext: 除了拥有BeanFactory的所有指出，ApplicationContext还提供了其他高级特性，比如事件发布、国际化信息支持等。默认初始化并绑定完成，要求更多的系统资源。
-
-- BeanFactory的对象注册与依赖绑定方式
-
-  - 直接编码方式
-  - 外部配置文件方式（Properties配置格式、XML配置格式）
-  - 注解方式
-
-- IoC容器初始化流程
-
-  Spring的IoC容器所起的作用，它会以某种方式加载Configuration Metadata（通常也就是XML格式的配置信息），然后根据这些信息绑定整个系统的对象，最终组装成一个可用的基于轻量级容器的应用系统。
-
-  Spring的IoC容器实现以上功能的过程，基本上可以按照类似的流程划分为两个阶段，即容器启动阶段和Bean实例化阶段。
-
-  1. 容器启动阶段
-  
-    容器启动伊始，首先会通过某种途径加载Configuration Metadata. 除了代码方式比较直接，在大部分情况下，容器需要依赖某些工具类对加载的Configuration Metadata进行解析和分析，并将分析后的信息编组为响应的BeanDefinition，最后把这些保存了bean定义必要信息的BeanDefinition，注册到相应的BeanDefinitionRegistry，这样容器启动工作就完成了。
-
-    总的来说，该阶段所作的工作可以认为是准备性的，重点更加侧重于对象管理信息的收集。当然，一些验证性或者辅助性的工作也可以在这个阶段完成。
-
-  2. Bean实例化阶段
-
-    经过第一阶段，现在所有的bean定义信息都通过BeanDefinition的方式注册到了Bean DefinitionRegistry中。当某个请求方法通过容器的getBean方法明确地请求某个对象，或者音依赖关系容器需要隐式地调用getBean方法时，就会触发第二阶段的活动。
-
-    该阶段，容器会首先检查所请求的对象之前是否已经初始化。如果没有，则会根据注册的BeanDefinition所提供的信息实例化被请求对象，并为其注入依赖。如果该对象实现了某些回调接口，也会根据回调接口的要求来装配它。当该对象装配完毕之后，容器会立即将其返回请求方使用。如果说第一阶段只是根据图纸装配生产线的话，那么第二阶段就是使用装配好的生产线来生产具体的产品了。
-
-- AOP走向现实
-
-  - 静态AOP时代
-
-    以AspectJ为代表。
-    
-    静态AOP的优点是，Aspect直接以Java字节码的形式编译到Java类中，Java虚拟即可以像通常一样加载Java类运行（因为编译完成的Aspect是完全符合Java类的规范的），不会对整个系统的运行造成任何的性能损失。
-
-    缺点就是不够灵活。如果横切关注点需要改变织入到系统的位置，就需要重新修改Aspect定义文件，然后使用编译器重新编译Aspect并重新织入到系统中。
-  
-  - 动态AOP时代
-
-    以Spring AOP为代表。
-
-    Aspect跟Class一样最终以Class身份作为系统的一等公民存在，与静态AOP最大的不同就是，AOP的织入过程在系统运行开始之后进行，而不是预先编译到系统类中，而且织入信息大都采用外部XML文件格式保存。
-
-    但动态AOP在引入灵活i选哪个以及易用性的同时，也会不可避免地引入相应的性能问题。因为动态AOP的实现产品大都在类加载或者系统运行期间，采用对系统字节码进行操作的方式来完成Aspect到系统的织入，难免会造成一定的运行时性能损失。但随着JVM版本的提升，对反射以及字节码操作技术的更好支持，这样的性能损失在逐渐减少，大多数情况下，这种性能损失是可以容忍的。
-
-- Java平台上的AOP实现机制
-
-  - 动态代理
-
-    动态代理机制可以在运行期间，为响应的接口动态生成对应的代理对象。可以将横切关注点逻辑封装到动态代理的InvocationHandler中。
-
-    这种方式实现的唯一缺点或者优点就是，所有需要织入横切关注点逻辑的模块类都得实现响应的接口，因为动态代理机制只针对接口有效。
-
-  - 动态字节码增强
-
-    可以使用ASM或者CGLIB等Java工具库，在程序运行期间，动态构建字节码的class文件。
-
-    可以为需要织入横切逻辑的模块类在运行期间，通过动态字节码增强技术，为这些系统模块类生成相应的子类，而将横切逻辑家都这些子类中，让应用程序在执行期间使用的是这些动态生成的子类，从而达到将横切逻辑织入系统的目的。
-
-    使用动态字节码增强技术，即使模块类没有实现相应的接口，我们依然可以对其进行扩展，而不用像动态dialing那样受限于接口。
-
-- 第一代Spring AOP：编程方式
-
-  - Order的作用
-
-    Spring在处理同一Jointpoint处的多个Advisor时，实际上会按照指定的顺序和优先级来执行它们，顺序号决定优先级，顺序号越小，优先级越高，优先级排在前面的，将被优先执行。我们可以从0或者1开始，因为小于0的顺序号原则上由Spring AOP框架内部使用。默认情况下，如果我们不明确指定各个Advisor的执行顺序，那么Spring会按照它们的声明顺序来应用它们，最先声明的顺序号最小但优先级最大，其次次之。
-
-  - 如何与ProxyFactory打交道
-
-    使用ProxyFactory只需要指定如下两个最基本的东西。
-
-    - 第一个时要对其进行织入的目标对象。
-    - 第二个是Advisor。
-
-- Spring AOP二世
-
-  - @AspectJ形式的Spring AOP
-
-    - 有两种方式将Aspect定义织入整个目标对象类，实现对其符合Pointcut定义的Joinpoint（也就是方法执行）进行拦截。
-
-      1. 编程方式织入
-      2. 通过自动代理织入
-    
-    - @AspectJ形式Pointcut
-    
-      - @AspectJ形式Pointcut的声明方式
-
-        - Pointcut Expression
-        - Pointcut Signature
-    
-      - @AspectJ形式Pointcut表达式的标志符
-
-        - execution
-        - within只接受类型声明
-        - args帮助捕获拥有指定参数类型、指定参数数量的方法级Joinpoint
-    
-    - @AspectJ形式的Advice
-
-      - @Before
-      - @AfterReturning
-      - @AfterThrowing
-      - @After (After finally)
-      - @Around
-
-  - 基于Schema的AOP
-
-- 使用Spring进行事务管理
-
-  - 编程式事务管理
-
-    - 使用TransactionTemplate进行编程式事务管理
-
-      - 抛出unchecked exception
-      - 将事务标记成rollBackOnly
-
-  - 声明式事务管理
-
-    - XML元数据驱动的声明式事务
-    - 注解元数据驱动的声明式事务
-
-- 迈向Spring MVC的旅程
-
-  - Sevlet
-
-    Servlet运行于Web容器之内，提供了Session和对象声明周期管理等功能。
-
-    弊病式Magic Servlet，开发人员会将各种逻辑混杂于一处，包括流程控制逻辑、视图显示逻辑、业务逻辑、数据访问逻辑等，这就在成了后去系统能以维护等一系列问题。
-
-  - JSP
-
-    为了能够将Servlet中的输入显然逻辑以独立的单元抽取出来，我们通常使用模板化的方法。JSP的提出，成为Java平台上开发Web应用程序事实上的模板化视图标准。
-
-    使用Servlet处理Web请求，我们需要在web.xml文件中，注册相应的请求URL与具体的处理Servlet之间的一个映射关系。
-
----
-
-> [Spring](https://github.com/hanggegreat/CS-Tree/blob/master/Java/Spring/Spring.md)
-
-- IOC
-  IOC（控制反转）是一种设计思想，就是 将原本在程序中手动创建对象的控制权，交由Spring框架来管理。 IOC 容器是 Spring 用来实现 IOC 的载体， IOC 容器实际上就是个Map，存放的是各种对象。将对象之间的相互依赖关系交给 IoC 容器来管理，并由 IoC 容器完成对象的注入。这样可以很大程度上简化应用的开发，把应用从复杂的依赖关系中解放出来。 IoC 容器就像是一个工厂一样，当我们需要创建一个对象的时候，只需要配置好配置文件/注解即可，完全不用考虑对象是如何被创建出来的。
-
-  Spring 时代我们一般通过 XML 文件来配置 Bean，后来开发人员觉得 XML 文件来配置不太好，于是 SpringBoot 注解配置就慢慢开始流行起来。
-
-- AOP
-
-  AOP（面向切面编程）能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度，并有利于未来的可拓展性和可维护性。
-
-  Spring AOP就是基于动态代理的，如果要代理的对象，实现了某个接口，那么Spring AOP会使用JDK Proxy，去创建代理对象，而对于没有实现接口的对象，这时候Spring AOP会使用Cglib生成一个被代理对象的子类来作为代理。
-
-  使用 AOP 之后我们可以把一些通用功能抽象出来，在需要用到的地方直接使用即可，这样大大简化了代码量。我们需要增加新功能时也方便，这样也提高了系统扩展性。日志功能、事务管理等等场景都用到了 AOP 。
-
----
-
 - 什么是 Spring 框架?
 
   Spring 是一种轻量级开发框架，旨在提高开发人员的开发效率以及系统的可维护性。Spring 官网：https://spring.io/。
@@ -203,9 +40,9 @@ tags:
   - **Spring AOP ：提供了面向切面的编程实现。**
   - **Spring JDBC : Java数据库连接。**
   - Spring JMS ：Java消息服务。
-  - Spring ORM : 用于支持Hibernate等ORM工具。
+  - **Spring ORM : 用于支持Hibernate等ORM工具。**
   - **Spring Web : 为创建Web应用程序提供支持。**
-  - Spring Test : 提供了对 JUnit 和 TestNG 测试的支持。
+  - **Spring Test : 提供了对 JUnit 和 TestNG 测试的支持。**
 
 - @RestController vs @Controller
 
@@ -263,9 +100,7 @@ tags:
 
   **Spring AOP 属于运行时增强，而 AspectJ 是编译时增强。Spring AOP 基于代理(Proxying)，而 AspectJ 基于字节码操作(Bytecode Manipulation)。**
 
-  Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。AspectJ 相比于 Spring AOP 功能更加强大，但是 Spring AOP 相对来说更简单，
-
-  如果我们的切面比较少，那么两者性能差异不大。但是，当切面太多的话，最好选择 AspectJ ，它比Spring AOP 快很多。
+  Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。AspectJ 相比于 Spring AOP 功能更加强大，但是 Spring AOP 相对来说更简单，如果我们的切面比较少，那么两者性能差异不大。但是，当切面太多的话，最好选择 AspectJ ，它比Spring AOP 快很多。
 
 - Spring如何解决循环依赖（三级缓存）
   
@@ -1562,3 +1397,135 @@ Spring将事务管理分成了两类：
 - designators指示器
 
   - 匹配方法 execution()
+
+#### MyBatis
+
+> [mybatis interview](https://snailclimb.gitee.io/javaguide/#/docs/system-design/framework/mybatis/mybatis-interview)
+
+> [mybatis缓存机制详解](https://www.cnblogs.com/winclpt/articles/7511672.html)
+
+- #{}和${}的区别是什么？
+
+  ${}是 Properties 文件中的变量占位符，它可以用于标签属性值和 sql 内部，属于静态文本替换，比如${driver}会被静态替换为com.mysql.jdbc.Driver。
+
+  #{}是 sql 的参数占位符，Mybatis 会将 sql 中的#{}替换为?号，在 sql 执行前会使用 PreparedStatement 的参数设置方法，按序给 sql 的?号占位符设置参数值，比如 ps.setInt(0, parameterValue)，#{item.name} 的取值方式为使用反射从参数对象中获取 item 对象的 name 属性值，相当于 param.getItem().getName()。
+
+- mybatis缓存
+
+  mybatis提供了缓存机制减轻数据库压力，提高数据库性能
+
+  mybatis的缓存分为两级：一级缓存、二级缓存
+
+  一级缓存是SqlSession级别的缓存，缓存的数据只在SqlSession内有效
+
+  mybatis的一级缓存是SqlSession级别的缓存，在操作数据库的时候需要先创建SqlSession会话对象，在对象中有一个HashMap用于存储缓存数据，此HashMap是当前会话对象私有的，别的SqlSession会话对象无法访问。
+
+  二级缓存是mapper级别的缓存，同一个namespace公用这一个缓存，所以对SqlSession是共享的
+
+  二级缓存是mapper级别的缓存，也就是同一个namespace的mapper.xml，当多个SqlSession使用同一个Mapper操作数据库的时候，得到的数据会缓存在同一个二级缓存区域
+
+- Xml 映射文件中，除了常见的 select|insert|updae|delete 标签之外，还有哪些标签？
+
+  还有很多其他的标签，<resultMap>、<parameterMap>、<sql>、<include>、<selectKey>，加上动态 sql 的 9 个标签，trim|where|set|foreach|if|choose|when|otherwise|bind等，其中为 sql 片段标签，通过<include>标签引入 sql 片段，<selectKey>为不支持自增的主键生成策略标签。
+
+- 最佳实践中，通常一个 Xml 映射文件，都会写一个 Dao 接口与之对应，请问，这个 Dao 接口的工作原理是什么？Dao 接口里的方法，参数不同时，方法能重载吗？
+
+  Dao 接口，就是人们常说的 Mapper接口，接口的全限名，就是映射文件中的 namespace 的值，接口的方法名，就是映射文件中MappedStatement的 id 值，接口方法内的参数，就是传递给 sql 的参数。Mapper接口是没有实现类的，当调用接口方法时，接口全限名+方法名拼接字符串作为 key 值，可唯一定位一个MappedStatement，举例：com.mybatis3.mappers.StudentDao.findStudentById，可以唯一找到 namespace 为com.mybatis3.mappers.StudentDao下面id = findStudentById的MappedStatement。在 Mybatis 中，每一个<select>、<insert>、<update>、<delete>标签，都会被解析为一个MappedStatement对象。
+
+  Dao 接口里的方法，是不能重载的，因为是全限名+方法名的保存和寻找策略。
+
+  Dao 接口的工作原理是 JDK 动态代理，Mybatis 运行时会使用 JDK 动态代理为 Dao 接口生成代理 proxy 对象，代理对象 proxy 会拦截接口方法，转而执行MappedStatement所代表的 sql，然后将 sql 执行结果返回。
+
+- mybatis和hibernate, jdbc的区别；mybatis解决了什么问题，mybatis有什么缺点
+
+  > [JDBC、MyBatis、Hibernate的区别](https://www.cnblogs.com/kingofjava/p/10651093.html)
+
+  JDBC
+
+  1.使用JDBC编程需要链接数据库，注册驱动和数据库信息。
+
+  2.操作Connection，打开Statement对象。
+
+  3.通过Statement执行SQL语句，返回结果放到ResultSet对象。
+
+  4.使用ResultSet读取数据。
+
+  5.关闭数据库相关的资源。
+
+  JDBC缺点：
+
+  工作量比较大，需要连接，然后处理jdbc底层事务，处理数据类型，还需要操作Connection，Statement对象和ResultSet对象去拿数据并关闭他们
+
+  没有使用框架的时候 sql语句是和java语句一起写在dao层 耦合度高，维护不易而且实际开发中sql是会变的，需要频繁修改 当你要替换某个sql代码的时候，需要对整个项目 进行操作，极不方便。
+
+  JDBC优点：
+
+  接近底层，理论上效率最高
+
+  MyBatis
+
+  半自动化的持久层框架 半自动 轻量级 
+
+  1.SQLSessionFactoryBuilder(构造器):它会根据配置信息或者代码生成SqlSessionFactory。
+
+  2.SqlSessionFactory(工厂接口)：依靠工厂生成SqlSession。
+
+  3.SqlSession(会话)：是一个既可以发送SQL去执行并且返回结果，也可以获取Mapper接口。
+
+  4.SQL Mapper:是由一个JAVA接口和XML文件(或注解)构成，需要给出对应的SQL和映射规则。SQL是由Mapper发送出去，并且返回结果。
+
+  Mybatis的优点：
+
+  1、易于上手和掌握，提供了数据库查询的自动对象绑定功能，而且延续了很好的SQL使用经验，对于没有那么高的对象模型要求的项目来说，相当完美。
+
+  2、sql写在xml里，便于统一管理和优化， 解除sql与程序代码的耦合。
+
+  3、提供映射标签，支持对象与数据库的orm字段关系映射
+
+  4、 提供对象关系映射标签，支持对象关系组建维护
+
+  5、提供xml标签，支持编写动态sql。
+
+  6、速度相对于Hibernate的速度较快
+
+  Mybatis的缺点：
+
+  1、关联表多时，字段多的时候，sql工作量很大。
+
+  2、sql依赖于数据库，导致数据库移植性差。
+
+  3、由于xml里标签id必须唯一，导致DAO中方法不支持方法重载。
+
+  4、对象关系映射标签和字段映射标签仅仅是对映射关系的描述，具体实现仍然依赖于sql。
+
+  5、DAO层过于简单，对象组装的工作量较大。
+
+  6、不支持级联更新、级联删除。
+
+  7、Mybatis的日志除了基本记录功能外，其它功能薄弱很多。
+
+  8、编写动态sql时,不方便调试，尤其逻辑复杂时。
+
+  9、提供的写动态sql的xml标签功能简单，编写动态sql仍然受限，且可读性低。
+
+  Hibernate
+
+  Hibernate的优点：
+
+  1、hibernate是全自动，hibernate完全可以通过对象关系模型实现对数据库的操作，拥有完整的JavaBean对象与数据库的映射结构来自动生成sql。
+
+  2、功能强大，数据库无关性好，O/R映射能力强，需要写的代码很少，开发速度很快。
+
+  3、有更好的二级缓存机制，可以使用第三方缓存。
+
+  4、数据库移植性良好。
+
+  5、hibernate拥有完整的日志系统，hibernate日志系统非常健全，涉及广泛，包括sql记录、关系异常、优化警告、缓存提示、脏数据警告等
+
+  Hibernate的缺点：
+
+  1、学习门槛高，精通门槛更高，程序员如何设计O/R映射，在性能和对象模型之间如何取得平衡，以及怎样用好Hibernate方面需要的经验和能力都很强才行
+
+  2、hibernate的sql很多都是自动生成的，无法直接维护sql；虽然有hql查询，但功能还是不及sql强大，见到报表等变态需求时，hql查询要虚，也就是说hql查询是有局限的；hibernate虽然也支持原生sql查询，但开发模式上却与orm不同，需要转换思维，因此使用上有些不方便。总之写sql的灵活度上hibernate不及mybatis。
+
+- mapper中的sql语句怎么转化成代码中的sql的

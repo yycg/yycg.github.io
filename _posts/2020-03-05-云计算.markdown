@@ -1,0 +1,32 @@
+---
+layout:     post
+title:      "云计算"
+subtitle:   ""
+date:       2020-03-05 12:00:00
+author:     "盈盈冲哥"
+header-img: "img/fleabag.jpg"
+mathjax: true
+catalog: true
+tags:
+    - 学习
+---
+
+
+云计算是一种商业计算模型。它将计算任务分布在大量计算机构成的资源池上，使各种应用系统能够根据需要获取计算力、存储空间和信息服务。
+
+云计算的三种服务模式
+
+- SaaS(Software as a Service，软件即服务)
+- PaaS(Platform as a Service，平台即服务)
+- IaaS(Infrastructure as a Service，基础架构即服务)
+
+云计算的基础技术
+
+- 虚拟化技术：系统虚拟化的目的是通过使用虚拟化管理器（Virtual Machine Monitor，简称VMM）在一台物理机上虚拟和运行一台或多台虚拟机（Virtual Machine，简称VM）。
+- 容器技术：提供应用运行的环境支持；封装系统资源，提供应用SDK；对应用进行管理、统计
+
+Docker
+
+> [https://snailclimb.gitee.io/javaguide/#/docs/tools/Docker](https://snailclimb.gitee.io/javaguide/#/docs/tools/Docker)
+
+容器虚拟化的是操作系统而不是硬件，容器之间是共享同一套操作系统资源的。虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统。因此容器的隔离级别会稍低一些。

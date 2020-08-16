@@ -1,0 +1,140 @@
+---
+layout:     post
+title:      "Linux"
+subtitle:   ""
+date:       2020-06-21 12:00:00
+author:     "盈盈冲哥"
+header-img: "img/fleabag.jpg"
+mathjax: true
+catalog: true
+tags:
+    - 学习
+---
+
+## Linux & Git入门
+
+Linux日常用途：日常工作使用Mac、文档快速处理、登陆机器查看日志、检查机器运行情况
+
+Linux文件结构
+
+Unix/Linux基本哲学：一切皆文件
+
+优点：访问所有东西都对文件进行读写
+
+/bin二进制文件
+
+/sbin特权二进制文件
+
+/home普通用户目录
+
+/opt大型软件
+
+文件权限控制
+
+第一个字符：文件类
+
+后面9个字符表示3组文件权限
+
+第一组：所有者
+
+第二组：所在组
+
+第三组：其他组
+
+chmod 755 abc
+
+开发工作常见命令
+
+ls -l | grep fastjson
+
+文件查找：which whereis locate find
+
+文件内容：cat head (-n) tail (-n -f) more less sort(-r)
+
+日志：北京/opt/logs/log 上海/data/applogs 任意都可以
+
+文件处理指令：vim grep awk
+
+运维工作常见指令
+
+avartar或plus看日志不稳定，跳板机更好
+
+问价上传和下载：SFTP put get 文件
+
+python -m SimpleHTTPServer 8411(8411~8419)，不要忘记关进程
+
+ps -A -au -ef
+
+cpu: top, sar -u
+
+内存: top, free, sar -r
+
+磁盘指令: df, du
+
+网络指令: ping telnet sar -n
+
+## Shell
+
+1. 
+
+  ```shell
+  chmod +x ./test.sh  #使脚本具有执行权限
+  ```
+
+  不能写成test.sh，因为会去PATH里找。
+
+2. 使用变量
+
+  $变量名
+
+  ${变量名}
+
+3. 字符串
+
+  ```shell
+  your_name='runoob'
+  str="Hello, I know you are \"$your_name\"! \n"
+  echo -e $str
+  ```
+
+  - 双引号可以有变量、转义字符
+  - 字符串长度
+  
+  ```shell
+  echo ${#string}
+  ```
+
+  字符串截取
+
+  echo ${string:1:4}
+
+4. 数组
+
+  ```shell
+  array_name=(value0 value1 value2 value3)
+  valuen=${array_name[n]}
+  ```
+
+  数组中的所有元素
+
+  ```shell
+  ${my_array[*]}
+  ${my_array[@]}
+  ```
+
+  获取数组的长度
+
+  ```shell
+  ${#my_array[*]}
+  ${#my_array[@]}
+  ```
+
+5. 传递参数
+
+  ```shell
+  echo "第一个参数为：$1";
+  echo "参数个数为：$#";
+  echo "传递的参数作为一个字符串显示：$*";
+  ```
+
+  `$*`和`$@`的区别：如果传入3个参数，`$*`是一个参数，`$@`是3个参数
