@@ -1022,3 +1022,656 @@ Date Time API − 加强对日期与时间的处理。
 **Optional 类 − Optional 类已经成为 Java 8 类库的一部分，用来解决空指针异常。**
 
 Nashorn, JavaScript 引擎 − Java 8提供了一个新的Nashorn javascript引擎，它允许我们在JVM上运行特定的javascript应用。
+
+## Java代码示例
+
+```java
+String.valueOf(i)
+String s = "Hello world";
+System.out.println(s.indexOf("world"));
+System.out.println(s.substring(0, 5));
+System.out.println(s.replace("Hello", "Hi"));
+System.out.println(Arrays.asList(s.split(" ")));
+StringBuffer str = new StringBuffer(s);
+str.append("!");
+System.out.println(str);
+str.setCharAt(0)
+str.setLength(10)
+str.toString()
+
+int[][] arr = new int[3][4];
+int[][] arr = {{1,2},{3,4,5,6},{7,8,9}};
+arr[0].length
+Arrays.fill(array, 100);
+Arrays.fill(array, startIndex, endIndex, 100);
+String a[] = { "A", "E", "I" };
+String b[] = { "O", "U" };
+List list = new ArrayList(Arrays.asList(a));
+list.addAll(Arrays.asList(b));
+Object[] c = list.toArray();
+
+ArrayList<Integer> arrayList = new ArrayList<Integer>();
+arrayList.add(5);
+arrayList.add(index, 5);
+arrayList.remove(index);
+arrayList.contains(5);
+arrayList.indexOf(5);
+Collections.sort(arrayList);
+Collections.shuffle(arrayList);
+Collections.swap(arrayList, index, index);
+Collections.sort(arrayList, new Comparator<Integer>() { 
+    @Override
+    public int compare(Integer o1, Integer o2) {
+        return o2.compareTo(o1);
+    }
+});
+Collections.max(arrayList)
+Collections.min(arrayList)
+Collections.binarySearch(arrayList, 7)
+
+class Student implements Comparable {
+    private String name;
+    private int age;
+
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return age - ((Student) o).age;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        ArrayList<Student> arrayList = new ArrayList<>();
+        arrayList.add(new Student("2", 2));
+        arrayList.add(new Student("1", 1));
+        Collections.sort(arrayList, new Comparator<Student>() {
+            @Override
+            public int compare(Student o1, Student o2) {
+                return o2.compareTo(o1);
+            }
+        });
+        System.out.println(arrayList);
+    }
+}
+
+LinkedList<Integer> linkedList = new LinkedList<>();
+Queue<Integer> linkedList = new LinkedList<>();
+Stack<Integer> linkedList = new Stack<>();
+// array: add - remove
+linkedList.add(1);
+linkedList.add(index, 1);
+linkedList.addFirst(1);
+linkedList.addLast(1);
+// queue: offer - poll
+linkedList.offer(6);
+linkedList.offerFirst(4);
+linkedList.offerLast(4);
+// stack: push - pop
+linkedList.push(7);
+linkedList.pop();
+linkedList.peek();
+Queue使用时要尽量避免Collection的add()和remove()方法，而是要使用offer()来加入元素，使用poll()来获取并移出元素。它们的优点是通过返回值可以判断成功与否，add()和remove()方法在失败的时候会抛出异常。 如果要使用前端而不移出该元素，使用element()或者peek()方法。
+
+// 小根堆
+Queue<Integer> queue = new PriorityQueue<>();
+// 大根堆
+Queue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
+    @Override
+    public int compare(Integer o1, Integer o2) {
+        return o2.compareTo(o1);
+    }
+});
+queue.offer(1);
+queue.offer(2);
+queue.offer(3);
+System.out.println(queue.peek());
+queue.poll();
+System.out.println(queue);
+
+HashMap<String, String> hashMap = new HashMap<>();
+hashMap.put("1", "1st");
+hashMap.put("2", "2nd");
+Collection cl = hashMap.keySet();
+Collection cl = hashMap.values();
+Iterator it = cl.iterator();
+while(it.hasNext()) {
+    System.out.println(it.next());
+}
+
+HashSet<String> hashSet = new HashSet<>();
+hashSet.add("yellow");
+hashSet.add("white");
+Iterator it = hashSet.iterator();
+while(it.hasNext()) {
+    System.out.println(it.next());
+}
+for(String s: hashSet) {
+    System.out.println(s);
+}
+
+try {
+    BufferedWriter out = new BufferedWriter(new FileWriter("f.txt"));
+    out.write("Hello world\n");
+    out.write("Hello world\n");
+    out.close();
+} catch (IOException e) {
+
+}
+
+try {
+    BufferedReader in  = new BufferedReader(new FileReader("f.txt"));
+    String str;
+    while((str = in.readLine()) != null) {
+        System.out.println(str);
+    }
+} catch (IOException e) {
+
+}
+
+Random random = new Random();
+System.out.println(random.nextLong());
+System.out.println(random.nextInt(100));
+```
+
+- Collections、Arrays工具类
+
+  - Collections
+
+    - 排序
+
+      ```java
+      void reverse(List list)//反转
+      void shuffle(List list)//随机排序
+      void sort(List list)//按自然排序的升序排序
+      void sort(List list, Comparator c)//定制排序，由Comparator控制排序逻辑
+      void swap(List list, int i , int j)//交换两个索引位置的元素
+      void rotate(List list, int distance)//旋转。当distance为正数时，将list后distance个元素整体移到前面。当distance为负数时，将 list的前distance个元素整体移到后面。
+      ```
+
+      实例代码
+
+      ```java
+      ArrayList<Integer> arrayList = new ArrayList<Integer>();
+      arrayList.add(-1);
+      arrayList.add(3);
+      arrayList.add(3);
+      arrayList.add(-5);
+      arrayList.add(7);
+      arrayList.add(4);
+      arrayList.add(-9);
+      arrayList.add(-7);
+      System.out.println("原始数组:");
+      System.out.println(arrayList);
+      // void reverse(List list)：反转
+      Collections.reverse(arrayList);
+      System.out.println("Collections.reverse(arrayList):");
+      System.out.println(arrayList);
+      
+      
+      Collections.rotate(arrayList, 4);
+      System.out.println("Collections.rotate(arrayList, 4):");
+      System.out.println(arrayList);
+      
+      // void sort(List list),按自然排序的升序排序
+      Collections.sort(arrayList);
+      System.out.println("Collections.sort(arrayList):");
+      System.out.println(arrayList);
+      
+      // void shuffle(List list),随机排序
+      Collections.shuffle(arrayList);
+      System.out.println("Collections.shuffle(arrayList):");
+      System.out.println(arrayList);
+      
+      // void swap(List list, int i , int j),交换两个索引位置的元素
+      Collections.swap(arrayList, 2, 5);
+      System.out.println("Collections.swap(arrayList, 2, 5):");
+      System.out.println(arrayList);
+      
+      // 定制排序的用法
+      Collections.sort(arrayList, new Comparator<Integer>() {
+      
+          @Override
+          public int compare(Integer o1, Integer o2) {
+              return o2.compareTo(o1);
+          }
+      });
+      System.out.println("定制排序后：");
+      System.out.println(arrayList);
+      ```
+
+    - 查找、替换
+
+      ```java
+      int binarySearch(List list, Object key)//对List进行二分查找，返回索引，注意List必须是有序的
+      int max(Collection coll)//根据元素的自然顺序，返回最大的元素。 类比int min(Collection coll)
+      int max(Collection coll, Comparator c)//根据定制排序，返回最大元素，排序规则由Comparatator类控制。类比int min(Collection coll, Comparator c)
+      void fill(List list, Object obj)//用指定的元素代替指定list中的所有元素。
+      int frequency(Collection c, Object o)//统计元素出现次数
+      int indexOfSubList(List list, List target)//统计target在list中第一次出现的索引，找不到则返回-1，类比int lastIndexOfSubList(List source, list target).
+      boolean replaceAll(List list, Object oldVal, Object newVal), 用新元素替换旧元素
+      ```
+
+      示例代码
+
+      ```java
+      ArrayList<Integer> arrayList = new ArrayList<Integer>();
+      arrayList.add(-1);
+      arrayList.add(3);
+      arrayList.add(3);
+      arrayList.add(-5);
+      arrayList.add(7);
+      arrayList.add(4);
+      arrayList.add(-9);
+      arrayList.add(-7);
+      ArrayList<Integer> arrayList2 = new ArrayList<Integer>();
+      arrayList2.add(-3);
+      arrayList2.add(-5);
+      arrayList2.add(7);
+      System.out.println("原始数组:");
+      System.out.println(arrayList);
+      
+      System.out.println("Collections.max(arrayList):");
+      System.out.println(Collections.max(arrayList));
+      
+      System.out.println("Collections.min(arrayList):");
+      System.out.println(Collections.min(arrayList));
+      
+      System.out.println("Collections.replaceAll(arrayList, 3, -3):");
+      Collections.replaceAll(arrayList, 3, -3);
+      System.out.println(arrayList);
+      
+      System.out.println("Collections.frequency(arrayList, -3):");
+      System.out.println(Collections.frequency(arrayList, -3));
+      
+      System.out.println("Collections.indexOfSubList(arrayList, arrayList2):");
+      System.out.println(Collections.indexOfSubList(arrayList, arrayList2));
+      
+      System.out.println("Collections.binarySearch(arrayList, 7):");
+      // 对List进行二分查找，返回索引，List必须是有序的
+      Collections.sort(arrayList);
+      System.out.println(Collections.binarySearch(arrayList, 7));
+      ```
+
+    - 同步控制
+
+      **效率非常低**
+
+  - Arrays
+
+    - 排序 : `sort()`
+    - 查找 : `binarySearch()`
+    - 比较: `equals()`
+    - 填充 : `fill()`
+    - 转列表: `asList()`
+    - 转字符串 : `toString()`
+    - 复制: `copyOf()`
+
+- Comparable和Comparator接口的作用以及它们的区别
+
+  - Java提供了只包含一个compareTo()方法的Comparable接口。这个方法可以个给两个对象排序。具体来说，它返回负数，0，正数来表明输入对象小于，等于，大于已经存在的对象。
+
+  - Java提供了包含compare()和equals()两个方法的Comparator接口。compare()方法用来给两个输入参数排序，返回负数，0，正数表明第一个参数是小于，等于，大于第二个参数。equals()方法需要一个对象作为参数，它用来决定输入参数是否和comparator相等。只有当输入参数也是一个comparator并且输入参数和当前comparator的排序结果是相同的时候，这个方法才返回true。
+
+  > [https://www.jianshu.com/p/fa1a1089d44d](<https://www.jianshu.com/p/fa1a1089d44d>)
+
+  - Comparable接口的实现是在类的内部（如 String、Integer已经实现了Comparable接口，自己就可以完成比较大小操作），Comparator接口的实现是在类的外部（可以理解为一个是自已完成比较，一个是外部程序实现比较）
+
+  - **实现Comparable接口要重写compareTo方法, 在compareTo方法里面实现比较**
+
+    ```java
+    public class Student implements Comparable {
+         String name;
+         int age
+         public int compareTo(Student another) {
+              int i = 0;
+              i = name.compareTo(another.name); 
+              if(i == 0) { 
+                   return age - another.age;
+              } else {
+                   return i; 
+              }
+         }
+    }
+    ```
+
+    这时我们可以直接用 Collections.sort( StudentList ) 对其排序了(**只需传入要排序的列表**）
+
+  - **实现Comparator需要重写 compare 方法**
+
+    ```java
+    public class Student{
+         String name;
+         int age
+    }
+    class StudentComparator implements Comparator { 
+         public int compare(Student one, Student another) {
+              int i = 0;
+              i = one.name.compareTo(another.name); 
+              if(i == 0) { 
+                   return one.age - another.age;
+              } else {
+                   return i;
+              }
+         }
+    }
+    ```
+
+    Collections.sort( StudentList , new StudentComparator()) 可以对其排序（**不仅要传入待排序的列表，还要传入实现了Comparator的类的对象**）
+
+java 8
+
+```java
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+interface Formula {
+    double calculate(int a);
+
+    default double sqrt(int a) {
+        return Math.sqrt(a);
+    }
+}
+
+@FunctionalInterface
+interface Converter<F, T> {
+    T convert(F from);
+}
+
+class Something {
+    String startsWith(String s) {
+        return String.valueOf(s.charAt(0));
+    }
+}
+
+class Person {
+    String firstName;
+    String lastName;
+
+    Person() {}
+
+    Person(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+}
+
+interface PersonFactory<P extends Person> {
+    P create(String firstName, String lastName);
+}
+
+class Lambda4 {
+    static int outerStaticNum;
+    int outerNum;
+
+    void testScopes() {
+        Converter<Integer, String> stringConverter1 = (from) -> {
+            outerNum = 23;
+            return String.valueOf(from);
+        };
+
+        Converter<Integer, String> stringConverter2 = (from) -> {
+            outerStaticNum = 72;
+            return String.valueOf(from);
+        };
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        // 允许在接口中有默认方法实现
+        Formula formula = new Formula() {
+            @Override
+            public double calculate(int a) {
+                return sqrt(a * 100);
+            }
+        };
+        System.out.println(formula.calculate(100));
+        System.out.println(formula.sqrt(16));
+
+        // Lambda表达式
+        List<String> names = Arrays.asList("peter", "anna", "mike", "xenia");
+//        names.sort(new Comparator<String>() {
+//            @Override
+//            public int compare(String o1, String o2) {
+//                return o2.compareTo(o1);
+//            }
+//        });
+        names.sort((a, b) -> b.compareTo(a));
+        System.out.println(names);
+
+        // 函数式接口
+//        Converter<String, Integer> converter = from -> Integer.valueOf(from);
+//        Integer converted = converter.convert("123");
+//        System.out.println(converted);
+
+        // 方法和构造函数引用
+//        Converter<String, Integer> converter = Integer::valueOf;
+//        Integer converted = converter.convert("123");
+//        System.out.println(converted);
+
+        Something something = new Something();
+        Converter<String, String> converter = something::startsWith;
+        String converted = converter.convert("Java");
+        System.out.println(converted);
+
+        PersonFactory<Person> personFactory = Person::new;
+        Person person = personFactory.create("Peter", "Parker");
+
+        // Lambda 表达式作用域
+//        final int num = 1;
+//        Converter<Integer, String> stringConverter =
+//                (from) -> String.valueOf(from + num);
+//        System.out.println(stringConverter.convert(2));
+
+        int num = 1;
+        Converter<Integer, String> stringConverter =
+                (from) -> String.valueOf(from + num);
+        System.out.println(stringConverter.convert(2));
+
+        // 内置函数式接口
+        // Predicates
+        Predicate<String> predicate = (s) -> s.length() > 0;
+
+        System.out.println(predicate.test("foo"));
+        System.out.println(predicate.negate().test("foo"));
+
+        Predicate<Boolean> nonNull = Objects::nonNull;
+        Predicate<Boolean> isNull = Objects::isNull;
+
+        Predicate<String> isEmpty = String::isEmpty;
+        Predicate<String> isNotEmpty = isEmpty.negate();
+
+        // Functions
+        Function<String, Integer> toInteger = Integer::valueOf;
+        Function<String, String> backToString = toInteger.andThen(String::valueOf);
+
+        System.out.println(backToString.apply("123"));
+
+        // Suppliers
+        Supplier<Person> personSupplier = Person::new;
+        System.out.println(personSupplier.get());
+
+        // Consumers
+        Consumer<Person> greeter = (p) -> System.out.println("Hello, " + p.firstName);
+        greeter.accept(new Person("Luke", "Skywalker"));
+
+        // Comparators
+        Comparator<Person> comparator = (p1, p2) -> p1.firstName.compareTo(p2.firstName);
+
+        Person p1 = new Person("John", "Doe");
+        Person p2 = new Person("Alice", "Wonderland");
+
+        System.out.println(comparator.compare(p1, p2));
+        System.out.println(comparator.reversed().compare(p1, p2));
+
+        // Optionals
+        Optional<String> optional = Optional.of("bam");
+
+        System.out.println(optional.isPresent());
+        System.out.println(optional.get());
+        System.out.println(optional.orElse("fallback"));
+
+        optional.ifPresent((s) -> System.out.println(s.charAt(0)));
+
+        // Streams
+        List<String> stringCollection = new ArrayList<>();
+        stringCollection.add("ddd2");
+        stringCollection.add("aaa2");
+        stringCollection.add("bbb1");
+        stringCollection.add("aaa1");
+        stringCollection.add("bbb3");
+        stringCollection.add("ccc");
+        stringCollection.add("bbb2");
+        stringCollection.add("ddd1");
+
+        // Filter
+        stringCollection
+                .stream()
+                .filter((s) -> s.startsWith("a"))
+                .forEach(System.out::println);
+
+        // Sorted
+        stringCollection
+                .stream()
+                .sorted()
+                .filter((s) -> s.startsWith("a"))
+                .forEach(System.out::println);
+
+        // Map
+        stringCollection
+                .stream()
+                .map(String::toUpperCase)
+                .sorted((a, b) -> b.compareTo(a))
+                .forEach(System.out::println);
+
+        // Match
+        boolean anyStartsWithA =
+                stringCollection
+                        .stream()
+                        .anyMatch((s) -> s.startsWith("a"));
+
+        System.out.println(anyStartsWithA);      // true
+
+        boolean allStartsWithA =
+                stringCollection
+                        .stream()
+                        .allMatch((s) -> s.startsWith("a"));
+
+        System.out.println(allStartsWithA);      // false
+
+        boolean noneStartsWithZ =
+                stringCollection
+                        .stream()
+                        .noneMatch((s) -> s.startsWith("z"));
+
+        System.out.println(noneStartsWithZ);      // true
+
+        // Count
+        long startsWithB =
+                stringCollection
+                        .stream()
+                        .filter((s) -> s.startsWith("b"))
+                        .count();
+
+        System.out.println(startsWithB);    // 3
+
+        // Reduce
+        Optional<String> reduced =
+                stringCollection
+                        .stream()
+                        .sorted()
+                        .reduce((s1, s2) -> s1 + "#" + s2);
+
+        reduced.ifPresent(System.out::println);
+        // "aaa1#aaa2#bbb1#bbb2#bbb3#ccc#ddd1#ddd2"
+
+        // Parallel Streams
+        int max = 1000000;
+        List<String> values = new ArrayList<>(max);
+        for (int i = 0; i < max; i++) {
+            UUID uuid = UUID.randomUUID();
+            values.add(uuid.toString());
+        }
+
+        // 顺序排序
+//        long t0 = System.nanoTime();
+//
+//        long count = values.stream().sorted().count();
+//        System.out.println(count);
+//
+//        long t1 = System.nanoTime();
+//
+//        long millis = TimeUnit.NANOSECONDS.toMillis(t1 - t0);
+//        System.out.println(String.format("sequential sort took: %d ms", millis));
+
+        // sequential sort took: 899 ms
+
+        // 并行排序
+        long t0 = System.nanoTime();
+
+        long count = values.parallelStream().sorted().count();
+        System.out.println(count);
+
+        long t1 = System.nanoTime();
+
+        long millis = TimeUnit.NANOSECONDS.toMillis(t1 - t0);
+        System.out.println(String.format("parallel sort took: %d ms", millis));
+
+        // parallel sort took: 472 ms
+
+        // Map
+        Map<Integer, String> map = new HashMap<>();
+
+        for (int i = 0; i < 10; i++) {
+            map.putIfAbsent(i, "val" + i);
+        }
+
+        map.forEach((id, val) -> System.out.println(val));
+
+        map.computeIfPresent(3, (number, val) -> val + number);
+        System.out.println(map.get(3));             // val33
+
+        map.computeIfPresent(9, (number, val) -> null);
+        System.out.println(map.containsKey(9));     // false
+
+        map.computeIfAbsent(23, number -> "val" + number);
+        System.out.println(map.containsKey(23));    // true
+
+        map.computeIfAbsent(3, number -> "bam");
+        System.out.println(map.get(3));             // val33
+
+        map.remove(3, "val3");
+        System.out.println(map.get(3));             // val33
+
+        map.remove(3, "val33");
+        System.out.println(map.get(3));             // null
+
+        System.out.println(map.getOrDefault(42, "not found"));  // not found
+
+        map.merge(9, "val9", (value, newValue) -> value.concat(newValue));
+        System.out.println(map.get(9));             // val9
+
+        map.merge(9, "concat", (value, newValue) -> value.concat(newValue));
+        System.out.println(map.get(9));             // val9concat
+    }
+}
+```

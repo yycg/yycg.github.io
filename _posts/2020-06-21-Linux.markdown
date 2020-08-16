@@ -75,6 +75,10 @@ cpu: top, sar -u
 
 ## Shell
 
+> [Shell 编程入门](https://snailclimb.gitee.io/javaguide/#/docs/operating-system/Shell)
+
+> [Shell 教程](https://www.runoob.com/linux/linux-shell.html)
+
 1. 
 
   ```shell

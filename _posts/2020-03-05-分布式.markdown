@@ -286,104 +286,116 @@ dubbo的健壮性表现：
 
 ## Thrift
 
-  > [Thrift RPC详解](https://blog.csdn.net/kesonyk/article/details/50924489)
- 
-  > [Thrift RPC详解](https://www.jianshu.com/p/15dbc8665648)
-  
-  为了实现RPC步骤，许多RPC工具被研发出来。这些RPC工具大多使用“接口描述语言” —— interface description language (IDL) 来提供跨平台跨语言的服务调用。现在生产中用的最多的IDL是Google开源的protobuf。
+> [Thrift RPC详解](https://blog.csdn.net/kesonyk/article/details/50924489)
 
-  在日常开发中通常有两种形式来使用RPC，一种是团队内部完全实现上述RPC的6个步骤，自己序列化数据，然后自己利用socket或者http传输数据，最常见的就是游戏开发了。另一种就是利用现成的RPC工具，这些RPC工具实现了底层的数据通信，开发人员只需要利用IDL定义实现自己的服务即可而不用关心数据是如何通信的，最常见的RPC工具是Facebook开源的Thrift RPC框架。本文将重点讲解Thrift RPC。
-  
-  Thrift实际上是实现了C/S模式，通过代码生成工具将接口定义文件生成服务器端和客户端代码（可以为不同语言），从而实现服务端和客户端跨语言的支持。用户在Thirft描述文件中声明自己的服务，这些服务经过编译后会生成相应语言的代码文件，然后用户实现服务（客户端调用服务，服务器端提服务）便可以了。其中protocol（协议层, 定义数据传输格式，可以为二进制或者XML等）和transport（传输层，定义数据传输方式，可以为TCP/IP传输，内存共享或者文件共享等）被用作运行时库。
-  
-  Thrift的协议栈如下图所示：
- 
-  ![img](https://upload-images.jianshu.io/upload_images/6302559-75e0caadd951d14d.png?imageMogr2/auto-orient/strip|imageView2/2/w/424/format/webp)
- 
-  在Client和Server的最顶层都是用户自定义的处理逻辑，也就是说用户只需要编写用户逻辑，就可以完成整套的RPC调用流程。用户逻辑的下一层是Thrift自动生成的代码，这些代码主要用于结构化数据的解析,发送和接收，同时服务器端的自动生成代码中还包含了RPC请求的转发（Client的A调用转发到Server A函数进行处理）。
+> [Thrift RPC详解](https://www.jianshu.com/p/15dbc8665648)
 
-  协议栈的其他模块都是Thrift的运行时模块：
+为了实现RPC步骤，许多RPC工具被研发出来。这些RPC工具大多使用“接口描述语言” —— interface description language (IDL) 来提供跨平台跨语言的服务调用。现在生产中用的最多的IDL是Google开源的protobuf。
 
-  - 底层IO模块，负责实际的数据传输，包括Socket，文件，或者压缩数据流等。
+在日常开发中通常有两种形式来使用RPC，一种是团队内部完全实现上述RPC的6个步骤，自己序列化数据，然后自己利用socket或者http传输数据，最常见的就是游戏开发了。另一种就是利用现成的RPC工具，这些RPC工具实现了底层的数据通信，开发人员只需要利用IDL定义实现自己的服务即可而不用关心数据是如何通信的，最常见的RPC工具是Facebook开源的Thrift RPC框架。本文将重点讲解Thrift RPC。
 
-  - TTransport负责以字节流方式发送和接收Message，是底层IO模块在Thrift框架中的实现，每一个底层IO模块都会有一个对应TTransport来负责Thrift的字节流(Byte Stream)数据在该IO模块上的传输。例如TSocket对应Socket传输，TFileTransport对应文件传输。
+Thrift实际上是实现了C/S模式，通过代码生成工具将接口定义文件生成服务器端和客户端代码（可以为不同语言），从而实现服务端和客户端跨语言的支持。用户在Thirft描述文件中声明自己的服务，这些服务经过编译后会生成相应语言的代码文件，然后用户实现服务（客户端调用服务，服务器端提服务）便可以了。其中protocol（协议层, 定义数据传输格式，可以为二进制或者XML等）和transport（传输层，定义数据传输方式，可以为TCP/IP传输，内存共享或者文件共享等）被用作运行时库。
 
-  - TProtocol主要负责结构化数据组装成Message，或者从Message结构中读出结构化数据。TProtocol将一个有类型的数据转化为字节流以交给TTransport进行传输，或者从TTransport中读取一定长度的字节数据转化为特定类型的数据。如int32会被TBinaryProtocol Encode为一个四字节的字节数据，或者TBinaryProtocol从TTransport中取出四个字节的数据Decode为int32。
+Thrift的协议栈如下图所示：
 
-  - TServer负责接收Client的请求，并将请求转发到Processor进行处理。TServer主要任务就是高效的接受Client的请求，特别是在高并发请求的情况下快速完成请求。
+![img](https://upload-images.jianshu.io/upload_images/6302559-75e0caadd951d14d.png?imageMogr2/auto-orient/strip|imageView2/2/w/424/format/webp)
 
-  - Processor(或者TProcessor)负责对Client的请求做出相应，包括RPC请求转发，调用参数解析和用户逻辑调用，返回值写回等处理步骤。Processor是服务器端从Thrift框架转入用户逻辑的关键流程。Processor同时也负责向Message结构中写入数据或者读出数据。
+在Client和Server的最顶层都是用户自定义的处理逻辑，也就是说用户只需要编写用户逻辑，就可以完成整套的RPC调用流程。用户逻辑的下一层是Thrift自动生成的代码，这些代码主要用于结构化数据的解析,发送和接收，同时服务器端的自动生成代码中还包含了RPC请求的转发（Client的A调用转发到Server A函数进行处理）。
 
-  利用Thrift用户只需要做三件事：
+协议栈的其他模块都是Thrift的运行时模块：
 
-  (1). 利用IDL定义数据结构及服务
-  (2). 利用代码生成工具将(1)中的IDL编译成对应语言（如C++、JAVA），编译后得到基本的框架代码
-  (3). 在(2)中框架代码基础上完成完整代码（纯C++代码、JAVA代码等）
+- 底层IO模块，负责实际的数据传输，包括Socket，文件，或者压缩数据流等。
 
-  数据类型
+- TTransport负责以字节流方式发送和接收Message，是底层IO模块在Thrift框架中的实现，每一个底层IO模块都会有一个对应TTransport来负责Thrift的字节流(Byte Stream)数据在该IO模块上的传输。例如TSocket对应Socket传输，TFileTransport对应文件传输。
 
-  - Base Types（基本类型）
-  - Structs（结构体）
-  - enum(枚举）
-  - Containers（容器）
-  - Exceptions（异常）
-  - Services（服务）
+- TProtocol主要负责结构化数据组装成Message，或者从Message结构中读出结构化数据。TProtocol将一个有类型的数据转化为字节流以交给TTransport进行传输，或者从TTransport中读取一定长度的字节数据转化为特定类型的数据。如int32会被TBinaryProtocol Encode为一个四字节的字节数据，或者TBinaryProtocol从TTransport中取出四个字节的数据Decode为int32。
+
+- TServer负责接收Client的请求，并将请求转发到Processor进行处理。TServer主要任务就是高效的接受Client的请求，特别是在高并发请求的情况下快速完成请求。
+
+- Processor(或者TProcessor)负责对Client的请求做出相应，包括RPC请求转发，调用参数解析和用户逻辑调用，返回值写回等处理步骤。Processor是服务器端从Thrift框架转入用户逻辑的关键流程。Processor同时也负责向Message结构中写入数据或者读出数据。
+
+利用Thrift用户只需要做三件事：
+
+(1). 利用IDL定义数据结构及服务
+(2). 利用代码生成工具将(1)中的IDL编译成对应语言（如C++、JAVA），编译后得到基本的框架代码
+(3). 在(2)中框架代码基础上完成完整代码（纯C++代码、JAVA代码等）
+
+数据类型
+
+- Base Types（基本类型）
+- Structs（结构体）
+- enum(枚举）
+- Containers（容器）
+- Exceptions（异常）
+- Services（服务）
 
 ## protobuf为什么快
 
-  > [protobuf为什么那么快](https://www.jianshu.com/p/72108f0aefca)
+> [protobuf为什么那么快](https://www.jianshu.com/p/72108f0aefca)
 
 ## 分布式id
 
-  > [分布式id生成方案总结](https://snailclimb.gitee.io/javaguide/#/docs/system-design/micro-service/%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93)
+> [分布式id生成方案总结](https://snailclimb.gitee.io/javaguide/#/docs/system-design/micro-service/%E5%88%86%E5%B8%83%E5%BC%8Fid%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93)
 
-  - UUID：不适合作为主键，因为太长了，并且无序不可读，查询效率低。比较适合用于生成唯一的名字的标示比如文件的名字。
-  - 数据库自增 id：业务系统每次需要一个ID时，都需要请求数据库获取，性能低，并且如果此数据库实例下线了，那么将影响所有的业务系统。
-  - 数据库多主模式：两台数据库分别设置不同步长，生成不重复ID的策略来实现高可用。问题是无法新增实例。
-  - 利用redis生成id
-  - 号端模式
+- UUID：不适合作为主键，因为太长了，并且无序不可读，查询效率低。比较适合用于生成唯一的名字的标示比如文件的名字。
+- 数据库自增 id：业务系统每次需要一个ID时，都需要请求数据库获取，性能低，并且如果此数据库实例下线了，那么将影响所有的业务系统。
+- 数据库多主模式：两台数据库分别设置不同步长，生成不重复ID的策略来实现高可用。问题是无法新增实例。
+- 利用redis生成id
+- 号端模式
 
-    ```sql
-    CREATE TABLE id_generator (
-      id int(10) NOT NULL,
-      current_max_id bigint(20) NOT NULL COMMENT '当前最大id',
-      increment_step int(10) NOT NULL COMMENT '号段的长度',
-      PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-    ```
+  ```sql
+  CREATE TABLE id_generator (
+    id int(10) NOT NULL,
+    current_max_id bigint(20) NOT NULL COMMENT '当前最大id',
+    increment_step int(10) NOT NULL COMMENT '号段的长度',
+    PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  ```
 
-    ```sql
-    update id_generator set current_max_id=#{newMaxId}, version=version+1 where version = #{version}
-    ```
+  ```sql
+  update id_generator set current_max_id=#{newMaxId}, version=version+1 where version = #{version}
+  ```
 
-  - twitter snowflake雪花算法：时间戳、工作机器id、序列号
-  - 美团Leaf
+- twitter snowflake雪花算法：时间戳、工作机器id、序列号
+- 美团Leaf
 
 ## 限流
 
-  > [限流的算法有哪些？](https://snailclimb.gitee.io/javaguide/#/docs/system-design/micro-service/limit-request)
+> [限流的算法有哪些？](https://snailclimb.gitee.io/javaguide/#/docs/system-design/micro-service/limit-request)
 
-  - 固定窗口计数器算法：规定我们单位时间处理的请求数量。
-  - 滑动窗口计数器算法：例如我们的接口限流每分钟处理60个请求，我们可以把 1 分钟分为60个窗口。每隔1秒移动一次， 如果当前窗口的请求计数总和超过了限制的数量的话就不再处理其他请求。
-  - 漏桶算法：往桶中以任意速率流入水，以一定速率流出水。当水超过桶流量则丢弃，因为桶容量是不变的，保证了整体的速率。
-  - 令牌桶算法：首先我们会有个桶，如果里面没有满那么就会以一定 固定的速率 会往里面放令牌，一个请求过来首先要从桶中获取令牌，如果没有获取到，那么这个请求就拒绝，如果获取到那么就放行。
+- 固定窗口计数器算法：规定我们单位时间处理的请求数量。
+- 滑动窗口计数器算法：例如我们的接口限流每分钟处理60个请求，我们可以把 1 分钟分为60个窗口。每隔1秒移动一次， 如果当前窗口的请求计数总和超过了限制的数量的话就不再处理其他请求。
+- 漏桶算法：往桶中以任意速率流入水，以一定速率流出水。当水超过桶流量则丢弃，因为桶容量是不变的，保证了整体的速率。
+- 令牌桶算法：首先我们会有个桶，如果里面没有满那么就会以一定 固定的速率 会往里面放令牌，一个请求过来首先要从桶中获取令牌，如果没有获取到，那么这个请求就拒绝，如果获取到那么就放行。
 
 ## Databus
 
-  读数据：读缓存，读数据库，写缓存
+读数据：读缓存，读数据库，写缓存
 
-  写数据：淘汰缓存，写数据库，（写缓存）
+写数据：淘汰缓存，写数据库，（写缓存）
 
-  问题：写数据库后，写缓存失败怎么办？读数据后写缓存时，数据库又更新了怎么办？
+问题：写数据库后，写缓存失败怎么办？读数据后写缓存时，数据库又更新了怎么办？
 
-  解决：Databus，强一致协议（比如两阶段提交，paxos等）
+解决：Databus，强一致协议（比如两阶段提交，paxos等）
 
 ## 秒杀
 
-  - 超卖
+学妹的整理
 
-    https://blog.csdn.net/glamour2015/article/details/105179738/
+秒杀问题（超卖问题）
 
-    https://hacpai.com/article/1536335417613
+2020-7-7 李鹏程分享
 
-    https://www.jianshu.com/p/39b3a95240c4
+https://km.sankuai.com/page/330500196
+
+关于超卖
+
+在之前面试阿里的时候，面试官问我关于促销活动等。这种情况，对于商品应该使用什么锁，他告诉我应该用悲观锁，因为卖出的不能超过库存，但是为啥这里的解决方案是乐观锁呢？
+
+answer：这个问题可以通过悲观锁解决也可以通过乐观锁解决，具体参考↓（这三个讲的基本上差不多），lpc上面的文档里也写到了乐观锁的具体的sql解决方案
+
+https://blog.csdn.net/glamour2015/article/details/105179738/
+
+https://hacpai.com/article/1536335417613
+
+https://www.jianshu.com/p/39b3a95240c4
