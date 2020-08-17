@@ -79,7 +79,7 @@ tags:
   - 遇到过线上JVM问题吗，CPU过高怎么办（jstack, 他说不一定是java进程造成的，top），jmap是干嘛的，可以看到变量值吗
   - JVM分区，对象存在哪里，堆里的内存是怎么样的，垃圾回收算法，方法区存的是什么
   - hashmap, hashtable, concurrenthashmap
-  - mysql的聚合索引abc，a等于多少，c等于多少能走索引吗
+  - mysql的聚合索引abc，a等于多少，c等于多少能走索引吗，怎么看用了什么索引（explain）
   - spring bean是怎么初始化的，怎么依赖注入的，怎么解决循环依赖
   - 开放问题：建立https网站要做什么，与http网站的区别
   - 算法题：leetcode第一题，边界判断，还有一题并发循环输出foobar可选
