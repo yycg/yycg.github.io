@@ -11,7 +11,7 @@ tags:
     - 学习
 ---
 
-> [https://snailclimb.gitee.io/javaguide/#/?id=java]https://snailclimb.gitee.io/javaguide/#/?id=java
+> [https://snailclimb.gitee.io/javaguide/#/?id=java](https://snailclimb.gitee.io/javaguide/#/?id=java)
 
 > [https://github.com/hanggegreat/CS-Tree](https://github.com/hanggegreat/CS-Tree)
 
