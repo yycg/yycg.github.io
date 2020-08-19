@@ -77,7 +77,7 @@ tags:
   - SQL注入，CSRF，如何应对
   - Integer和int可以互相赋值吗，Integer a = null; int b = a;会怎么样
   - 遇到过线上JVM问题吗，CPU过高怎么办（jstack, 他说不一定是java进程造成的，top），jmap是干嘛的，可以看到变量值吗
-  - JVM分区，对象存在哪里，堆里的内存是怎么样的，垃圾回收算法，方法区存的是什么
+  - JVM分区，equals和==，地址在哪里，堆里的内存是怎么样的，垃圾回收算法，方法区存的是什么
   - hashmap, hashtable, concurrenthashmap
   - mysql的聚合索引abc，a等于多少，c等于多少能走索引吗，怎么看用了什么索引（explain）
   - spring bean是怎么初始化的，怎么依赖注入的，怎么解决循环依赖

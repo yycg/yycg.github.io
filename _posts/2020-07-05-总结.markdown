@@ -1140,13 +1140,379 @@ tags:
     - Spring Web : 为创建Web应用程序提供支持。
     - Spring Test : 提供了对 JUnit 和 TestNG 测试的支持。
 
-2. @RestController = @Controller + @ResponseBody
-
-3. Spring IOC & AOP
+2. Spring IOC & AOP
 
     - IOC：IoC（Inverse of Control:控制反转）是一种设计思想，就是 将原本在程序中手动创建对象的控制权，交由Spring框架来管理。 IoC 在其他语言中也有应用，并非 Spring 特有。 IoC 容器是 Spring 用来实现 IoC 的载体， IoC 容器实际上就是个Map（key，value）,Map 中存放的是各种对象。
     - DI：依赖注入（Dependecy Injection）和控制反转（Inversion of Control）是同一个概念。创建被调用者的工作由spring来完成，然后注入调用者 因此也称为依赖注入。依赖注入可以通过setter方法注入、构造器注入和接口注入三种方式来实现，Spring支持setter注入和构造器注入。
     - AOP：AOP(Aspect-Oriented Programming:面向切面编程)能够分离应用的业务逻辑和系统级服务。将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度，并有利于未来的可拓展性和可维护性。
+
+3. IoC容器初始化流程
+
+    Spring的IoC容器所起的作用，它会以某种方式加载Configuration Metadata（通常也就是XML格式的配置信息），然后根据这些信息绑定整个系统的对象，最终组装成一个可用的基于轻量级容器的应用系统。
+
+    Spring的IoC容器实现以上功能的过程，基本上可以按照类似的流程划分为两个阶段，即容器启动阶段和Bean实例化阶段。
+
+    1. 容器启动阶段
+    
+      容器启动伊始，首先会通过某种途径加载Configuration Metadata. 除了代码方式比较直接，在大部分情况下，容器需要依赖某些工具类对加载的Configuration Metadata进行解析和分析，并将分析后的信息编组为响应的BeanDefinition，最后把这些保存了bean定义必要信息的BeanDefinition，注册到相应的BeanDefinitionRegistry，这样容器启动工作就完成了。
+
+      总的来说，该阶段所作的工作可以认为是准备性的，重点更加侧重于对象管理信息的收集。当然，一些验证性或者辅助性的工作也可以在这个阶段完成。
+
+    2. Bean实例化阶段
+
+      经过第一阶段，现在所有的bean定义信息都通过BeanDefinition的方式注册到了Bean DefinitionRegistry中。当某个请求方法通过容器的getBean方法明确地请求某个对象，或者音依赖关系容器需要隐式地调用getBean方法时，就会触发第二阶段的活动。
+
+      该阶段，容器会首先检查所请求的对象之前是否已经初始化。如果没有，则会根据注册的BeanDefinition所提供的信息实例化被请求对象，并为其注入依赖。如果该对象实现了某些回调接口，也会根据回调接口的要求来装配它。当该对象装配完毕之后，容器会立即将其返回请求方使用。如果说第一阶段只是根据图纸装配生产线的话，那么第二阶段就是使用装配好的生产线来生产具体的产品了。
+
+4. Spring 中的 bean 的作用域有哪些?
+
+    - singleton : 唯一 bean 实例，Spring 中的 bean 默认都是单例的。
+    - prototype : 每次请求都会创建一个新的 bean 实例。
+
+    Spring 2.x中针对WebApplicationContext新增了3个作用域
+
+    - request : 每一次HTTP请求都会产生一个新的bean，该bean仅在当前HTTP request内有效。
+    - session : 每一次HTTP请求都会产生一个新的 bean，该bean仅在当前 HTTP session 内有效。
+    - global-session： 全局session作用域，仅仅在基于portlet的web应用中才有意义，Spring5已经没有了。Portlet是能够生成语义代码(例如：HTML)片段的小型Java Web插件。它们基于portlet容器，可以像servlet一样处理HTTP请求。但是，与 servlet 不同，每个 portlet 都有不同的会话
+
+5. Spring 中的单例 bean 的线程安全问题了解吗？
+
+  **单例 bean 存在线程问题，主要是因为当多个线程操作同一个对象的时候，对这个对象的非静态成员变量的写操作会存在线程安全问题。**
+
+  常见的有两种解决办法：
+
+  1. 在Bean对象中尽量避免定义可变的成员变量（不太现实）。
+
+  2. **在类中定义一个ThreadLocal成员变量，将需要的可变成员变量保存在 ThreadLocal 中**（推荐的一种方式）。
+
+6. Spring中自动装配的方式
+
+    - no：不进行自动装配，手动设置Bean的依赖关系。
+    - byName：根据Bean的名字进行自动装配。
+    - byType：根据Bean的类型进行自动装配。
+    - constructor：类似于byType，不过是应用于构造器的参数，如果正好有一个Bean与构造器的参数类型相同则可以自动装配，否则会导致错误。
+    - autodetect：如果有默认的构造器，则通过constructor的方式进行自动装配，否则使用byType的方式进行自动装配。
+
+7. Spring 中的 bean 生命周期?
+
+  **实例化bean、设置属性（依赖注入）、注入aware接口、执行postProcessBeforeInitialization() 方法、调用初始化方法、执行postProcessAfterInitialization() 方法、调用销毁方法**
+
+8. Spring提供了两种容器类型：BeanFactory和ApplicationContext
+
+  - BeanFactory: 默认采用延迟初始化策略。容器启动初期速度较快，所需要的资源有限。
+  - ApplicationContext: 除了拥有BeanFactory的所有指出，ApplicationContext还提供了其他高级特性，比如事件发布、国际化信息支持等。默认初始化并绑定完成，要求更多的系统资源。
+
+9. Spring如何解决循环依赖（三级缓存）
+
+    - 第一级缓存：单例缓存池**singletonObjects**。
+    - 第二级缓存：早期提前暴露的对象缓存**earlySingletonObjects**。（**属性还没有值，对象也没有被初始化**）
+    - 第三级缓存：**singletonFactories**单例对象工厂缓存。
+
+10. 注解
+
+    - @RestController = @Controller + @ResponseBody
+
+    - 组件类注解
+    
+      - @Component ：标准一个普通的spring Bean类。 
+      - @Repository：标注一个DAO组件类。 
+      - @Service：标注一个业务逻辑组件类。 
+      - @Controller：标注一个控制器组件类。
+      - @Component可以代替@Repository、@Service、@Controller，因为这三个注解是被@Component标注的。
+
+    - @Configuration, @Component, @Bean
+      
+      - @Configuration 来注解类表示类可以被 Spring 的 IoC 容器所使用，作为 bean 定义的资源。
+      - @Component可以替代 @Configuration注解。
+      - @Bean注解主要用于方法上，有点类似于工厂方法。
+
+    - @Autowired, @Resource
+
+      - @Autowired注解是按照类型（byType）装配依赖对象，默认情况下它要求依赖对象必须存在，如果允许null值，可以设置它的required属性为false。如果我们想使用按照名称（byName）来装配，可以结合@Qualifier注解一起使用。
+      - @Resource默认按照ByName自动注入，@Resource有两个重要的属性：name和type，Spring将@Resource注解的name属性解析为bean的名字，而type属性则解析为bean的类型。所以，如果使用name属性，则使用byName的自动注入策略，而使用type属性时则使用byType自动注入策略。如果既不制定name也不制定type属性，这时将通过反射机制使用byName自动注入策略。
+
+11. Spring AOP 和 AspectJ AOP 有什么区别？
+
+    Spring AOP 属于运行时增强，而 AspectJ 是编译时增强。Spring AOP 基于代理(Proxying)，而 AspectJ 基于字节码操作(Bytecode Manipulation)。
+
+    Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。AspectJ 相比于 Spring AOP 功能更加强大，但是 Spring AOP 相对来说更简单，如果我们的切面比较少，那么两者性能差异不大。但是，当切面太多的话，最好选择 AspectJ ，它比Spring AOP 快很多。
+
+12. AOP中的连接点（Joinpoint）、切点（Pointcut）、增强（Advice）、引介（Introduction）、织入（Weaving）、切面（Aspect）
+
+    a. **连接点**（Joinpoint）：**程序执行的某个特定位置（如：某个方法调用前、调用后，方法抛出异常后）。一个类或一段程序代码拥有一些具有边界性质的特定点，这些代码中的特定点就是连接点。**Spring仅支持方法的连接点。
+
+    b. **切点**（Pointcut）：**如果连接点相当于数据中的记录，那么切点相当于查询条件，一个切点可以匹配多个连接点。**Spring AOP的规则解析引擎负责解析切点所设定的查询条件，找到对应的连接点。
+
+    c. **增强**（Advice）：**增强是织入到目标类连接点上的一段程序代码。**Spring提供的增强接口都是带方位名的，如：BeforeAdvice、AfterReturningAdvice、ThrowsAdvice等。
+
+    d. 引介（Introduction）：引介是一种特殊的增强，它为类添加一些属性和方法。这样，即使一个业务类原本没有实现某个接口，通过引介功能，可以动态的为该业务类添加接口的实现逻辑，让业务类成为这个接口的实现类。
+
+    e. 织入（Weaving）：织入是将增强添加到目标类具体连接点上的过程，AOP有三种织入方式：①编译期织入：需要特殊的Java编译期（例如AspectJ的ajc）；②装载期织入：要求使用特殊的类加载器，在装载类的时候对类进行增强；③运行时织入：在运行时为目标类生成代理实现增强。Spring采用了动态代理的方式实现了运行时织入，而AspectJ采用了编译期织入和装载期织入的方式。
+
+    f. **切面**（Aspect）：**切面是由切点和增强（引介）组成的**，它包括了对横切关注功能的定义，也包括了对连接点的定义。
+
+13. AOP的原理是什么？
+  
+    Spring 提供了两种方式来生成代理对象: JDKProxy 和Cglib，具体使用哪种方式生成由AopProxyFactory 根据AdvisedSupport 对象的配置来决定。**默认的策略是如果目标类是接口，则使用JDK 动态代理技术，否则使用Cglib 来生成代理。**
+
+    - JDK动态代理
+
+      JDK 动态代理主要涉及到java.lang.reflect 包中的两个类：Proxy 和InvocationHandler。InvocationHandler 是一个接口，通过实现该接口定义横切逻辑，并通过反射机制调用目标类的代码，动态将横切逻辑和业务逻辑编制在一起。Proxy 利用InvocationHandler 动态创建一个符合某一接口的实例，生成目标类的代理对象。
+
+      动态代理机制可以在运行期间，为响应的接口动态生成对应的代理对象。可以将横切关注点逻辑封装到动态代理的InvocationHandler中。
+
+      这种方式实现的唯一缺点或者优点就是，所有需要织入横切关注点逻辑的模块类都得实现响应的接口，因为动态代理机制只针对接口有效。
+    
+    - CGLib 动态字节码增强
+
+      CGLib 全称为Code Generation Library，是一个强大的高性能，高质量的代码生成类库，可以在运行期扩展Java 类与实现Java 接口，CGLib 封装了asm，可以在运行期动态生成新的class。和JDK 动态代理相比较：**JDK 创建代理有一个限制，就是只能为接口创建代理实例，而对于没有通过接口定义业务方法的类，则可以通过CGLib 创建动态代理。**
+
+      可以使用ASM或者CGLIB等Java工具库，在程序运行期间，动态构建字节码的class文件。
+
+      可以为需要织入横切逻辑的模块类在运行期间，通过动态字节码增强技术，为这些系统模块类生成相应的子类，而将横切逻辑家都这些子类中，让应用程序在执行期间使用的是这些动态生成的子类，从而达到将横切逻辑织入系统的目的。
+
+      使用动态字节码增强技术，即使模块类没有实现相应的接口，我们依然可以对其进行扩展，而不用像动态代理那样受限于接口。
+
+14. SpringAOP的在实际应用中场景
+
+    1. **Authentication 权限**
+    2. Caching 缓存
+    3. Context passing 内容传递
+    4. Error handling 错误处理
+    5. Lazy loading 懒加载
+    6. **Debugging 调试**
+    7. logging，tracing，profiling and monitoring 记录跟踪 优化 校准
+    8. Performance optimization 性能优化
+    9. **Persistence 持久化**
+    10. Resource pooling 资源池
+    11. Synchronization 同步
+    12. **Transactions 事务**
+    13. **Logging 日志**
+
+15. Order的作用
+
+    Spring在处理同一Jointpoint处的多个Advisor时，实际上会按照指定的顺序和优先级来执行它们，顺序号决定优先级，顺序号越小，优先级越高，优先级排在前面的，将被优先执行。我们可以从0或者1开始，因为小于0的顺序号原则上由Spring AOP框架内部使用。默认情况下，如果我们不明确指定各个Advisor的执行顺序，那么Spring会按照它们的声明顺序来应用它们，最先声明的顺序号最小但优先级最大，其次次之。
+
+16. 迈向Spring MVC的旅程
+
+  - Sevlet
+
+    Servlet运行于Web容器之内，提供了Session和对象声明周期管理等功能。
+
+    弊病式Magic Servlet，开发人员会将各种逻辑混杂于一处，包括流程控制逻辑、视图显示逻辑、业务逻辑、数据访问逻辑等，这就在成了后去系统能以维护等一系列问题。
+
+  - JSP
+
+    为了能够将Servlet中的输入显然逻辑以独立的单元抽取出来，我们通常使用模板化的方法。JSP的提出，成为Java平台上开发Web应用程序事实上的模板化视图标准。
+
+    使用Servlet处理Web请求，我们需要在web.xml文件中，注册相应的请求URL与具体的处理Servlet之间的一个映射关系。
+
+17. Servlet生命周期
+
+  - 加载Servlet。当Tomcat第一次访问Servlet的时候，Tomcat会负责创建Servlet的实例
+  - 初始化。当Servlet被实例化后，Tomcat会调用init()方法初始化这个对象
+  - 处理服务。当浏览器访问Servlet的时候，Servlet 会调用service()方法处理请求
+  - 销毁。当Tomcat关闭时或者检测到Servlet要从Tomcat删除的时候会自动调用destroy()方法，让该实例释放掉所占的资源。一个Servlet如果长时间不被使用的话，也会被Tomcat自动销毁
+  - 卸载。当Servlet调用完destroy()方法后，等待垃圾回收。如果有需要再次使用这个Servlet，会重新调用init()方法进行初始化操作。
+
+19. SpringMVC 工作原理
+
+    浏览器请求DispatcherServlet，DispatcherServlet根据请求调用HandlerMapping，解析到对应的Handler。HandlerAdapter根据Handler调用controller，返回ModelAndView，包括数据对象Model和逻辑View。ViewResolver根据逻辑View查找实际的View。DispatcherServlet把Model传给View渲染，并返回给浏览器。
+
+20. Spring 管理事务的方式有几种？
+
+    1. **编程式事务，在代码中硬编码。**(不推荐使用)
+    2. **声明式事务，在配置文件中配置**（推荐使用）
+  
+    声明式事务又分为两种：
+
+    1. **基于XML的声明式事务**
+    2. **基于注解的声明式事务**
+
+21. Spring 事务中的隔离级别
+
+    - TransactionDefinition.ISOLATION_DEFAULT: 使用后端数据库默认的隔离级别，Mysql 默认采用的 REPEATABLE_READ隔离级别 Oracle 默认采用的 READ_COMMITTED隔离级别.
+    - TransactionDefinition.ISOLATION_READ_UNCOMMITTED: 最低的隔离级别，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读
+    - TransactionDefinition.ISOLATION_READ_COMMITTED: 允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生
+    - TransactionDefinition.ISOLATION_REPEATABLE_READ: 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生。
+    - TransactionDefinition.ISOLATION_SERIALIZABLE: 最高的隔离级别，完全服从ACID的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能。通常情况下也不会用到该级别。
+
+22. 事务的传播特性
+
+    - propagation_requierd：如果当前没有事务，就新建一个事务，如果已存在一个事务中，加入到这个事务中，这是Spring默认的选择。
+    - propagation_supports：支持当前事务，如果没有当前事务，就以非事务方法执行。
+    - propagation_mandatory：使用当前事务，如果没有当前事务，就抛出异常。
+    - propagation_required_new：新建事务，如果当前存在事务，把当前事务挂起。
+    - propagation_not_supported：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+    - propagation_never：以非事务方式执行操作，如果当前事务存在则抛出异常。
+    - propagation_nested：如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与propagation_required类似的操作。
+
+23. @Transactional(rollbackFor = Exception.class)注解
+
+    在@Transactional注解中如果不配置rollbackFor属性,那么事物只会在遇到RuntimeException的时候才会回滚,加上rollbackFor=Exception.class,可以让事物在遇到非运行时异常时也回滚。
+
+24. #{}和${}的区别是什么？
+
+    ${}是 Properties 文件中的变量占位符，它可以用于标签属性值和 sql 内部，属于静态文本替换，比如${driver}会被静态替换为com.mysql.jdbc.Driver。
+
+    #{}是 sql 的参数占位符，Mybatis 会将 sql 中的#{}替换为?号，在 sql 执行前会使用 PreparedStatement 的参数设置方法，按序给 sql 的?号占位符设置参数值，比如 ps.setInt(0, parameterValue)，#{item.name} 的取值方式为使用反射从参数对象中获取 item 对象的 name 属性值，相当于 param.getItem().getName()。
+
+25. mybatis缓存
+
+    mybatis提供了缓存机制减轻数据库压力，提高数据库性能
+
+    mybatis的缓存分为两级：一级缓存、二级缓存
+
+    一级缓存是SqlSession级别的缓存，缓存的数据只在SqlSession内有效
+
+    mybatis的一级缓存是SqlSession级别的缓存，在操作数据库的时候需要先创建SqlSession会话对象，在对象中有一个HashMap用于存储缓存数据，此HashMap是当前会话对象私有的，别的SqlSession会话对象无法访问。
+
+    二级缓存是mapper级别的缓存，同一个namespace公用这一个缓存，所以对SqlSession是共享的
+
+    二级缓存是mapper级别的缓存，也就是同一个namespace的mapper.xml，当多个SqlSession使用同一个Mapper操作数据库的时候，得到的数据会缓存在同一个二级缓存区域
+
+26. Xml 映射文件中，除了常见的 select|insert|updae|delete 标签之外，还有哪些标签？
+
+    还有很多其他的标签，<resultMap>、<parameterMap>、<sql>、<include>、<selectKey>，加上动态 sql 的 9 个标签，trim|where|set|foreach|if|choose|when|otherwise|bind等，其中为 sql 片段标签，通过<include>标签引入 sql 片段，<selectKey>为不支持自增的主键生成策略标签。
+
+27. 最佳实践中，通常一个 Xml 映射文件，都会写一个 Dao 接口与之对应，请问，这个 Dao 接口的工作原理是什么？Dao 接口里的方法，参数不同时，方法能重载吗？
+
+    Dao 接口，就是人们常说的 Mapper接口，接口的全限名，就是映射文件中的 namespace 的值，接口的方法名，就是映射文件中MappedStatement的 id 值，接口方法内的参数，就是传递给 sql 的参数。Mapper接口是没有实现类的，当调用接口方法时，接口全限名+方法名拼接字符串作为 key 值，可唯一定位一个MappedStatement，举例：com.mybatis3.mappers.StudentDao.findStudentById，可以唯一找到 namespace 为com.mybatis3.mappers.StudentDao下面id = findStudentById的MappedStatement。在 Mybatis 中，每一个<select>、<insert>、<update>、<delete>标签，都会被解析为一个MappedStatement对象。
+
+    Dao 接口里的方法，是不能重载的，因为是全限名+方法名的保存和寻找策略。
+
+    Dao 接口的工作原理是 JDK 动态代理，Mybatis 运行时会使用 JDK 动态代理为 Dao 接口生成代理 proxy 对象，代理对象 proxy 会拦截接口方法，转而执行MappedStatement所代表的 sql，然后将 sql 执行结果返回。
+
+28. mybatis和hibernate, jdbc的区别；mybatis解决了什么问题，mybatis有什么缺点
+
+    JDBC
+
+    1.使用JDBC编程需要链接数据库，注册驱动和数据库信息。
+
+    2.操作Connection，打开Statement对象。
+
+    3.通过Statement执行SQL语句，返回结果放到ResultSet对象。
+
+    4.使用ResultSet读取数据。
+
+    5.关闭数据库相关的资源。
+
+    JDBC缺点：
+
+    工作量比较大，需要连接，然后处理jdbc底层事务，处理数据类型，还需要操作Connection，Statement对象和ResultSet对象去拿数据并关闭他们
+
+    没有使用框架的时候 sql语句是和java语句一起写在dao层 耦合度高，维护不易而且实际开发中sql是会变的，需要频繁修改 当你要替换某个sql代码的时候，需要对整个项目 进行操作，极不方便。
+
+    JDBC优点：
+
+    接近底层，理论上效率最高
+
+    MyBatis
+
+    半自动化的持久层框架 半自动 轻量级 
+
+    1.SQLSessionFactoryBuilder(构造器):它会根据配置信息或者代码生成SqlSessionFactory。
+
+    2.SqlSessionFactory(工厂接口)：依靠工厂生成SqlSession。
+
+    3.SqlSession(会话)：是一个既可以发送SQL去执行并且返回结果，也可以获取Mapper接口。
+
+    4.SQL Mapper:是由一个JAVA接口和XML文件(或注解)构成，需要给出对应的SQL和映射规则。SQL是由Mapper发送出去，并且返回结果。
+
+    Mybatis的优点：
+
+    1、易于上手和掌握，提供了数据库查询的自动对象绑定功能，而且延续了很好的SQL使用经验，对于没有那么高的对象模型要求的项目来说，相当完美。
+
+    2、sql写在xml里，便于统一管理和优化， 解除sql与程序代码的耦合。
+
+    3、提供映射标签，支持对象与数据库的orm字段关系映射
+
+    4、 提供对象关系映射标签，支持对象关系组建维护
+
+    5、提供xml标签，支持编写动态sql。
+
+    6、速度相对于Hibernate的速度较快
+
+    Mybatis的缺点：
+
+    1、关联表多时，字段多的时候，sql工作量很大。
+
+    2、sql依赖于数据库，导致数据库移植性差。
+
+    3、由于xml里标签id必须唯一，导致DAO中方法不支持方法重载。
+
+    4、对象关系映射标签和字段映射标签仅仅是对映射关系的描述，具体实现仍然依赖于sql。
+
+    5、DAO层过于简单，对象组装的工作量较大。
+
+    6、不支持级联更新、级联删除。
+
+    7、Mybatis的日志除了基本记录功能外，其它功能薄弱很多。
+
+    8、编写动态sql时,不方便调试，尤其逻辑复杂时。
+
+    9、提供的写动态sql的xml标签功能简单，编写动态sql仍然受限，且可读性低。
+
+    Hibernate
+
+    Hibernate的优点：
+
+    1、hibernate是全自动，hibernate完全可以通过对象关系模型实现对数据库的操作，拥有完整的JavaBean对象与数据库的映射结构来自动生成sql。
+
+    2、功能强大，数据库无关性好，O/R映射能力强，需要写的代码很少，开发速度很快。
+
+    3、有更好的二级缓存机制，可以使用第三方缓存。
+
+    4、数据库移植性良好。
+
+    5、hibernate拥有完整的日志系统，hibernate日志系统非常健全，涉及广泛，包括sql记录、关系异常、优化警告、缓存提示、脏数据警告等
+
+    Hibernate的缺点：
+
+    1、学习门槛高，精通门槛更高，程序员如何设计O/R映射，在性能和对象模型之间如何取得平衡，以及怎样用好Hibernate方面需要的经验和能力都很强才行
+
+    2、hibernate的sql很多都是自动生成的，无法直接维护sql；虽然有hql查询，但功能还是不及sql强大，见到报表等变态需求时，hql查询要虚，也就是说hql查询是有局限的；hibernate虽然也支持原生sql查询，但开发模式上却与orm不同，需要转换思维，因此使用上有些不方便。总之写sql的灵活度上hibernate不及mybatis。
+
+29. 反射
+
+    **反射可以实现在运行时可以知道任意一个类的属性和方法。**
+
+    **理解Class类和类类型**
+    
+    类是java.lang.Class类的实例对象，而Class是所有类的类。
+    
+    ```java
+    Class c1 = Code.class;
+    //这说明任何一个类都有一个隐含的静态成员变量class，这种方式是通过获取类的静态成员变量class得到的
+    Class c2 = code1.getClass();
+    //code1是Code的一个对象，这种方式是通过一个类的对象的getClass()方法获得的
+    Class c3 = Class.forName("com.trigl.reflect.Code");
+    //这种方法是Class类调用forName方法，通过一个类的全量限定名获得
+    ```
+    
+    这里，c1、c2、c3都是Class的对象，他们是完全一样的，而且有个学名，叫做Code的类类型（class type）。
+
+    **Java反射相关操作**
+
+    获取成员方法Method
+
+    ```java
+    public Method getDeclaredMethod(String name, Class<?>... parameterTypes) // 得到该类所有的方法，不包括父类的
+    public Method getMethod(String name, Class<?>... parameterTypes) // 得到该类所有的public方法，包括父类的
+    ```
+
+    获取成员变量Field
+
+    ```java
+    public Field getDeclaredField(String name) // 获得该类自身声明的所有变量，不包括其父类的变量
+    public Field getField(String name) // 获得该类自所有的public成员变量，包括其父类变量
+    ```
+    
+    获取构造函数Constructor
+    ```java
+    public Constructor<T> getDeclaredConstructor(Class<?>... parameterTypes) //  获得该类所有的构造器，不包括其父类的构造器
+    public Constructor<T> getConstructor(Class<?>... parameterTypes) // 获得该类所以public构造器，包括父类
+    ```
 
 ## 操作系统
 
