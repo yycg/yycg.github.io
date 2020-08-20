@@ -8548,7 +8548,7 @@ public:
 
   import java.util.ArrayList;
 
-  class TicketSeller implements Runnable{
+  class TicketSeller implements Runnable {
       private static volatile int ticketNum = 0;
       private static int ticketPrice = 500;
 
@@ -8580,7 +8580,7 @@ public:
 
   import java.util.ArrayList;
 
-  class TicketSeller implements Runnable{
+  class TicketSeller implements Runnable {
       private volatile int ticketNum = 0;
       private int ticketPrice = 500;
 

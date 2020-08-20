@@ -26,7 +26,7 @@ tags:
 2. 如何优化性能？
 
     - 缓存：CDN、反向代理、本地缓存、分布式缓存（一致性Hash算法）
-    - 均衡负载：分布式（不同服务部署在不同）、集群（多台机器提供相同的服务）
+    - 均衡负载：分布式（不同服务部署在不同机器上）、集群（多台机器提供相同的服务）
     - 异步（消息队列削峰、线程池）
     - 数据库分库分表、读写分离
 
@@ -34,7 +34,7 @@ tags:
 
     一致性Hash算法通过一致性Hash环实现key到缓存服务器的Hash映射。
 
-    具体算法过程为：先构造一个长度为$2^32$的整数环（一致性Hash环），根据节点名称的Hash值将缓存服务器节点放置在这个Hash环上。然后根据需要缓存的数据的key值计算得到其Hash值，在Hash环上顺时针查找距离这个key的Hash值最近的缓存服务器节点。
+    具体算法过程为：先构造一个长度为$2^{32}$的整数环（一致性Hash环），根据节点名称的Hash值将缓存服务器节点放置在这个Hash环上。然后根据需要缓存的数据的key值计算得到其Hash值，在Hash环上顺时针查找距离这个key的Hash值最近的缓存服务器节点。
 
     当缓存服务器集群需要扩容时，只需要将新加入的节点名称的Hash值放入一致性Hash环中，由于key时顺时针查找其最近的节点，因此新加入的节点只影响整个环中的一小段。
 
@@ -609,7 +609,7 @@ tags:
 3. 设计模式
 
     - 简单工厂模式
-    - 工程方法模式：产品接口、工厂接口、具体产品、具体工厂，一个具体工厂生产一个具体产品。
+    - 工厂方法模式：产品接口、工厂接口、具体产品、具体工厂，一个具体工厂生产一个具体产品。
     - 抽象工厂模式：一个具体工厂创建一组具体工厂。
     - 策略模式：上下文类（维护一个对策略的引用），策略类，具体策略类
     - 代理模式：主体类（定义真是主体类和代理类的共同接口），真实主体类，代理类（保存一个引用是的代理可以访问真实主体）
@@ -640,7 +640,7 @@ tags:
 
     领域模型中的实体类可细分为4种类型：VO、DTO、DO、PO。
         
-    - VO（View Ob-ject）：视图对象，用于展示层视图状态对应的对象
+    - VO（View Object）：视图对象，用于展示层视图状态对应的对象
     - DTO（Data Transfer Object）：数据传输对象，原来的目的是为EJB的分布式应用提供粗粒度的数据实体，以降低分布式调用的次数，提高分布式调用的性能，后来一般泛指用于展示层与服务层之间的数据传输对象，因此可以将DTO看成一个组合版的DO
     - DO（Domain Object）：领域对象，即业务实体对象
     - PO（Persistent Object）：持久化对象，表示持久层的数据结构（如数据库表）
@@ -673,8 +673,9 @@ tags:
 
 8. final
 
-    - 修饰变量：值再初始化后不能更改
+    - 修饰变量：值在初始化后不能更改
     - 修饰类：类不能被继承，所有成员方法都会被隐式指定为final
+		- 修饰方法：方法不能被重写
 
 9. static
 
@@ -939,13 +940,15 @@ tags:
 
 28. 可重入锁独有的功能
 
-	- 指定公平锁还是非公平锁
-	- Condition条件类，分组唤醒需要唤醒的线程
-	- 中断等待锁
+		- 指定公平锁还是非公平锁
+		- Condition条件类，分组唤醒需要唤醒的线程
+		- 中断等待锁
 
 29. ThreadLocal内存泄漏
 
-	  key为弱引用，value为强引用，key被清理掉，value未被清理
+	  ThreadLocalMap的 key 就是 ThreadLocal对象，value 就是 ThreadLocal 对象调用set方法设置的值。
+		
+		内存泄漏：key为弱引用，value为强引用，key被清理掉，value未被清理。
 
 30. 引用
 
@@ -1050,9 +1053,9 @@ tags:
 
 7. 类加载的过程
 
-  - 加载
-  - 连接：验证、准备、解析
-  - 初始化
+		- 加载（class文件）
+		- 连接：验证（载入的class文件数据的正确性）、准备（为类的静态变量分配存储空间）、解析（将符号引用转换成直接引用）
+		- 初始化（静态变量、静态代码块）
 
 8. volatile
 
@@ -1070,7 +1073,7 @@ tags:
 
     线程私有的：程序计数器、虚拟机栈、本地方法栈
     
-    线程共享的：堆、方法区
+    线程共享的：堆、方法区（存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据）
 
     JDK 8中用元数据去代替永久代实现方法区，并把字符串常量池和类静态变量迁移到堆中存放。
 
@@ -1154,15 +1157,15 @@ tags:
 
     1. 容器启动阶段
     
-      容器启动伊始，首先会通过某种途径加载Configuration Metadata. 除了代码方式比较直接，在大部分情况下，容器需要依赖某些工具类对加载的Configuration Metadata进行解析和分析，并将分析后的信息编组为响应的BeanDefinition，最后把这些保存了bean定义必要信息的BeanDefinition，注册到相应的BeanDefinitionRegistry，这样容器启动工作就完成了。
+				容器启动伊始，首先会通过某种途径加载Configuration Metadata. 除了代码方式比较直接，在大部分情况下，容器需要依赖某些工具类对加载的Configuration Metadata进行解析和分析，并将分析后的信息编组为响应的BeanDefinition，最后把这些保存了bean定义必要信息的BeanDefinition，注册到相应的BeanDefinitionRegistry，这样容器启动工作就完成了。
 
-      总的来说，该阶段所作的工作可以认为是准备性的，重点更加侧重于对象管理信息的收集。当然，一些验证性或者辅助性的工作也可以在这个阶段完成。
+				总的来说，该阶段所作的工作可以认为是准备性的，重点更加侧重于对象管理信息的收集。当然，一些验证性或者辅助性的工作也可以在这个阶段完成。
 
     2. Bean实例化阶段
 
-      经过第一阶段，现在所有的bean定义信息都通过BeanDefinition的方式注册到了Bean DefinitionRegistry中。当某个请求方法通过容器的getBean方法明确地请求某个对象，或者音依赖关系容器需要隐式地调用getBean方法时，就会触发第二阶段的活动。
+				经过第一阶段，现在所有的bean定义信息都通过BeanDefinition的方式注册到了Bean DefinitionRegistry中。当某个请求方法通过容器的getBean方法明确地请求某个对象，或者音依赖关系容器需要隐式地调用getBean方法时，就会触发第二阶段的活动。
 
-      该阶段，容器会首先检查所请求的对象之前是否已经初始化。如果没有，则会根据注册的BeanDefinition所提供的信息实例化被请求对象，并为其注入依赖。如果该对象实现了某些回调接口，也会根据回调接口的要求来装配它。当该对象装配完毕之后，容器会立即将其返回请求方使用。如果说第一阶段只是根据图纸装配生产线的话，那么第二阶段就是使用装配好的生产线来生产具体的产品了。
+				该阶段，容器会首先检查所请求的对象之前是否已经初始化。如果没有，则会根据注册的BeanDefinition所提供的信息实例化被请求对象，并为其注入依赖。如果该对象实现了某些回调接口，也会根据回调接口的要求来装配它。当该对象装配完毕之后，容器会立即将其返回请求方使用。如果说第一阶段只是根据图纸装配生产线的话，那么第二阶段就是使用装配好的生产线来生产具体的产品了。
 
 4. Spring 中的 bean 的作用域有哪些?
 
@@ -1177,13 +1180,13 @@ tags:
 
 5. Spring 中的单例 bean 的线程安全问题了解吗？
 
-  **单例 bean 存在线程问题，主要是因为当多个线程操作同一个对象的时候，对这个对象的非静态成员变量的写操作会存在线程安全问题。**
+		**单例 bean 存在线程问题，主要是因为当多个线程操作同一个对象的时候，对这个对象的非静态成员变量的写操作会存在线程安全问题。**
 
-  常见的有两种解决办法：
+		常见的有两种解决办法：
 
-  1. 在Bean对象中尽量避免定义可变的成员变量（不太现实）。
+		1. 在Bean对象中尽量避免定义可变的成员变量（不太现实）。
 
-  2. **在类中定义一个ThreadLocal成员变量，将需要的可变成员变量保存在 ThreadLocal 中**（推荐的一种方式）。
+		2. **在类中定义一个ThreadLocal成员变量，将需要的可变成员变量保存在 ThreadLocal 中**（推荐的一种方式）。
 
 6. Spring中自动装配的方式
 
@@ -1195,12 +1198,12 @@ tags:
 
 7. Spring 中的 bean 生命周期?
 
-  **实例化bean、设置属性（依赖注入）、注入aware接口、执行postProcessBeforeInitialization() 方法、调用初始化方法、执行postProcessAfterInitialization() 方法、调用销毁方法**
+  	**实例化bean、设置属性（依赖注入）、注入aware接口、执行postProcessBeforeInitialization() 方法、调用初始化方法、执行postProcessAfterInitialization() 方法、调用销毁方法**
 
 8. Spring提供了两种容器类型：BeanFactory和ApplicationContext
 
-  - BeanFactory: 默认采用延迟初始化策略。容器启动初期速度较快，所需要的资源有限。
-  - ApplicationContext: 除了拥有BeanFactory的所有指出，ApplicationContext还提供了其他高级特性，比如事件发布、国际化信息支持等。默认初始化并绑定完成，要求更多的系统资源。
+		- BeanFactory: 默认采用延迟初始化策略。容器启动初期速度较快，所需要的资源有限。
+		- ApplicationContext: 除了拥有BeanFactory的所有指出，ApplicationContext还提供了其他高级特性，比如事件发布、国际化信息支持等。默认初始化并绑定完成，要求更多的系统资源。
 
 9. Spring如何解决循环依赖（三级缓存）
 
@@ -1243,7 +1246,7 @@ tags:
 
     b. **切点**（Pointcut）：**如果连接点相当于数据中的记录，那么切点相当于查询条件，一个切点可以匹配多个连接点。**Spring AOP的规则解析引擎负责解析切点所设定的查询条件，找到对应的连接点。
 
-    c. **增强**（Advice）：**增强是织入到目标类连接点上的一段程序代码。**Spring提供的增强接口都是带方位名的，如：BeforeAdvice、AfterReturningAdvice、ThrowsAdvice等。
+    c. **增强**（Advice）：**增强是织入到目标类连接点上的一段程序代码。**Spring提供的增强接口都是带方位名的，如：@Before, @AfterReturning, @AfterThrowing, @After (After finally), @Around。
 
     d. 引介（Introduction）：引介是一种特殊的增强，它为类添加一些属性和方法。这样，即使一个业务类原本没有实现某个接口，通过引介功能，可以动态的为该业务类添加接口的实现逻辑，让业务类成为这个接口的实现类。
 
@@ -1295,25 +1298,25 @@ tags:
 
 16. 迈向Spring MVC的旅程
 
-  - Sevlet
+		- Sevlet
 
-    Servlet运行于Web容器之内，提供了Session和对象声明周期管理等功能。
+			Servlet运行于Web容器之内，提供了Session和对象声明周期管理等功能。
 
-    弊病式Magic Servlet，开发人员会将各种逻辑混杂于一处，包括流程控制逻辑、视图显示逻辑、业务逻辑、数据访问逻辑等，这就在成了后去系统能以维护等一系列问题。
+			弊病式Magic Servlet，开发人员会将各种逻辑混杂于一处，包括流程控制逻辑、视图显示逻辑、业务逻辑、数据访问逻辑等，这就在成了后去系统能以维护等一系列问题。
 
-  - JSP
+		- JSP
 
-    为了能够将Servlet中的输入显然逻辑以独立的单元抽取出来，我们通常使用模板化的方法。JSP的提出，成为Java平台上开发Web应用程序事实上的模板化视图标准。
+			为了能够将Servlet中的输入显然逻辑以独立的单元抽取出来，我们通常使用模板化的方法。JSP的提出，成为Java平台上开发Web应用程序事实上的模板化视图标准。
 
-    使用Servlet处理Web请求，我们需要在web.xml文件中，注册相应的请求URL与具体的处理Servlet之间的一个映射关系。
+			使用Servlet处理Web请求，我们需要在web.xml文件中，注册相应的请求URL与具体的处理Servlet之间的一个映射关系。
 
 17. Servlet生命周期
 
-  - 加载Servlet。当Tomcat第一次访问Servlet的时候，Tomcat会负责创建Servlet的实例
-  - 初始化。当Servlet被实例化后，Tomcat会调用init()方法初始化这个对象
-  - 处理服务。当浏览器访问Servlet的时候，Servlet 会调用service()方法处理请求
-  - 销毁。当Tomcat关闭时或者检测到Servlet要从Tomcat删除的时候会自动调用destroy()方法，让该实例释放掉所占的资源。一个Servlet如果长时间不被使用的话，也会被Tomcat自动销毁
-  - 卸载。当Servlet调用完destroy()方法后，等待垃圾回收。如果有需要再次使用这个Servlet，会重新调用init()方法进行初始化操作。
+		- 加载Servlet。当Tomcat第一次访问Servlet的时候，Tomcat会负责创建Servlet的实例
+		- 初始化。当Servlet被实例化后，Tomcat会调用init()方法初始化这个对象
+		- 处理服务。当浏览器访问Servlet的时候，Servlet 会调用service()方法处理请求
+		- 销毁。当Tomcat关闭时或者检测到Servlet要从Tomcat删除的时候会自动调用destroy()方法，让该实例释放掉所占的资源。一个Servlet如果长时间不被使用的话，也会被Tomcat自动销毁
+		- 卸载。当Servlet调用完destroy()方法后，等待垃圾回收。如果有需要再次使用这个Servlet，会重新调用init()方法进行初始化操作。
 
 19. SpringMVC 工作原理
 
@@ -1371,13 +1374,13 @@ tags:
 
     二级缓存是mapper级别的缓存，也就是同一个namespace的mapper.xml，当多个SqlSession使用同一个Mapper操作数据库的时候，得到的数据会缓存在同一个二级缓存区域
 
-26. Xml 映射文件中，除了常见的 select|insert|updae|delete 标签之外，还有哪些标签？
+26. Xml 映射文件中，除了常见的 select|insert|update|delete 标签之外，还有哪些标签？
 
-    还有很多其他的标签，<resultMap>、<parameterMap>、<sql>、<include>、<selectKey>，加上动态 sql 的 9 个标签，trim|where|set|foreach|if|choose|when|otherwise|bind等，其中为 sql 片段标签，通过<include>标签引入 sql 片段，<selectKey>为不支持自增的主键生成策略标签。
+    还有很多其他的标签，`<resultMap>`、`<parameterMap>`、`<sql>`、`<include>`、`<selectKey>`，加上动态 sql 的 9 个标签，`trim|where|set|foreach|if|choose|when|otherwise|bind`等，其中为 sql 片段标签，通过`<include>`标签引入 sql 片段，`<selectKey>`为不支持自增的主键生成策略标签。
 
 27. 最佳实践中，通常一个 Xml 映射文件，都会写一个 Dao 接口与之对应，请问，这个 Dao 接口的工作原理是什么？Dao 接口里的方法，参数不同时，方法能重载吗？
 
-    Dao 接口，就是人们常说的 Mapper接口，接口的全限名，就是映射文件中的 namespace 的值，接口的方法名，就是映射文件中MappedStatement的 id 值，接口方法内的参数，就是传递给 sql 的参数。Mapper接口是没有实现类的，当调用接口方法时，接口全限名+方法名拼接字符串作为 key 值，可唯一定位一个MappedStatement，举例：com.mybatis3.mappers.StudentDao.findStudentById，可以唯一找到 namespace 为com.mybatis3.mappers.StudentDao下面id = findStudentById的MappedStatement。在 Mybatis 中，每一个<select>、<insert>、<update>、<delete>标签，都会被解析为一个MappedStatement对象。
+    Dao 接口，就是人们常说的 Mapper接口，接口的全限名，就是映射文件中的 namespace 的值，接口的方法名，就是映射文件中MappedStatement的 id 值，接口方法内的参数，就是传递给 sql 的参数。Mapper接口是没有实现类的，当调用接口方法时，接口全限名+方法名拼接字符串作为 key 值，可唯一定位一个MappedStatement，举例：com.mybatis3.mappers.StudentDao.findStudentById，可以唯一找到 namespace 为com.mybatis3.mappers.StudentDao下面id = findStudentById的MappedStatement。在 Mybatis 中，每一个`<select>`、`<insert>`、`<update>`、`<delete>`标签，都会被解析为一个MappedStatement对象。
 
     Dao 接口里的方法，是不能重载的，因为是全限名+方法名的保存和寻找策略。
 
@@ -1513,6 +1516,62 @@ tags:
     public Constructor<T> getDeclaredConstructor(Class<?>... parameterTypes) //  获得该类所有的构造器，不包括其父类的构造器
     public Constructor<T> getConstructor(Class<?>... parameterTypes) // 获得该类所以public构造器，包括父类
     ```
+
+30. 什么是 Spring Boot?
+
+		首先，重要的是要理解 Spring Boot 并不是一个框架，它是一种创建独立应用程序的更简单方法，只需要很少或没有配置（相比于 Spring 来说）。Spring Boot最好的特性之一是它利用现有的 Spring 项目和第三方项目来开发适合生产的应用程序。
+
+		**说出使用Spring Boot的主要优点**
+
+		1. 开发基于 Spring 的应用程序很容易。
+		2. Spring Boot 项目所需的开发或工程时间明显减少，通常会提高整体生产力。
+		3. **Spring Boot不需要编写大量样板代码、XML配置和注释。**
+		4. Spring引导应用程序可以很容易地与Spring生态系统集成，如Spring JDBC、Spring ORM、Spring Data、Spring Security等。
+		5. Spring Boot遵循“固执己见的默认配置”，以减少开发工作（默认配置可以修改）。
+		6. **Spring Boot 应用程序提供嵌入式HTTP服务器，如Tomcat和Jetty，可以轻松地开发和测试web应用程序。**（这点很赞！普通运行Java程序的方式就能运行基于Spring Boot web 项目，省事很多）
+		7. Spring Boot提供命令行接口(CLI)工具，用于开发和测试Spring Boot应用程序，如Java或Groovy。
+		8. Spring Boot提供了多种插件，可以使用内置工具(如Maven和Gradle)开发和测试Spring Boot应用程序。
+
+		**什么是 Spring Boot Starters?**
+
+		Spring Boot Starters 是一系列依赖关系的集合，因为它的存在，项目的依赖之间的关系对我们来说变的更加简单了。举个例子：在没有Spring Boot Starters之前，我们开发REST服务或Web应用程序时; 我们需要使用像Spring MVC，Tomcat和Jackson这样的库，这些依赖我们需要手动一个一个添加。但是，有了 Spring Boot Starters 我们只需要一个只需添加一个spring-boot-starter-web一个依赖就可以了，这个依赖包含的字依赖中包含了我们开发REST 服务需要的所有依赖。
+
+		```xml
+		<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		```
+
+		**如何在Spring Boot应用程序中使用Jetty而不是Tomcat?**
+
+		Spring Boot Web starter使用Tomcat作为默认的嵌入式servlet容器, 如果你想使用 Jetty 的话只需要修改pom.xml(Maven)或者build.gradle(Gradle)就可以了。
+
+		**介绍一下@SpringBootApplication注解**
+
+		大概可以把 `@SpringBootApplication `看作是 `@Configuration`、`@EnableAutoConfiguration`、`@ComponentScan ` 注解的集合。根据 SpringBoot官网，这三个注解的作用分别是：
+
+		- `@EnableAutoConfiguration`：启用 SpringBoot 的自动配置机制
+		- `@ComponentScan`： **扫描被`@Component` (`@Service`,`@Controller`)注解的bean**，注解默认会扫描该类所在的包下所有的类。
+		- `@Configuration`：允许在上下文中注册额外的bean或**导入其他配置类**
+
+		**(重要)Spring Boot 的自动配置是如何实现的?**
+
+		**这个是因为@SpringBootApplication 注解的原因。**
+
+		**Spring Boot支持哪些嵌入式web容器？**
+
+		Spring Boot支持以下嵌入式servlet容器:
+
+		| **Name**     | **Servlet Version** |
+		| ------------ | ------------------- |
+		| Tomcat 9.0   | 4.0                 |
+		| Jetty 9.4    | 3.1                 |
+		| Undertow 2.0 | 4.0                 |
+
+		您还可以将Spring引导应用程序部署到任何Servlet 3.1+兼容的 Web 容器中。
+
+		这就是你为什么可以通过直接像运行 普通 Java 项目一样运行 SpringBoot 项目。这样的确省事了很多，方便了我们进行开发，降低了学习难度。
 
 ## 操作系统
 
