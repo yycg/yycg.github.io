@@ -344,25 +344,6 @@ tags:
 
 - 有海量key和value都比较小的数据，在redis中如何存储才更省内存？
 
-  > [https://zzyongx.github.io/blogs/redis-memory-optimization-when-store-small-data.html](https://zzyongx.github.io/blogs/redis-memory-optimization-when-store-small-data.html)
-
-  - 使用二进制存储：**32位数转成16位数存储**
-
-  - 使用SET和HSET混合的数据组织方式
-
-    先看两个很有意思的配置，是专门为小Hash做准备（使用HSET），当Hash中的条目小于512，并且每个value小于64个字节时，Redis内部采用特殊的编码方式，可以使内存平均节省5倍。
-
-    > https://www.jianshu.com/p/8764a3e7b090
-    
-    > 如果该 Map 的成员数比较少，则会采用类似一维线性的紧凑格式来存储该 Map，即省去了大量指针的内存开销
-
-    ```
-    hash-max-ziplist-entries 512
-    hash-max-ziplist-value 64
-    ```
-
-    **我们可以把key-value的结构拆解成key-smallhash这样的结构来降低内存的使用**
-
 - 如何保证redis和DB中的数据一致性？
 
   > 如何保证缓存与数据库双写时的数据一致性?
