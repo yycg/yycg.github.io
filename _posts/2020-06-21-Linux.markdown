@@ -81,64 +81,216 @@ cpu: top, sar -u
 
 1. 
 
-  ```shell
-  chmod +x ./test.sh  #使脚本具有执行权限
-  ```
+    ```shell
+    chmod +x ./test.sh  #使脚本具有执行权限
+    ```
 
-  不能写成test.sh，因为会去PATH里找。
+    不能写成test.sh，因为会去PATH里找。
 
 2. 使用变量
 
-  $变量名
+    $变量名
 
-  ${变量名}
+    ${变量名}
+
+    ```shell
+    #!/bin/bash
+    #自定义变量hello
+    hello="hello world"
+    echo $hello
+    echo  "helloworld!"
+    ```
 
 3. 字符串
 
-  ```shell
-  your_name='runoob'
-  str="Hello, I know you are \"$your_name\"! \n"
-  echo -e $str
-  ```
+    字符串可以用单引号，也可以用双引号
+    
+    ```shell
+    #!/bin/bash
+    name="SnailClimb"
+    # 使用双引号拼接
+    greeting="hello, "$name" !"
+    greeting_1="hello, ${name} !"
+    echo $greeting  $greeting_1
+    # 使用单引号拼接
+    greeting_2='hello, '$name' !'
+    greeting_3='hello, ${name} !'
+    echo $greeting_2  $greeting_3
+    ```
 
-  - 双引号可以有变量、转义字符
-  - 字符串长度
-  
-  ```shell
-  echo ${#string}
-  ```
+    输出
 
-  字符串截取
+    ```
+    hello, SnailClimb ! hello, SnailClimb !
+    hello, SnailClimb ! hello, ${name} !
+    ```
 
-  echo ${string:1:4}
+    使用 expr 命令时，表达式中的运算符左右必须包含空格，如果不包含空格，将会输出表达式本身:
+
+    ```shell
+    expr 5+6    // 直接输出 5+6
+    expr 5 + 6       // 输出 11
+    expr 5 * 6       // 输出错误
+    expr 5 \* 6      // 输出30
+    ```
+
+    字符串长度
+    
+    ```shell
+    # 第一种方式
+    echo ${#string}
+    # 第二种方式
+    expr length "$string";
+    ```
+
+    字符串截取
+
+    echo ${string:1:4}
 
 4. 数组
 
-  ```shell
-  array_name=(value0 value1 value2 value3)
-  valuen=${array_name[n]}
-  ```
+    ```shell
+    array_name=(value0 value1 value2 value3)
+    valuen=${array_name[n]}
+    ```
 
-  数组中的所有元素
+    数组中的所有元素
 
-  ```shell
-  ${my_array[*]}
-  ${my_array[@]}
-  ```
+    ```shell
+    ${my_array[*]}
+    ${my_array[@]}
+    ```
 
-  获取数组的长度
+    获取数组的长度
 
-  ```shell
-  ${#my_array[*]}
-  ${#my_array[@]}
-  ```
+    ```shell
+    ${#my_array[*]}
+    ${#my_array[@]}
+    ```
 
-5. 传递参数
+    ```shell
+    #!/bin/bash
+    array=(1 2 3 4 5);
+    # 获取数组长度
+    length=${#array[@]}
+    # 或者
+    length2=${#array[*]}
+    #输出数组长度
+    echo $length #输出：5
+    echo $length2 #输出：5
+    # 输出数组第三个元素
+    echo ${array[2]} #输出：3
+    unset array[1]# 删除下标为1的元素也就是删除第二个元素
+    for i in ${array[@]};do echo $i ;done # 遍历数组，输出： 1 3 4 5 
+    unset arr_number; # 删除数组中的所有元素
+    for i in ${array[@]};do echo $i ;done # 遍历数组，数组元素为空，没有任何输出内容
+    ```
 
-  ```shell
-  echo "第一个参数为：$1";
-  echo "参数个数为：$#";
-  echo "传递的参数作为一个字符串显示：$*";
-  ```
+5. 关系运算符
 
-  `$*`和`$@`的区别：如果传入3个参数，`$*`是一个参数，`$@`是3个参数
+    ```shell
+    -eq, -ne, -gt, -lt, -ge, -le
+    ```
+
+    ```shell
+    #!/bin/bash
+    score=90;
+    maxscore=100;
+    if [ $score -eq $maxscore ]
+    then
+      echo "A"
+    else
+      echo "B"
+    fi
+    ```
+
+6. 布尔运算符
+
+    ```shell
+    ! # 非
+    -o # 或
+    -a # 与
+    ```
+
+7. 字符串运算符
+
+    ```shell
+    = # 判断两个字符串是否相等
+    != 
+    ```
+
+8. for循环
+
+    ```shell
+    for loop in 1 2 3 4 5
+    do
+        echo "The value is: $loop"
+    done
+    ```
+
+    ```shell
+    #!/bin/bash
+    for i in {0..9};
+    do 
+      echo $RANDOM;
+    done
+    ```
+
+    通常情况下 shell 变量调用需要加 $,但是 for 的 (()) 中不需要
+
+    ```shell
+    #!/bin/bash
+    for((i=1;i<=5;i++));do
+        echo $i;
+    done;
+    ```
+
+9. while循环
+
+    ```shell
+    #!/bin/bash
+    int=1
+    while(( $int<=5 ))
+    do
+        echo $int
+        let "int++"
+    done
+    ```
+
+5. 函数
+
+    ```shell
+    echo "第一个参数为：$1";
+    echo "参数个数为：$#";
+    echo "传递的参数作为一个字符串显示：$*";
+    ```
+
+    `$*`和`$@`的区别：如果传入3个参数，`$*`是一个参数，`$@`是3个参数
+
+    ```shell
+    #!/bin/bash
+    funWithReturn(){
+        echo "输入第一个数字: "
+        read aNum
+        echo "输入第二个数字: "
+        read anotherNum
+        echo "两个数字分别为 $aNum 和 $anotherNum !"
+        return $(($aNum+$anotherNum))
+    }
+    funWithReturn
+    echo "输入的两个数字之和为 $?"
+    ```
+
+    ```shell
+    #!/bin/bash
+    funWithParam(){
+        echo "第一个参数为 $1 !"
+        echo "第二个参数为 $2 !"
+        echo "第十个参数为 $10 !"
+        echo "第十个参数为 ${10} !"
+        echo "第十一个参数为 ${11} !"
+        echo "参数总数有 $# 个!"
+        echo "作为一个字符串输出所有参数 $* !"
+    }
+    funWithParam 1 2 3 4 5 6 7 8 9 34 73
+    ```
