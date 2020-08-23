@@ -240,15 +240,15 @@ tags:
 
     ```java
     public static void main(String[] args) {
-    	int[] arr = { 1, 2, 3, 4, 5 };
-    	System.out.println(arr[0]);
-    	change(arr);
-    	System.out.println(arr[0]);
+      int[] arr = { 1, 2, 3, 4, 5 };
+      System.out.println(arr[0]);
+      change(arr);
+      System.out.println(arr[0]);
     }
     
     public static void change(int[] array) {
-    	// 将数组的第一个元素变为0
-    	array[0] = 0;
+      // 将数组的第一个元素变为0
+      array[0] = 0;
     }
     ```
 
@@ -268,22 +268,22 @@ tags:
     ```java
     public class Test {
     
-    	public static void main(String[] args) {
-    		// TODO Auto-generated method stub
-    		Student s1 = new Student("小张");
-    		Student s2 = new Student("小李");
-    		Test.swap(s1, s2);
-    		System.out.println("s1:" + s1.getName());
-    		System.out.println("s2:" + s2.getName());
-    	}
+      public static void main(String[] args) {
+        // TODO Auto-generated method stub
+        Student s1 = new Student("小张");
+        Student s2 = new Student("小李");
+        Test.swap(s1, s2);
+        System.out.println("s1:" + s1.getName());
+        System.out.println("s2:" + s2.getName());
+      }
     
-    	public static void swap(Student x, Student y) {
-    		Student temp = x;
-    		x = y;
-    		y = temp;
-    		System.out.println("x:" + x.getName());
-    		System.out.println("y:" + y.getName());
-    	}
+      public static void swap(Student x, Student y) {
+        Student temp = x;
+        x = y;
+        y = temp;
+        System.out.println("x:" + x.getName());
+        System.out.println("y:" + y.getName());
+      }
     }
     ```
 
@@ -454,13 +454,13 @@ tags:
 
     ```java
     public class Container<K, V> {
-    	private K key;
-    	private V value;
+      private K key;
+      private V value;
     
-    	public Container(K k, V v) {
-    		key = k;
-    		value = v;
-    	}
+      public Container(K k, V v) {
+        key = k;
+        value = v;
+      }
     }
     ```
 

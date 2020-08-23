@@ -125,10 +125,10 @@ tags:
 
     ```java
     public static synchronized Singleton getInstance() {  
-	      if (instance == null) {  
-	          uniqueInstance = new Singleton();  
-	      }  
-	      return uniqueInstance;  
+        if (instance == null) {  
+            uniqueInstance = new Singleton();  
+        }  
+        return uniqueInstance;  
     } 
     ```
 

@@ -175,6 +175,8 @@ RPC（Remote Procedure Call）—远程过程调用，它是一种通过网络�
 
 RPC原理是什么？
 
+![img](http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-12-6/37345851.jpg)
+
 1. 服务消费方（client）调用以本地调用方式调用服务；
 2. client stub接收到调用后负责将方法、参数等组装成能够进行网络传输的消息体；
 3. client stub找到服务地址，并将消息发送到服务端；

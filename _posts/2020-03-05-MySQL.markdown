@@ -150,7 +150,7 @@ tags:
   | - | - | - | - |
   | 读取未提交(READ-UNCOMMITTED) | √ | √ | √ |
   | 读取已提交(READ-COMMITTED) | × | √ | √ |
-  | 可重复读(REPEATABLE-READ) | × |	× | √ |
+  | 可重复读(REPEATABLE-READ) | × |  × | √ |
   | 可串行化(SERIALIZABLE) | × | × | × |
 
   MySQL InnoDB 存储引擎的默认支持的隔离级别是 REPEATABLE-READ（可重读）。
@@ -390,8 +390,8 @@ tags:
 
     |事务A | 事务B |
     |--|--|
-    |begin;	|begin;|
-    |update class_teacher set class_name=‘初三二班’ where teacher_id=1;	|update class_teacher set class_name=‘初三三班’ where teacher_id=1;|
+    |begin;  |begin;|
+    |update class_teacher set class_name=‘初三二班’ where teacher_id=1;  |update class_teacher set class_name=‘初三三班’ where teacher_id=1;|
     |commit;||
 
     为了防止并发过程中的修改冲突，事务A中MySQL给teacher_id=1的数据行加锁，并一直不commit（释放锁），那么事务B也就一直拿不到该行锁，wait直到超时。
