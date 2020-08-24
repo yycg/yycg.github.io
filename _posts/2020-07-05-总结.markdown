@@ -1276,7 +1276,7 @@ tags:
 
 16. GET请求和POST请求
 
-    - GET请求参数在URL中，POST请求在请求主体中
+    - GET请求参数在URL中，POST请求参数在请求主体中
     - GET请求具有幂等性，多次调用和一次调用是一样的，没有副作用
 
 ## 设计模式
@@ -1306,7 +1306,7 @@ tags:
     - 抽象工厂模式：一个具体工厂创建一组具体工厂。
     - 策略模式：上下文类（维护一个对策略的引用），策略类，具体策略类
     - 代理模式：主体类（定义真是主体类和代理类的共同接口），真实主体类，代理类（保存一个引用是的代理可以访问真实主体）
-    - 观察者模式（发布-订阅模式）：主体类（可以增加和删除观察者对象）、观察者（再得到主体的通知时更新自己）、具体主体、具体观察者
+    - 观察者模式（发布-订阅模式）：主体类（可以增加和删除观察者对象）、观察者（在得到主体的通知时更新自己）、具体主体、具体观察者
     - 适配器模式：将一个类的接口转换成客户希望的另一个接口
     - 桥接模式：实现系统可能有多角度分类，每一种分类都有可能变化，那么就把这种多角度分离出来让它们独立变化，减少它们之间的耦合。
     - 单例模式
@@ -1394,7 +1394,7 @@ tags:
 13. HashMap
 
     - hash = h ^ (h >>> 16)，高16位和低16位都反映到低位上，使hash更均匀
-    - 到table[(n-1)&hash]取值（取hash的低位）
+    - 到table[(n-1)&hash]取值（n为2的幂，相当于取hash的低位）
     - 扩容：新数组newTable为原数组的2倍；如果节点是TreeNode，分成2棵树；如果是节点，hash&oldCap==0放在原索引，否则原索引+oldCap.
     - JDK 8前，并发扩容产生循环链表，get时死循环。JDK 8不会死循环，但仍然会产生数据丢失。
 
@@ -1605,7 +1605,7 @@ tags:
 
     (4) ThreadFactory：创建线程的工厂
 
-    (5) RejectExxcutionHandler 饱和策略
+    (5) RejectExcutionHandler 饱和策略
 
     AbortPolicy 直接抛出异常
 
@@ -1963,8 +1963,6 @@ tags:
 
       - @GetMapping("users") 等价于@RequestMapping(value="/users",method=RequestMethod.GET)
       - @PostMapping("users") 等价于@RequestMapping(value="/users",method=RequestMethod.POST)
-      - @PutMapping("/users/{userId}") 等价于@RequestMapping(value="/users/{userId}",method=RequestMethod.PUT)
-      - @PutMapping("/users/{userId}") 等价于@RequestMapping(value="/users/{userId}",method=RequestMethod.PUT)
 
     - 前后端传值
 
@@ -2002,6 +2000,10 @@ tags:
       动态代理机制可以在运行期间，为响应的接口动态生成对应的代理对象。可以将横切关注点逻辑封装到动态代理的InvocationHandler中。
 
       这种方式实现的唯一缺点或者优点就是，所有需要织入横切关注点逻辑的模块类都得实现响应的接口，因为动态代理机制只针对接口有效。
+
+      JDK动态代理为什么必须针对接口？
+
+      由于java的单继承，动态生成的代理类已经继承了Proxy类的，就不能再继承其他的类，所以只能靠实现被代理类的接口的形式，故JDK的动态代理必须有接口。
     
     - CGLib 动态字节码增强
 
@@ -2111,7 +2113,7 @@ tags:
 
     二级缓存是mapper级别的缓存，也就是同一个namespace的mapper.xml，当多个SqlSession使用同一个Mapper操作数据库的时候，得到的数据会缓存在同一个二级缓存区域
 
-26. Xml 映射文件中，除了常见的 select|insert|update|delete 标签之外，还有哪些标签？
+26. Xml 映射文件中，除了常见的 `select|insert|update|delete` 标签之外，还有哪些标签？
 
     还有很多其他的标签，`<resultMap>`、`<parameterMap>`、`<sql>`、`<include>`、`<selectKey>`，加上动态 sql 的 9 个标签，`trim|where|set|foreach|if|choose|when|otherwise|bind`等，其中为 sql 片段标签，通过`<include>`标签引入 sql 片段，`<selectKey>`为不支持自增的主键生成策略标签。
 
