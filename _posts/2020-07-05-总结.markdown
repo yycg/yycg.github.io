@@ -1792,7 +1792,10 @@ tags:
 
     happens-before是Java内存模型中定义的2项操作之间的偏序关系。如果说操作A先行发生于操作B，其实就是说发生操作B之前，操作A产生的影响能被B观察到。
 
-    程序次序规则、volatile变量规则
+    - 程序次序规则：一个线程中的每个操作，happens-before于该线程中的任意后续操作。
+    - 监视器锁规则：对一个锁的解锁，happens-before于随后对这个锁的加锁。
+    - volatile变量规则：对一个volatile域的写，happens-before于任意后续对这个volatile域的读。
+    - 传递性：如果A happens-before B，且B happens-before C，那么A happens-before C.
 
 10. JVM运行时数据区域
 
