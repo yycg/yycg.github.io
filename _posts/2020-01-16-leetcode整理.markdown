@@ -1391,6 +1391,10 @@ private:
  */
 ```
 
+#### [974. 和可被 K 整除的子数组](https://leetcode-cn.com/problems/subarray-sums-divisible-by-k/)
+
+思路：散列前缀数组mod K的结果。
+
 ## 数组
 
 #### [leetcode 41: 缺失的第一个正数](https://leetcode.com/problems/first-missing-positive/)
@@ -1709,6 +1713,10 @@ public:
 };
 ```
 
+#### [剑指 Offer 56 - I. 数组中数字出现的次数](https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
+
+思路：先对所有数字进行一次异或，得到两个出现一次的数字的异或值。在异或结果中找到任意为 1 的位。根据这一位对所有的数字进行分组。在每个组内进行异或操作，得到两个数字。
+
 #### [leetcode 169: 多数元素](https://leetcode.com/problems/majority-element)
 
 方法1：散列表
@@ -1945,6 +1953,83 @@ public:
         }
     }
 };
+```
+
+#### [剑指 Offer 51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
+
+思路：归并排序，归并的时候，右半边数与左半边剩下的数构成逆序关系
+
+```java
+public class Solution {
+
+    public int reversePairs(int[] nums) {
+        int len = nums.length;
+
+        if (len < 2) {
+            return 0;
+        }
+
+        int[] copy = new int[len];
+        for (int i = 0; i < len; i++) {
+            copy[i] = nums[i];
+        }
+
+        int[] temp = new int[len];
+        return reversePairs(copy, 0, len - 1, temp);
+    }
+
+    /**
+     * nums[left..right] 计算逆序对个数并且排序
+     */
+    private int reversePairs(int[] nums, int left, int right, int[] temp) {
+        if (left == right) {
+            return 0;
+        }
+
+        int mid = left + (right - left) / 2;
+        int leftPairs = reversePairs(nums, left, mid, temp);
+        int rightPairs = reversePairs(nums, mid + 1, right, temp);
+
+        if (nums[mid] <= nums[mid + 1]) {
+            return leftPairs + rightPairs;
+        }
+
+        int crossPairs = mergeAndCount(nums, left, mid, right, temp);
+        return leftPairs + rightPairs + crossPairs;
+    }
+
+    /**
+     * nums[left..mid] 有序，nums[mid + 1..right] 有序
+     */
+    private int mergeAndCount(int[] nums, int left, int mid, int right, int[] temp) {
+        for (int i = left; i <= right; i++) {
+            temp[i] = nums[i];
+        }
+
+        int i = left;
+        int j = mid + 1;
+
+        int count = 0;
+        for (int k = left; k <= right; k++) {
+
+            if (i == mid + 1) {
+                nums[k] = temp[j];
+                j++;
+            } else if (j == right + 1) {
+                nums[k] = temp[i];
+                i++;
+            } else if (temp[i] <= temp[j]) {
+                nums[k] = temp[i];
+                i++;
+            } else {
+                nums[k] = temp[j];
+                j++;
+                count += (mid - i + 1);
+            }
+        }
+        return count;
+    }
+}
 ```
 
 ## 字符串
@@ -2950,6 +3035,42 @@ public:
 };
 ```
 
+#### [剑指 Offer 57. 和为s的两个数字](https://leetcode-cn.com/problems/he-wei-sde-liang-ge-shu-zi-lcof/)
+
+思路：双指针
+
+#### [剑指 Offer 57 - II. 和为s的连续正数序列](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
+
+思路：双指针
+
+```java
+public class Solution {
+    public ArrayList<ArrayList<Integer> > FindContinuousSequence(int sum) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        int start = 1;
+        int end = 1;
+        int curSum = 1;
+        while (start <= sum) {
+            if (curSum == sum) {
+                if (end > start) {
+                    ArrayList<Integer> sequence = new ArrayList<>();
+                    for (int i = start; i <= end; i++) {
+                        sequence.add(i);
+                    }
+                    res.add(sequence);
+                }
+                curSum -= start++;
+            } else if (curSum > sum) {
+                curSum -= start++;
+            } else {
+                curSum += ++end;
+            }
+        }
+        return res;
+    }
+}
+```
+
 ## 栈
 
 #### [leetcode 20: 有效的括号](https://leetcode.com/problems/valid-parentheses/)
@@ -3376,6 +3497,61 @@ private:
  * NestedIterator i(nestedList);
  * while (i.hasNext()) cout << i.next();
  */
+```
+
+#### [剑指 Offer 09. 用两个栈实现队列](https://leetcode-cn.com/problems/yong-liang-ge-zhan-shi-xian-dui-lie-lcof/)
+
+```java
+public class Solution {
+    Stack<Integer> stack1 = new Stack<Integer>();
+    Stack<Integer> stack2 = new Stack<Integer>();
+    
+    public void push(int node) {
+        stack1.push(node);
+    }
+    
+    public int pop() {
+        if(stack2.empty()) {
+            while(!stack1.empty()) {
+                stack2.push(stack1.pop());
+            }
+        }
+        return stack2.pop();
+    }
+}
+```
+
+#### [剑指 Offer 59 - II. 队列的最大值](https://leetcode-cn.com/problems/dui-lie-de-zui-da-zhi-lcof/)
+
+思路：队列+双端队列deque（队首出队，队尾入栈）
+
+#### [剑指 Offer 59 - I. 滑动窗口的最大值](https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/)
+
+思路：双端队列deque，去掉队首的窗口以外的数，在队尾入栈，将队首的最大值放进结果中。
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        int[] in = {2,3,4,2,6,2,5,1};
+        System.out.println(maxInWindows(in, 3));
+    }
+
+    public static ArrayList<Integer> maxInWindows(int[] num, int size) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if (size <=  0) return res;
+
+        LinkedList<Integer> index = new LinkedList<>();
+        for (int i = 0; i < num.length; i++) {
+            if(!index.isEmpty() && i - size + 1 > index.getFirst()) index.removeFirst();
+            while (!index.isEmpty() && num[i] >= num[index.peekLast()]) index.removeLast();
+            index.add(i);
+
+            if(i - size + 1 >= 0) res.add(num[index.getFirst()]);
+        }
+        return res;
+    }
+}
 ```
 
 ## 堆
@@ -4390,6 +4566,10 @@ private:
   };
   ```
 
+#### [leetcode 543: 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
+
+思路：跟上面这题差不多
+
 #### [leetcode 208: 实现 Trie (前缀树)](https://leetcode.com/problems/implement-trie-prefix-tree)
 
 方法1：迭代
@@ -4644,6 +4824,22 @@ private:
         visited[i][j] = false;
     }
 };
+```
+
+#### [leetcode 235: 二叉搜索树的最近公共祖先](https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-search-tree/)
+
+思路：如果
+
+```java
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root.val < p.val && root.val < q.val)
+            return lowestCommonAncestor(root.right, p, q);
+        if(root.val > p.val && root.val > q.val)
+            return lowestCommonAncestor(root.left, p, q);
+        return root;
+    }
+}
 ```
 
 #### [leetcode 236: 二叉树的最近公共祖先](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree)
@@ -5040,6 +5236,10 @@ private:
     }
 };
 ```
+
+#### [剑指 Offer 26. 树的子结构](https://leetcode-cn.com/problems/shu-de-zi-jie-gou-lcof/)
+
+思路：对于A树的每个节点，判断该节点为根节点的子树是否包含B树。
 
 ## 链表
 
@@ -6944,6 +7144,26 @@ class Solution {public:
 };
 ```
 
+#### [剑指 Offer 14- I. 剪绳子](https://leetcode-cn.com/problems/jian-sheng-zi-lcof/)
+
+```java
+public class Solution {
+    public int cutRope(int target) {
+        if(target < 2) return -1;
+        
+        int[] dp = new int[target+1];
+        dp[1] = 1;
+        for(int i = 2; i <= target; i++) {
+            dp[i] = 0;
+            for(int j = 1; j < i; j++) {
+                dp[i] = Math.max(dp[i], Math.max(dp[j], j)*(i-j));
+            }
+        }
+        return dp[target];
+    }
+}
+```
+
 ## 回溯
 
 #### [leetcode 17: 电话号码的字母组合](https://leetcode.com/problems/letter-combinations-of-a-phone-number/)
@@ -8293,6 +8513,119 @@ public:
         return a;
     }
 };
+```
+
+#### [剑指 Offer 43. 1～n整数中1出现的次数](https://leetcode-cn.com/problems/1nzheng-shu-zhong-1chu-xian-de-ci-shu-lcof/)
+
+思路：找规律，分三种情况当前位是0、当前位是1、当前位大于1三种情况。
+
+1. 当前位是0: 2304, 0010~2219, 000~229, 23*10
+2. 当前位是1: 2314, 0010~2314, 000~234, 23*10+4+1
+3. 当前位大于1: 2344, 0010~2319, 000~239, (23+1)*10
+
+#### [剑指 Offer 44. 数字序列中某一位的数字](https://leetcode-cn.com/problems/shu-zi-xu-lie-zhong-mou-yi-wei-de-shu-zi-lcof/)
+
+思路：找规律
+
+- 1~9: 1位*9个数
+- 10~99： 2位*90个数
+- 100~999: 3位*900个数
+
+#### [剑指 Offer 49. 丑数](https://leetcode-cn.com/problems/chou-shu-lcof/)
+
+```java
+public class Solution {
+    public int GetUglyNumber_Solution(int index) {
+        //    1  2  3  4
+        // 2: 2  4  6  8
+        // 3: 3  6  9  12
+        // 5: 5  10 15 20
+        if (index == 0) return 0;
+        
+        List<Integer> uglyNumbers = new ArrayList<>();
+        int p2 = 0;
+        int p3 = 0;
+        int p5 = 0;
+        int newNum = 1;
+        uglyNumbers.add(newNum);
+        while (uglyNumbers.size() < index) {
+            newNum = Math.min(Math.min(uglyNumbers.get(p2)*2, uglyNumbers.get(p3)*3), uglyNumbers.get(p5)*5);
+            if (newNum == uglyNumbers.get(p2)*2) p2++;
+            if (newNum == uglyNumbers.get(p3)*3) p3++;
+            if (newNum == uglyNumbers.get(p5)*5) p5++;
+            uglyNumbers.add(newNum);
+        }
+        return uglyNumbers.get(index-1);
+    }
+}
+```
+
+#### [剑指 Offer 60. n个骰子的点数](https://leetcode-cn.com/problems/nge-tou-zi-de-dian-shu-lcof/)
+
+思路：基于循环求骰子点数
+
+#### [剑指 Offer 64. 求1+2+…+n](https://leetcode-cn.com/problems/qiu-12n-lcof/)
+
+```java
+public class Solution {
+    public int Sum_Solution(int n) {
+        int res = n;
+        boolean flag = (res > 0) && ((res += Sum_Solution(n-1)) > 0);
+        return res;
+    }
+}
+```
+
+#### [剑指 Offer 62. 圆圈中最后剩下的数字](https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/)
+
+推导：
+
+根据规律
+
+k+1->0
+
+k+2->1
+
+...
+
+n-1->n-k-2
+
+0->n-k-1
+
+1->n-k
+
+...
+
+k-1->n-2
+
+所以$p(x)=(x-k-1)\%n$
+
+$p^{-1}(x)=(x+k+1)\%n$
+
+因为$k=(m-1)\%n$
+
+所以$f(n,m)$
+
+$=f'(n-1,m)$
+
+$=p^{-1}[f(n-1,m)]$
+
+$=[f(n-1,m)+k+1]\%n$
+
+$=[f(n-1,m)+m]\%n$
+
+```java
+public class Solution {
+    public static int LastRemaining_Solution(int n, int m) {
+        if (n <= 0 || m <= 0) return -1;
+        
+        int last = 0;
+        for (int i = 2; i <= n; i++) {
+            last = (last + m) % i;
+        }
+        return last;
+    }
+}
 ```
 
 ## 并发
