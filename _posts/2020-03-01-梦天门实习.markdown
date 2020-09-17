@@ -12,6 +12,28 @@ tags:
 
 ## 后端
 
+#### 项目介绍
+
+我负责智能执法平台里用户授权的工作，从用户查询到他所拥有的权限，开发接口管理用户角色、角色、权限的增删改查，和它们之间的多对多关系的增删改查。另外我还负责法规的检索和推荐的工作。
+
+#### 项目的问题
+
+解决检索项目在服务器不能正常运行的问题
+
+(1) 页面的搜索结果不能正常显示，但是后台并没有报错。
+
+(2) 直接运行flask项目中的入口python文件没有问题，用uwsgi将配置文件中的3行多线程相关的内容注释掉也可以正常运行。
+
+(3) 定位发现是调用HanLP的函数过程中线程会卡住。原因是利用python的jpype调用Hanlp的java源代码时，不能为新开启的线程分配JVM。解决方法是在每个API的开头添加两行代码，判断并为线程分配JVM。
+
+#### 项目怎么优化
+
+> [https://tieba.baidu.com/p/6239499571?red_tag=0442800574&traceid=](https://tieba.baidu.com/p/6239499571?red_tag=0442800574&traceid=)
+
+redis缓存，异步，接口调优，SQL调优，调用超时
+
+可以说一下分布式方面的改进吧，什么集群，数据库主从分离等等
+
 #### Shiro
 
 > [https://www.cnblogs.com/wmyskxz/p/10229148.html](https://www.cnblogs.com/wmyskxz/p/10229148.html)
@@ -1139,7 +1161,7 @@ https://www.runoob.com/python3/python3-iterator-generator.html
 
     (5) 条件随机场 (CRF) 算法：随机场是由若干个位置组成的整体，当给每一个位置中按照某种分布随机赋予一个值之后，其全体就叫做随机场。马尔科夫随机场是随机场的特例，它假设随机场中某一个位置的赋值仅仅与和它相邻的位置的赋值有关，和与其不相邻的位置的赋值无关。CRF是马尔科夫随机场的特例，它假设马尔科夫随机场中只有X和Y两种变量，X一般是给定的，而Y一般是在给定X的条件下的输出。CRF 准确的数学语言描述：设X与Y是随机变量，P(Y|X)是给定X时Y的条件概率分布，若随机变量Y构成的是一个马尔科夫随机场，则称条件概率分布P(Y|X)是条件随机场。
 
-<!-- #### TensorFlow 深度学习框架
+#### TensorFlow 深度学习框架
 
 - TensorFlow 基本概念
 
@@ -2061,4 +2083,4 @@ https://www.runoob.com/python3/python3-iterator-generator.html
       ![img](https://upload-images.jianshu.io/upload_images/4155986-0a2af3358b3fae95.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/544)
 
       分母是所有的测试集合，分子式每个用户top-K推荐列表中属于测试集合的个数的总和。举个简单的例子，三个用户在测试集中的商品个数分别是10，12，8，模型得到的top-10推荐列表中，分别有6个，5个，4个在测试集中，那么此时HR的值是 (6+5+4)/(10+12+8) = 0.5。
- -->
+

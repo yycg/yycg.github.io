@@ -1,0 +1,101 @@
+---
+layout:     post
+title:      "Python"
+subtitle:   ""
+date:       2020-03-05 12:00:00
+author:     "盈盈冲哥"
+header-img: "img/fleabag.jpg"
+mathjax: true
+catalog: true
+tags:
+    - 学习
+---
+
+#### contextlib
+
+[contextlib](https://www.liaoxuefeng.com/wiki/1016959663602400/1115615597164000)
+
+利用`__enter__`和`__exit__`这两个方法实现上下文管理，就可以用`with`语句。
+
+```python
+class Query(object):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __enter__(self):
+        print('Begin')
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        if exc_type:
+            print('Error')
+        else:
+            print('End')
+    
+    def query(self):
+        print('Query info about %s...' % self.name)
+```
+
+```python
+with Query('Bob') as q:
+    q.query()
+```
+
+Python的标准库`contextlib`提供了更简单的写法。
+
+- `@contextmanager`这个decorator接受一个generator，`yield`语句生成的变量就是`with ... as var`中的变量。
+- `with`语句首先执行`yield`之前的语句，`yield`调用会执行`with`语句内部的所有语句，最后执行`yield`之后的语句。
+
+```python
+from contextlib import contextmanager
+
+class Query(object):
+
+    def __init__(self, name):
+        self.name = name
+
+    def query(self):
+        print('Query info about %s...' % self.name)
+
+@contextmanager
+def create_query(name):
+    print('Begin')
+    q = Query(name)
+    yield q
+    print('End')
+```
+
+```python
+with create_query('Bob') as q:
+    q.query()
+```
+
+```python
+import contextlib
+import time
+
+@contextlib.contextmanager
+def elapsed_timer(message):
+    start_time = time.time()
+    yield
+    LOGGER.info(message.format(time.time() - start_time))
+```
+
+#### __getattr__
+
+[__getattr__](https://www.cnblogs.com/xybaby/p/6280313.html)
+
+如果属性查找（attribute lookup）在实例以及对应的类中（通过__dict__)失败， 那么会调用到类的__getattr__函数, 如果没有定义这个函数，那么抛出AttributeError异常。
+
+```python
+class StubLogger(object):
+    def __getattr__(self, name):
+        return self.log_print
+
+    def log_print(self, msg, *args):
+        print(msg % args)
+
+LOGGER = StubLogger()
+LOGGER.info("Hello %s!", "world")
+```

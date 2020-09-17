@@ -29,6 +29,7 @@ tags:
 - [BFS](#BFS)
 - [数学](#数学)
 - [并发](#并发)
+- [SQL](#SQL)
 
 ## 基础
 
@@ -9169,4 +9170,76 @@ class KV {
         map.get(key).getAndIncrement();
     }
 }
+```
+
+## SQL
+
+#### [leetcode 175: 组合两个表](https://leetcode-cn.com/problems/combine-two-tables/)
+
+```sql
+SELECT Person.FirstName, Person.LastName, Address.City, Address.State
+FROM Person
+LEFT JOIN Address ON Person.PersonId = Address.PersonId;
+```
+
+#### [leetcode 176: 第二高的薪水](https://leetcode-cn.com/problems/second-highest-salary)
+
+```sql
+SELECT (SELECT DISTINCT Salary FROM Employee ORDER BY Salary DESC LIMIT 1 OFFSET 1) AS SecondHighestSalary
+```
+
+```sql
+SELECT max(Salary) AS SecondHighestSalary FROM Employee WHERE Salary < (SELECT max(Salary) FROM Employee)
+```
+
+#### [leetcode 177: 第N高的薪水](https://leetcode-cn.com/problems/nth-highest-salary)
+
+```sql
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  DECLARE M INT;
+  SET M=N-1;
+  RETURN (
+      # Write your MySQL query statement below.
+      SELECT(SELECT DISTINCT Salary FROM Employee ORDER BY Salary DESC LIMIT 1 OFFSET M) AS `getNthHighestSalary(2)`
+  );
+END
+```
+
+```sql
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  DECLARE M INT;
+  SET M=N-1;
+  RETURN (
+      # Write your MySQL query statement below.
+      SELECT DISTINCT Salary AS `getNthHighestSalary(2)` FROM Employee ORDER BY Salary DESC LIMIT 1 OFFSET M
+  );
+END
+```
+
+#### [leetcode 178: 分数排名](https://leetcode-cn.com/problems/rank-scores)
+
+```sql
+SELECT
+  Score, 
+  (SELECT COUNT(DISTINCT Score) FROM Scores WHERE Score >= s.Score) AS Rank
+FROM Scores AS s ORDER BY Score DESC 
+```
+
+#### [leetcode 180: 连续出现的数字](https://leetcode-cn.com/problems/consecutive-numbers)
+
+```sql
+SELECT DISTINCT l1.Num AS ConsecutiveNums FROM Logs AS l1, Logs AS l2, Logs AS l3
+WHERE l1.Id = l2.Id-1 AND l1.id = l3.Id-2
+AND l1.Num=l2.Num AND l1.Num=l3.Num
+```
+
+#### [leetcode 181: 超过经理收入的员工](https://leetcode-cn.com/problems/employees-earning-more-than-their-managers)
+
+```sql
+SELECT a.Name AS Employee 
+FROM Employee AS a
+JOIN Employee AS b ON a.managerId = b.Id
+WHERE a.Salary > b.Salary
 ```

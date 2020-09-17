@@ -11,8 +11,6 @@ tags:
     - 学习
 ---
 
-## JVM
-
 - JVM加载class文件的原理
 
   > [https://www.cnblogs.com/Qian123/p/5707562.html](<https://www.cnblogs.com/Qian123/p/5707562.html>)
@@ -691,8 +689,6 @@ tags:
   使用双亲委派模型来组织类和加载器之间的关系，有一个显而易见的好处就是Java类随着它的类加载器一起具备了一种带有优先级的层次关系。例如`Java.lang.Object`，它存放在`rt.jar`之中，无论哪一个类加载器要加载这个类，最终都是委派给启动类加载器进行加载，因此Object类在程序的各种累加器环境中都是同一个类。相反，如果没有使用双亲委派模型，由各个类加载器自行区加载的话，如果用户自己写了一个名为`Java.lang.Object`的类，并放在程序的ClassPath中，那系统中将会出现多个不同的Object类，Java类型体系中最基础的行为也就无从保证，应用程序也将会变得一片混乱。可以尝试区写一个与`rt.jar`类库中已有类重名的Java类，将会发现可以正常编译，但永远无法被加载运行。（即使自定义了自己的加载器，强行用defineClass()方法去加载一个以`Java.lang`开头的类也不会成功。如果读者尝试这样做的话，将会收到一个由虚拟机自己抛出的`java.lang.SecurityException: Prohibited package name: java.lang`异常。）
 
   > [https://blog.csdn.net/tang9140/article/details/42738433](https://blog.csdn.net/tang9140/article/details/42738433)
-
----
 
 - 什么是Java虚拟机？为什么Java被称作是“平台无关的编程语言”？
 
