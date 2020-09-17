@@ -13,7 +13,7 @@ tags:
 
 #### contextlib
 
-[contextlib](https://www.liaoxuefeng.com/wiki/1016959663602400/1115615597164000)
+> [contextlib](https://www.liaoxuefeng.com/wiki/1016959663602400/1115615597164000)
 
 利用`__enter__`和`__exit__`这两个方法实现上下文管理，就可以用`with`语句。
 
@@ -84,7 +84,7 @@ def elapsed_timer(message):
 
 #### __getattr__
 
-[__getattr__](https://www.cnblogs.com/xybaby/p/6280313.html)
+> [__getattr__](https://www.cnblogs.com/xybaby/p/6280313.html)
 
 如果属性查找（attribute lookup）在实例以及对应的类中（通过__dict__)失败， 那么会调用到类的__getattr__函数, 如果没有定义这个函数，那么抛出AttributeError异常。
 
@@ -98,4 +98,23 @@ class StubLogger(object):
 
 LOGGER = StubLogger()
 LOGGER.info("Hello %s!", "world")
+```
+
+#### 文件
+
+> [读文件](https://www.zhihu.com/question/28426969)
+
+读文件
+
+```python
+with open('filename') as file:
+    for line in file:
+        do_things(line)
+```
+
+写文件
+
+```python
+with open('filename') as file:
+    file.write()
 ```
