@@ -563,7 +563,7 @@ tags:
 
 ## 同学的面试
 
-> [同学的面试]](https://github.com/yycg/interview/blob/master/interview.md)
+> [同学的面试](https://github.com/yycg/interview/blob/master/interview.md)
 
 - 阿里
 
