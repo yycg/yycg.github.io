@@ -13,65 +13,116 @@ tags:
 
 ## Linux & Git入门
 
-Linux日常用途：日常工作使用Mac、文档快速处理、登陆机器查看日志、检查机器运行情况
+- Linux日常用途：日常工作使用Mac、文档快速处理、登陆机器查看日志、检查机器运行情况
 
-Linux文件结构
+- Linux文件结构
 
-Unix/Linux基本哲学：一切皆文件
+  - Unix/Linux基本哲学：一切皆文件
+  - 优点：访问所有东西都对文件进行读写
+  - /bin 二进制文件
+  - /sbin 特权二进制文件
+  - /home 普通用户目录
+  - /opt 大型软件
+  - /usr 安装程序
+  - /var 经常变化的文件
+  - /mnt 文件挂载目录
+  - /etc 配置文件
+  - /root 特权用户
+  - /dev 抽象硬件
+  - /boot 内核和启动文件
 
-优点：访问所有东西都对文件进行读写
+- 文件权限控制
 
-/bin二进制文件
+  - 第一个字符：文件类型
+    - (-)文件，(d)目录，(l)软链，(s)套接字
+  - 后面9个字符表示3组文件权限
+    - (r)读，(w)写，(x)执行
+    - 第一组：所有者
+    - 第二组：所在组
+    - 第三组：其他组
+  - chmod 755 abc
+  - chown username file|dir（修改文件或文件夹的用户名）
+  - chown -R username dir（修改文件夹中文件的用户名）
+  - chown username:group file|dir（修改文件或文件夹的用户名及用户组）
 
-/sbin特权二进制文件
+- 开发工作常见命令
 
-/home普通用户目录
+  - tar 打包压缩
+    - -c 归档文件
+    - -x 解压缩文件
+    - -z gzip 压缩文件
+    - -j bzip2 压缩文件
+    - -v 显示压缩或解压缩过程
+    - -f 使用档名
+    - tar –cvf /home/abc.tar /home/abc 只打包，不压缩
+    - tar -zcvf /home/abc.tar.gz /home/abc 打包，并用 gzip 压缩
+    - tar -jcvf /home/abc.tar.bz2 /home/abc 打包，并用 bzip2 压缩
+  - ls -l | grep fastjson
+  - 文件查找
+    - which 查看可执行文件的位置
+    - whereis 查看二进制文件、 说明文件、 源文件的位置
+    - locate 配合数据库查看文件位置
+    - find 实际搜寻硬盘查询文件名称
+  - 文件内容
+    - cat
+    - head (-n k,显示文档开始的前k行，-k,不显示文档结尾的最后 k 行)
+    - tail (-n k,显示文档结尾的后k行， +k,不显示文档最开始的 k 行) (-f 循环读取， 十分常用)
+    - more 逐页阅读， 按空格显示下一页， 按 b 键往回一页显
+    - less 逐步加载， 随意阅读
+    - sort 以行为单位排序 (-r 倒序)
+  - 日志：北京/opt/logs/log 上海/data/applogs 任意都可以
+  - 文件处理指令
+    - vim
+      - gg 移动到文档开头
+      - G 移动到文件末尾
+      - Ctrl+f 向下翻页
+      - Ctrl+b 向上翻页
+      - /{word} 从光标之下查找下一个匹配的字符串， 按n重复上一个查询指令
+      - ?{word} 从光标之上查询上一个匹配的字符串， 按n重复上一个查询指令
+    - grep 匹配
+    - awk 字段处理
+      - $0 一行
+      - $1, $2, $3... 第几列
+      - 列分隔符FS， 默认为空格
+      - 行分隔符RS， 默认为换行符
+      - 行号NR
+      - 列数量NF
+      - 常见用法 awk '{[pattern] action}' {filenames}
+        
+        awk –F: '{print $1}
+    
+    > [awk、uniq、sort三个命令的基本用法](https://blog.51cto.com/ttxsgoto/1582213)
+    
+    - uniq 去重
+      - -c  显示输出中，在每行行首加上本行在文件中出现的次数
+      - -d  只显示重复行
+      - -u  只显示文件中不重复的各行
+      - -n  前n个字段与每个字段前的空白一起被忽略
+      - +n 前n个字符被忽略，之前的字符被跳过（字符从0开始编号）
+      - -f   n与-n相同，这里n是字段数
+      - -s   n与+n相同，这里n是字符数
+      - 常用： uniq -c  首行显示文件中出现的次数
+    - sort 排序
+      - -u  在输出行中去除重复行
+      - -r   默认的排序方式为升序，-r转换为降序排列
+      - -n  默认按照字符来排序出现10在2前面，-n以数值来排序
+      - -t   后面设定间隔符
+      - -k  指定列数
+      - 如：sort -n -k 2 -t ： test.txt  以数值排序，按照第二列以“：”间隔来排列顺序
 
-/opt大型软件
+- 运维工作常见指令
 
-文件权限控制
-
-第一个字符：文件类
-
-后面9个字符表示3组文件权限
-
-第一组：所有者
-
-第二组：所在组
-
-第三组：其他组
-
-chmod 755 abc
-
-开发工作常见命令
-
-ls -l | grep fastjson
-
-文件查找：which whereis locate find
-
-文件内容：cat head (-n) tail (-n -f) more less sort(-r)
-
-日志：北京/opt/logs/log 上海/data/applogs 任意都可以
-
-文件处理指令：vim grep awk
-
-运维工作常见指令
-
-avartar或plus看日志不稳定，跳板机更好
-
-问价上传和下载：SFTP put get 文件
-
-python -m SimpleHTTPServer 8411(8411~8419)，不要忘记关进程
-
-ps -A -au -ef
-
-cpu: top, sar -u
-
-内存: top, free, sar -r
-
-磁盘指令: df, du
-
-网络指令: ping telnet sar -n
+  - avartar或plus看日志不稳定，跳板机更好
+  - 文件上传和下载：SFTP put get 文件
+  - python -m SimpleHTTPServer 8411(8411~8419)，不要忘记关进程
+  - ps
+    - -A 列出所有进程
+    - -au 显示较详细的信息
+    - -ef 显示所有进程信息， 连同命令行
+  - cpu: top, sar -u
+  - 内存: top, free -h, sar -r
+  - 磁盘指令: df -h, du -sh, sar -d
+  - 网络指令: ping, telnet, sar -n
 
 ## Shell
 

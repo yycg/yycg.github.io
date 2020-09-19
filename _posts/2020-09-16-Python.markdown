@@ -118,3 +118,19 @@ with open('filename') as file:
 with open('filename') as file:
     file.write()
 ```
+
+#### String Split and Join
+
+> [String Split and Join](https://www.hackerrank.com/challenges/python-string-split-and-join/problem)
+
+In Python, a string can be split on a delimiter.
+
+```python
+list = string.split(" ")
+```
+
+Joining a string is simple:
+
+```python
+string = "-".join(list)
+```
