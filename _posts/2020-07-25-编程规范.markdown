@@ -17,151 +17,151 @@ tags:
 
 #### 命名风格
 
-类名：UpperCamelCase，DO / BO / DTO / VO / AO / PO / UID 例外。
+- 类名：UpperCamelCase，DO / BO / DTO / VO / AO / PO / UID 例外。
 
-抽象类：Abstract 或 Base 开头；异常类：使用 Exception 结尾；测试类：以 Test 结尾。
+- 抽象类：Abstract 或 Base 开头；异常类：使用 Exception 结尾；测试类：以 Test 结尾。
 
-POJO 类中的布尔变量不要加 is 前缀，部分框架解析会引起序列化错误。
+- POJO 类中的布尔变量不要加 is 前缀，部分框架解析会引起序列化错误。
 
-包名小写，点之间一个单词。包名用单数，类名可以用复数。
+- 包名小写，点之间一个单词。包名用单数，类名可以用复数。
 
-子类和父类之间、不同代码块之间变量不要用一样的命名。
+- 子类和父类之间、不同代码块之间变量不要用一样的命名。
 
-如果模块、接口、类、方法使用了设计模式，在命名时需体现出具体模式。
+- 如果模块、接口、类、方法使用了设计模式，在命名时需体现出具体模式。
 
-接口类方法和属性不加修饰符，包括public。定义变量要与所有接口方法相关，JDK8中的默认实现要对所有实现都有价值。
+- 接口类方法和属性不加修饰符，包括public。定义变量要与所有接口方法相关，JDK8中的默认实现要对所有实现都有价值。
 
-基于SOA的理念，Service和DAO类暴露出来的服务要是接口，实现类用Impl后缀。借口取名可以用-able形容词。
+- 基于SOA的理念，Service和DAO类暴露出来的服务要是接口，实现类用Impl后缀。借口取名可以用-able形容词。
 
-Service/DAO 层方法命名：get, list, count, save/insert, remove/delete, update.
+- Service/DAO 层方法命名：get, list, count, save/insert, remove/delete, update.
 
-领域模型命名规约：数据对象xxxDO；数据传输对象xxxDTO；展示对象xxxVO；POJO 是 DO/DTO/BO/VO 的统称，禁止命名成 xxxPOJO.
+- 领域模型命名规约：数据对象xxxDO；数据传输对象xxxDTO；展示对象xxxVO；POJO 是 DO/DTO/BO/VO 的统称，禁止命名成 xxxPOJO.
 
 #### 常量定义
 
-魔法值（未经预先定义的常量）不要直接出现在代码中。
+- 魔法值（未经预先定义的常量）不要直接出现在代码中。
 
-数值后面用大写L，防止l看成1.
+- 数值后面用大写L，防止l看成1.
 
-OOP规约
+#### OOP规约
 
-用类名访问静态方法和静态变量，不要通过对象访问。
+- 用类名访问静态方法和静态变量，不要通过对象访问。
 
-用常量或有确定值的对象调用equals，防止出现空指针异常。
+- 用常量或有确定值的对象调用equals，防止出现空指针异常。
 
-整形包装类值比较用equals方法。
+- 整形包装类值比较用equals方法。
 
-金额用最小货币单位。
+- 金额用最小货币单位。
 
-浮点数积分类型不能用==比较，浮点数包装不能用equals比较（使用 BigDecimal 来定义值，再进行浮点数运算）。
+- 浮点数积分类型不能用==比较，浮点数包装不能用equals比较（使用 BigDecimal 来定义值，再进行浮点数运算）。
 
-DO类中的属性类型要与数据库字段匹配。
+- DO类中的属性类型要与数据库字段匹配。
 
-禁止使用构造方法 BigDecimal(double)的方式把 double 值转化为 BigDecimal 对象。
+- 禁止使用构造方法 BigDecimal(double)的方式把 double 值转化为 BigDecimal 对象。
 
-所有的 POJO 类属性必须使用包装数据类型。
+- 所有的 POJO 类属性必须使用包装数据类型。
 
-RPC 方法的返回值和参数必须使用包装数据类型。
+- RPC 方法的返回值和参数必须使用包装数据类型。
 
-所有的局部变量使用基本数据类型。
+- 所有的局部变量使用基本数据类型。
 
-定义 DO/DTO/VO 等 POJO 类时，不要设定任何属性默认值。
+- 定义 DO/DTO/VO 等 POJO 类时，不要设定任何属性默认值。
 
-序列化类新增属性时，不要修改 serialVersionUID 字段，避免反序列失败；如果完全不兼容升级，要修改 serialVersionUID 值。
+- 序列化类新增属性时，不要修改 serialVersionUID 字段，避免反序列失败；如果完全不兼容升级，要修改 serialVersionUID 值。
 
-POJO 类必须写 toString 方法。
+- POJO 类必须写 toString 方法。
 
-类中构造方法应该在一起，同名方法应该在一起；类内方法定义的顺序依次是：公有方法或保护方法 > 私有方法 > getter / setter方法。
+- 类中构造方法应该在一起，同名方法应该在一起；类内方法定义的顺序依次是：公有方法或保护方法 > 私有方法 > getter / setter方法。
 
-setter 方法中，参数名称与类成员变量名称一致，this.成员名 = 参数名。在getter/setter 方法中，不要增加业务逻辑。
+- setter 方法中，参数名称与类成员变量名称一致，this.成员名 = 参数名。在getter/setter 方法中，不要增加业务逻辑。
 
-字符串的连接用 StringBuilder 的 append 方法。
+- 字符串的连接用 StringBuilder 的 append 方法。
 
-慎用 Object 的 clone 方法来拷贝对象。对象 clone 方法默认是浅拷贝，若想实现深拷贝需覆写 clone 方法实现域对象的深度遍历式拷贝。
+- 慎用 Object 的 clone 方法来拷贝对象。对象 clone 方法默认是浅拷贝，若想实现深拷贝需覆写 clone 方法实现域对象的深度遍历式拷贝。
 
-https://blog.csdn.net/zhangjg_blog/article/details/18369201 clone只深拷贝一层域变量，不进行递归的深拷贝。
+- https://blog.csdn.net/zhangjg_blog/article/details/18369201 clone只深拷贝一层域变量，不进行递归的深拷贝。
 
-方法访问控制从严：优先用private，如果对继承类公开用protected，对外公开用public。
+- 方法访问控制从严：优先用private，如果对继承类公开用protected，对外公开用public。
 
 #### 集合处理
 
-判断所有集合内部的元素是否为空，使用 isEmpty()方法，而不是 size()==0 的方式。（前者的时间复杂度为 O(1)，而且可读性更好。）
+- 判断所有集合内部的元素是否为空，使用 isEmpty()方法，而不是 size()==0 的方式。（前者的时间复杂度为 O(1)，而且可读性更好。）
 
-在使用 java.util.stream.Collectors 类的 toMap()方法转为 Map 集合时，使用含有参数类型为 BinaryOperator，参数名为 mergeFunction 的方法，防止出现相同 key 值。
+- 在使用 java.util.stream.Collectors 类的 toMap()方法转为 Map 集合时，使用含有参数类型为 BinaryOperator，参数名为 mergeFunction 的方法，防止出现相同 key 值。
 
-在使用 java.util.stream.Collectors 类的 toMap()方法转为 Map 集合时，注意当 value 为 null 时会抛 NPE 异常。
+- 在使用 java.util.stream.Collectors 类的 toMap()方法转为 Map 集合时，注意当 value 为 null 时会抛 NPE 异常。
 
-Map的方法keySet()/values()/entrySet()返回集合对象，不能新增元素。
+- Map的方法keySet()/values()/entrySet()返回集合对象，不能新增元素。
 
-Collections类返回的对象不可变，如：emptyList()/singletonList()。
+- Collections类返回的对象不可变，如：emptyList()/singletonList()。
 
-集合转数组用toArray(T[] array)方法，传入类型一致，长度为0的空数组。
+- 集合转数组用toArray(T[] array)方法，传入类型一致，长度为0的空数组。
 
-Arrays.asList将数组转换成集合时，不能修改集合。
+- Arrays.asList将数组转换成集合时，不能修改集合。
 
-forEach里不要对元素进行remove/add操作。remove 元素使用 Iterator 方式，并发操作需要对 Iterator 对象加锁。
+- forEach里不要对元素进行remove/add操作。remove 元素使用 Iterator 方式，并发操作需要对 Iterator 对象加锁。
 
-集合初始化时，指定集合初始值大小。大小为元素个数/HashMap负载因子，不确定设为16。
+- 集合初始化时，指定集合初始值大小。大小为元素个数/HashMap负载因子，不确定设为16。
 
-使用 entrySet 遍历 Map 类集合 KV，而不是 keySet 方式。
+- 使用 entrySet 遍历 Map 类集合 KV，而不是 keySet 方式。
 
-ConcurrentHashMap键和值都不能为空（根据key获取value时得到null，由于是在并发的情况下，难以根据containsKey知道key是否存在），TreeMap键不能为空。
+- ConcurrentHashMap键和值都不能为空（根据key获取value时得到null，由于是在并发的情况下，难以根据containsKey知道key是否存在），TreeMap键不能为空。
 
 #### 并发处理
 
-获取单例保证线程安全。
+- 获取单例保证线程安全。
 
-线程资源必须通过线程池提供。
+- 线程资源必须通过线程池提供。
 
-不用Executors创建线程池，因为FixThreadPool和SingleThreadPool允许请求队列长度为Integer.MAX_VALUE，CachedThreadPool允许创建线程数为Integer.MAX_VALUE导致OOM；用ThreadPoolExecutor。
+- 不用Executors创建线程池，因为FixThreadPool和SingleThreadPool允许请求队列长度为Integer.MAX_VALUE，CachedThreadPool允许创建线程数为Integer.MAX_VALUE导致OOM；用ThreadPoolExecutor。
 
-在try-finally中回收自定义的ThreadLocal变量，在线程池中会导致内存泄漏的情况。
+- 在try-finally中回收自定义的ThreadLocal变量，在线程池中会导致内存泄漏的情况。
 
-能不用锁就不用锁，能锁块就不要锁方法，能锁对象就不要锁类。
+- 能不用锁就不用锁，能锁块就不要锁方法，能锁对象就不要锁类。
 
-保证一定的加锁顺序防止死锁。
+- 保证一定的加锁顺序防止死锁。
 
-并发修改应该加锁：应用层加锁，缓存加锁，数据库层加乐观锁。
+- 并发修改应该加锁：应用层加锁，缓存加锁，数据库层加乐观锁。
 
-用ScheduledExecutorService替代Timer：Timer运行多个TimeTask，有一个没有捕获异常，其他任务就会终止。
+- 用ScheduledExecutorService替代Timer：Timer运行多个TimeTask，有一个没有捕获异常，其他任务就会终止。
 
-资金相关的金融敏感信息用悲观锁。
+- 资金相关的金融敏感信息用悲观锁。
 
-Random实例被多线程使用，会导致竞争同一种子而性能下降。
+- Random实例被多线程使用，会导致竞争同一种子而性能下降。
 
-volatile解决内存不可见的问题，一写多读情况下可以解决线程同步问题。count++用原子变量，JDK8中的LongAdder比AtomicLong性能好。
+- volatile解决内存不可见的问题，一写多读情况下可以解决线程同步问题。count++用原子变量，JDK8中的LongAdder比AtomicLong性能好。
 
 #### 控制语句
 
-switch里，case要么通过comtinue/break/return终止，要么用注释说明执行到那个case，一定要有default。
+- switch里，case要么通过comtinue/break/return终止，要么用注释说明执行到那个case，一定要有default。
 
-switch括号里的变量如果是String，先判断null。
+- switch括号里的变量如果是String，先判断null。
 
-一行代码也要大括号。
+- 一行代码也要大括号。
 
-三目运算符condition? expr1: expr2中，两个表达式如果有一个是原始类型，或者类型不一致，会触发对齐拆箱操作。
+- 三目运算符condition? expr1: expr2中，两个表达式如果有一个是原始类型，或者类型不一致，会触发对齐拆箱操作。
 
-高并发时不要用==，应该用>或者<。
+- 高并发时不要用==，应该用>或者<。
 
-超过3层if-else使用卫语句。
+- 超过3层if-else使用卫语句。
 
-if里的复杂逻辑判断赋值给一个有意义的变量名。
+- if里的复杂逻辑判断赋值给一个有意义的变量名。
 
-赋值语句单独一行，不要在条件表达式等其他位置插入赋值语句。
+- 赋值语句单独一行，不要在条件表达式等其他位置插入赋值语句。
 
-尽量避免取反逻辑。
+- 尽量避免取反逻辑。
 
-批量操作，接口入参保护。
+- 批量操作，接口入参保护。
 
-对外提供的开放接口（RPC/API/HTTP），执行时间开销大的接口，需要参数校验；很有可能被循环调用的方法，底层调用频率高的方法，private只会被自己代码调用的方法，可以不校验参数。
+- 对外提供的开放接口（RPC/API/HTTP），执行时间开销大的接口，需要参数校验；很有可能被循环调用的方法，底层调用频率高的方法，private只会被自己代码调用的方法，可以不校验参数。
 
 #### 异常处理
 
-可以规避的RuntimeException异常不应该通过catch来处理。
+- 可以规避的RuntimeException异常不应该通过catch来处理。
 
-不要用异常来做条件控制。
+- 不要用异常来做条件控制。
 
-捕获异常是为了处理，如果不处理，应该将异常抛给调用者
+- 捕获异常是为了处理，如果不处理，应该将异常抛给调用者
 
 ## 整洁代码
 
@@ -179,22 +179,48 @@ if里的复杂逻辑判断赋值给一个有意义的变量名。
   - 合成/聚合原则：尽量使用合成/聚合（has-a），尽量不要使用类继承（is-a）
   - 迪米特法则：一个类应该对其他对象尽可能少地了解
 
-- 命名
+- 命名的简洁
 
   - 变量命名
 
     - 尽量避免使用单字母变量，即使在for循环中，pos/index也比i/j/k优雅
     - 变量名长度适中，8~20
     - 见名知义：例如布尔变量用isDone代替status，状态变量用need代替flag，常量VERSION，集合变量List<Student> students
+    - 利用Codelf辅助工具来命名
 
   - 方法命名
 
     - 动词开头，规避get/set开头
     - 避免Data/Info等无意义的词
     - 主动创造命名机会，例如用静态工厂方法代替构造方法
-    - 尽量使用零参数和一参数的的函数，尽量避免三参数以上的函数，应该将参数封装起来
-    - 避免副作用函数，还有除了函数名所说的其他的副作用
 
   - 包命名规则：com.公司名.{业务线}.项目名.模块名
 
-  - 利用Codelf辅助工具来命名
+- 包的简洁/类的整洁
+
+  - 类应有且仅有一条被修改的理由，即单一职责原则
+  - 功能复用优先考虑组合，而非继承
+
+- 函数的的整洁
+
+  - 尽量使用零参数和一参数的的函数，尽量避免三参数以上的函数，应该将参数封装起来
+  - 函数只做一件事，函数中的语句在同一抽象层级上
+  - 避免副作用函数，还有除了函数名所说的其他的副作用
+
+- 异常的整洁
+
+  - 分层处理，链式传播：异常信息链传播与函数栈调用顺序相反
+  - 正确使用受检异常与非受检异常
+    - Exception 运行期可预知异常，通常可恢复。程序运行时出现是正常现象。（受检异常）
+    - Error 编程错误，通常不可恢复。一旦发生通常意味着bug，应极力避免。
+    - RuntimeException 编程错误，通常不可恢复。一旦发生通常意味着bug，应极力避免。（非受检异常）
+  - 总是要做一些清理工作
+  - 不要使用异常来控制流程
+  - 不要忽略异常，至少要写一个注释
+  - 不要捕获Throwable类：在应用中不应捕获 当应用抛出Errors的时候，一般都是不可恢复的情况。
+  - 要在方法定义分句中定义具体的异常
+
+- 注释的整洁/格式的整洁
+  - 能用函数或变量时就别用注释
+  - 见文知意时不需要注释
+  - 对意图的解释、警示、提供有用信息的注释

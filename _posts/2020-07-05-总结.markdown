@@ -1117,6 +1117,8 @@ tags:
 
 23. 如何设计数据库表
 
+    数据库设计的初级⽅方法论：罗列实体全部属性->拆解属性->建⽴表关系
+    
     E-R图：实体、关系
 
     一对一（外键）、一对多（多的一方加外键）、多对多（中间表，两列作为联合主键）
@@ -1132,6 +1134,55 @@ tags:
     - 第三范式（3NF）：在2NF基础上，任何非主属性不依赖于其它非主属性（在2NF基础上消除传递依赖）
 
       **第三范式需要确保数据表中的每一列数据都和主键直接相关，而不能间接相关。**
+
+24. MySQL三层体系结构
+
+    0. 应用
+    1. 连接层：通信协议处理理、线程处理理、账号认证、安全检查等
+    2. SQL层：权限判断、查询解析、优化器&缓存、查询执⾏&返回
+    3. 存储层：存储引擎、错误日志、二进制⽇日志、中继日志
+
+25. MySQL数据库常⽤用操作
+
+    - DDL：数据定义语⾔言DDL（Data Definition Language）Create、 Alter
+      - 创建数据库 ```CREATE DATABASE 数据库名;```
+      - 删除数据库 ```DROP DATABASE 数据库名;```
+      - 创建表 ```CREATE TABLE table_name (column_name column_type);```
+      - 新增列 ```ALTER TABLE testalter_tbl ADD i INT;```
+      - 新增索引 ```ALTER TABLE tableName ADD INDEX indexName(columnName)```
+    - DML：数据操纵语⾔言DML（Data Manipulation Language）Insert、 Update、 Delete
+      - 插入数据 ```INSERT INTO table_name ( field1, field2,...fieldN ) VALUES ( value1, value2,...valueN );```
+      - 更新数据 ```UPDATE table_name SET field1=new-value1, field2=new-value2 [WHERE Clause]```
+      - 删除数据 ```DELETE FROM table_name [WHERE Clause]```
+    - DQL：数据查询语⾔言DQL（Data Query Language）Select
+    - DCL：数据控制语⾔言DCL（Data Control Language）Grant、 Commit、 Rollback
+
+26. MySQL重要的数据类型
+
+    - 数值类型
+      - INT类型
+        - TINYINT 1 byte
+        - SMALLINT 2 byte
+        - MEDIUMINT 3 byte
+        - INT 4 byte
+        - BIGINT 8 byte
+      - 精度类型
+        - FLOAT 4 byte
+        - DOUBLE 8 byte
+        - DECIMAL 变⻓
+    - 字符串类型
+      - CHAR(N) 定长字符
+      - VARCHAR(N) 变长字符
+      - TEXT 大对象
+      - 字符集选择： UTF8-MB4
+      - 字符排序规则：
+        - utf8_general_ci 不区分大小写，这个你在注册用户名和邮箱的时候就要使用
+        - utf8_general_cs 区分⼤大⼩小写，如果用户名和邮箱用这个就会照成不良后果,A和a不一样
+    - 时间类型
+      - 推荐使用： DATETIME
+      - DATE：日期
+      - TIMESTAMP：1970-2038年
+    - JSON类型
 
 ## 网络
 

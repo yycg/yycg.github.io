@@ -698,6 +698,51 @@ tags:
   System.out.println(dp[s1.length()][s2.length()]);
   ```
 
+- 哈夫曼树
+
+  思路：将所有节点放到小顶堆里，每次拿出最小的两个节点，加起来放回堆里。
+
+  ```c++
+  #include <cstdio>
+  #include <queue>
+
+  using namespace std;
+
+  struct cmp {
+      bool operator()(const int& a, const int& b) {
+          return a > b;
+      }
+  };
+
+  priority_queue<int, vector<int>, cmp> pq;
+
+  int main() {
+      int n;
+      while(scanf("%d", &n) != EOF) {
+          while(n--) {
+              int node;
+              scanf("%d", &node);
+              pq.push(node);
+          }
+          int a, b, res = 0;
+          a = pq.top();
+          pq.pop();
+          b = pq.top();
+          pq.pop();
+          res += (a+b);
+          while(!pq.empty()) {
+              a = a + b;
+              b = pq.top();
+              pq.pop();
+              res += (a+b);
+          }
+          printf("%d\n", res);
+      }
+
+      return 0;
+  }
+  ```
+
 ## 分治
 
 #### [leetcode 74: 搜索二维矩阵](<https://leetcode.com/problems/search-a-2d-matrix/>)
