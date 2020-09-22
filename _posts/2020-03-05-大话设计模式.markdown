@@ -4,7 +4,7 @@ title:      "大话设计模式"
 subtitle:   ""
 date:       2020-03-05 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/fleabag.jpg"
+header-img: "img/yyy-3.jpg"
 mathjax: true
 catalog: true
 tags:

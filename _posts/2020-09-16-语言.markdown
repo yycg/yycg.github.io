@@ -1,15 +1,17 @@
 ---
 layout:     post
-title:      "Python"
+title:      "语言"
 subtitle:   ""
 date:       2020-09-16 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/fleabag.jpg"
+header-img: "img/yyy-29.jpg"
 mathjax: true
 catalog: true
 tags:
     - 学习
 ---
+
+## Python
 
 #### contextlib
 
@@ -134,3 +136,29 @@ Joining a string is simple:
 ```python
 string = "-".join(list)
 ```
+
+## C++
+
+#### argc & argv
+
+> [Regarding main(int argc, char *argv[])](https://stackoverflow.com/questions/3898021/regarding-mainint-argc-char-argv)
+
+$ mysort 2 8 9 1 4 5
+
+Argument Count, argc = 7 
+
+Argument Vector, argv[] = { "mysort", "2", "8", "9", "1", "4", "5" };
+
+## IDE
+
+#### IDEA
+
+- ctrl
+- ctrl alt <-
+- alt f12
+
+#### VSCode
+
+- ctrl
+- alt <-
+- shift ctrl o
