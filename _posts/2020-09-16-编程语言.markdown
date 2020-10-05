@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "语言"
+title:      "编程语言"
 subtitle:   ""
 date:       2020-09-16 12:00:00
 author:     "盈盈冲哥"
@@ -121,6 +121,12 @@ with open('filename') as file:
     file.write()
 ```
 
+路径拼接
+
+```python
+os.path.join(path1, path2)
+```
+
 #### String Split and Join
 
 > [String Split and Join](https://www.hackerrank.com/challenges/python-string-split-and-join/problem)
@@ -135,6 +141,26 @@ Joining a string is simple:
 
 ```python
 string = "-".join(list)
+```
+
+#### 字典遍历
+
+> [python字典遍历的几种方法](https://zhuanlan.zhihu.com/p/33033288)
+
+```python
+for key in dict:
+for key in dict.keys():
+for value in dict.values():
+for key, value in dict.items():
+```
+
+#### Pandas
+
+遍历DataFrame
+
+```python
+for index, row in df.iterrows():
+    row["column_name"]
 ```
 
 ## C++
@@ -155,10 +181,10 @@ Argument Vector, argv[] = { "mysort", "2", "8", "9", "1", "4", "5" };
 
 - ctrl
 - ctrl alt <-
-- alt f12
+- ctrl f12
 
 #### VSCode
 
 - ctrl
 - alt <-
-- shift ctrl o
+- ctrl shift o

@@ -1,0 +1,13 @@
+---
+layout:     post
+title:      "Deepwalk"
+subtitle:   ""
+date:       2020-10-05 12:00:00
+author:     "盈盈冲哥"
+header-img: "img/yyy-31.jpg"
+mathjax: true
+catalog: true
+tags:
+    - 学习
+---
+
