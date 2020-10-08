@@ -159,691 +159,691 @@ tags:
 
 > [Vue + Spring Boot 项目例子](https://blog.csdn.net/Neuf_Soleil/article/details/88925013)
 
-- 教程笔记
+#### 教程笔记
 
-  - 介绍
+- 介绍
+
+  - 指令
+    - v-bind: 将数据绑定到attribute
+    - v-if: 条件，将数据绑定到 DOM 结构
+    - v-for: 循环
+    - v-on: 添加一个事件监听器
+    - v-model: 表单输入和应用状态之间的双向绑定
   
-    - 指令
-      - v-bind: 将数据绑定到attribute
-      - v-if: 条件，将数据绑定到 DOM 结构
-      - v-for: 循环
-      - v-on: 添加一个事件监听器
-      - v-model: 表单输入和应用状态之间的双向绑定
+  - 组件化
+    - 组件接受一个prop，类似于一个自定义 attribute
+    - 利用v-bind指令，将数据绑定到组件的attribute，也需要为每个组件提供一个key
+
+- 第2节 创建第一个vue应用
+
+  ```html
+  <div id="app">
+    {{ message }}
+  </div>
+  ```
+
+  ```javascript
+  var app = new Vue({
+    el: '#app',
+    data: {
+      message: 'Hello Vue!'
+    }
+  })
+  ```
+
+  Vue是一个全局的变量，new Vue()返回一个Vue实例。
+  
+  el表示element，是一个id选择器。
+  
+  data是数据属性，包含message。
+
+- 第3节 数据与方法
+
+  ```javascript
+  // 我们的数据对象
+  var data = { a: 1 }
+
+  // 该对象被加入到一个 Vue 实例中
+  var vm = new Vue({
+    data: data
+  })
+
+  // 获得这个实例上的 property
+  // 返回源数据中对应的字段
+  vm.a == data.a // => true
+
+  // 设置 property 也会影响到原始数据
+  vm.a = 2
+  data.a // => 2
+
+  // ……反之亦然
+  data.a = 3
+  vm.a // => 3
+  ```
+
+  只有当实例被创建时就已经存在于 data 中的 property 才是响应式的。
+
+  除了数据 property，Vue 实例还暴露了一些有用的实例 property 与方法。它们都有前缀 $，以便与用户定义的 property 区分开来。
+
+  ```javascript
+  var data = { a: 1 }
+  var vm = new Vue({
+    el: '#example',
+    data: data
+  })
+
+  vm.$data === data // => true
+  vm.$el === document.getElementById('example') // => true
+
+  // $watch 是一个实例方法
+  vm.$watch('a', function (newValue, oldValue) {
+    // 这个回调将在 `vm.a` 改变后调用
+  })
+  ```
+
+- 第4节 生命周期
+
+  ```javascript
+  var vm = new Vue({
+    el : "#app",
+    data : {
+      msg : "hi vue",
+    },
+    //在实例初始化之后，数据观测 (data observer) 和 event/watcher 事件配置之前被调用。
+    beforeCreate:function(){
+      console.log('beforeCreate');
+    },
+    /* 在实例创建完成后被立即调用。
+    在这一步，实例已完成以下的配置：数据观测 (data observer)，属性和方法的运算，watch/event 事件回调。
+    然而，挂载阶段还没开始，$el 属性目前不可见。 */
+    created	:function(){
+      console.log('created');
+    },
+    //在挂载开始之前被调用：相关的渲染函数首次被调用
+    beforeMount : function(){
+      console.log('beforeMount');
+
+    },
+    //el 被新创建的 vm.$el 替换, 挂在成功	
+    mounted : function(){
+      console.log('mounted');
     
-    - 组件化
-      - 组件接受一个prop，类似于一个自定义 attribute
-      - 利用v-bind指令，将数据绑定到组件的attribute，也需要为每个组件提供一个key
+    },
+    //数据更新时调用
+    beforeUpdate : function(){
+      console.log('beforeUpdate');
+        
+    },
+    //组件 DOM 已经更新, 组件更新完毕 
+    updated : function(){
+      console.log('updated');
+        
+    }
+  });
+  ```
 
-  - 第2节 创建第一个vue应用
+- 第5节 模板语法-插值
 
-    ```html
-    <div id="app">
-      {{ message }}
-    </div>
-    ```
+  数据绑定
+  
+  ```html
+  <span>Message: {{ msg }}</span>
+  ```
+  
+  ```html
+  <span v-once>这个将不会改变: {{ msg }}</span>
+  ```
 
-    ```javascript
-    var app = new Vue({
-      el: '#app',
-      data: {
-        message: 'Hello Vue!'
-      }
-    })
-    ```
+  双大括号会将数据解释为普通文本，而非 HTML 代码。为了输出真正的 HTML，需要使用 v-html 指令。
 
-    Vue是一个全局的变量，new Vue()返回一个Vue实例。
-    
-    el表示element，是一个id选择器。
-    
-    data是数据属性，包含message。
+  对于所有的数据绑定，Vue.js 都提供了完全的 JavaScript 表达式支持。
 
-  - 第3节 数据与方法
+  ```html
+  <div id="app">
+    {{msg}}
+    <p>Using mustaches: {{ rawHtml }}</p>
+    <p v-html="rawHtml"></p>
+    <div v-bind:class="color">test...</div>
+    <p>{{ number + 1 }}</p>
+    <p>{{ 1 == 1 ? 'YES' : 'NO' }}</p>
+    <p>{{ message.split('').reverse().join('') }}</p>
+  </div>
+  <style type="text/css">
+  .red{color:red;}
+  .blue{color:blue; font-size:100px;}
+  </style>
+  ```
+  
+  ```javascript
+  var vm = new Vue({
+    el : "#app",
+    data : {
+      msg : "hi vue",
+      rawHtml : '<span style="color:red">this is should be red</span>',
+      color:'blue',
+      number : 10,
+      ok : 1,
+      message : "vue"
+    }
+  });
+  ```
 
-    ```javascript
-    // 我们的数据对象
-    var data = { a: 1 }
+- 第6节 模板语法-指令
 
-    // 该对象被加入到一个 Vue 实例中
-    var vm = new Vue({
-      data: data
-    })
-
-    // 获得这个实例上的 property
-    // 返回源数据中对应的字段
-    vm.a == data.a // => true
-
-    // 设置 property 也会影响到原始数据
-    vm.a = 2
-    data.a // => 2
-
-    // ……反之亦然
-    data.a = 3
-    vm.a // => 3
-    ```
-
-    只有当实例被创建时就已经存在于 data 中的 property 才是响应式的。
-
-    除了数据 property，Vue 实例还暴露了一些有用的实例 property 与方法。它们都有前缀 $，以便与用户定义的 property 区分开来。
-
-    ```javascript
-    var data = { a: 1 }
-    var vm = new Vue({
-      el: '#example',
-      data: data
-    })
-
-    vm.$data === data // => true
-    vm.$el === document.getElementById('example') // => true
-
-    // $watch 是一个实例方法
-    vm.$watch('a', function (newValue, oldValue) {
-      // 这个回调将在 `vm.a` 改变后调用
-    })
-    ```
-
-  - 第4节 生命周期
-
-    ```javascript
-    var vm = new Vue({
-      el : "#app",
-      data : {
-        msg : "hi vue",
-      },
-      //在实例初始化之后，数据观测 (data observer) 和 event/watcher 事件配置之前被调用。
-      beforeCreate:function(){
-        console.log('beforeCreate');
-      },
-      /* 在实例创建完成后被立即调用。
-      在这一步，实例已完成以下的配置：数据观测 (data observer)，属性和方法的运算，watch/event 事件回调。
-      然而，挂载阶段还没开始，$el 属性目前不可见。 */
-      created	:function(){
-        console.log('created');
-      },
-      //在挂载开始之前被调用：相关的渲染函数首次被调用
-      beforeMount : function(){
-        console.log('beforeMount');
-
-      },
-      //el 被新创建的 vm.$el 替换, 挂在成功	
-      mounted : function(){
-        console.log('mounted');
-      
-      },
-      //数据更新时调用
-      beforeUpdate : function(){
-        console.log('beforeUpdate');
-          
-      },
-      //组件 DOM 已经更新, 组件更新完毕 
-      updated : function(){
-        console.log('updated');
-          
-      }
-    });
-    ```
-
-  - 第5节 模板语法-插值
-
-    数据绑定
-    
-    ```html
-    <span>Message: {{ msg }}</span>
-    ```
-    
-    ```html
-    <span v-once>这个将不会改变: {{ msg }}</span>
-    ```
-
-    双大括号会将数据解释为普通文本，而非 HTML 代码。为了输出真正的 HTML，需要使用 v-html 指令。
-
-    对于所有的数据绑定，Vue.js 都提供了完全的 JavaScript 表达式支持。
-
-    ```html
-    <div id="app">
-      {{msg}}
-      <p>Using mustaches: {{ rawHtml }}</p>
-      <p v-html="rawHtml"></p>
-      <div v-bind:class="color">test...</div>
-      <p>{{ number + 1 }}</p>
-      <p>{{ 1 == 1 ? 'YES' : 'NO' }}</p>
-      <p>{{ message.split('').reverse().join('') }}</p>
-    </div>
-    <style type="text/css">
-    .red{color:red;}
-    .blue{color:blue; font-size:100px;}
-    </style>
-    ```
-    
-    ```javascript
-    var vm = new Vue({
-      el : "#app",
-      data : {
-        msg : "hi vue",
-        rawHtml : '<span style="color:red">this is should be red</span>',
-        color:'blue',
-        number : 10,
-        ok : 1,
-        message : "vue"
-      }
-    });
-    ```
-
-  - 第6节 模板语法-指令
-
-    ```html
-    <div id="app">
-      <p v-if="seen">现在你看到我了</p>
-      <a v-bind:href="url">...</a>
-      <div @click="click1">
-        <div @click.stop="click2">
-          click me
-        </div>
+  ```html
+  <div id="app">
+    <p v-if="seen">现在你看到我了</p>
+    <a v-bind:href="url">...</a>
+    <div @click="click1">
+      <div @click.stop="click2">
+        click me
       </div>
     </div>
-    ```
+  </div>
+  ```
 
-    ```javascript
-    var vm = new Vue({
-      el : "#app",
-      data : {
-        seen : false,
-        url : "https://cn.vuejs.org/v2/guide/syntax.html#%E6%8C%87%E4%BB%A4"
+  ```javascript
+  var vm = new Vue({
+    el : "#app",
+    data : {
+      seen : false,
+      url : "https://cn.vuejs.org/v2/guide/syntax.html#%E6%8C%87%E4%BB%A4"
+    },
+    methods:{
+      click1 : function () {
+        console.log('click1......');
       },
-      methods:{
-        click1 : function () {
-          console.log('click1......');
-        },
-        click2 : function () {
-          console.log('click2......');
-        }
+      click2 : function () {
+        console.log('click2......');
       }
-    });
-    ```
+    }
+  });
+  ```
 
-    点击click me，只触发click2函数，之后会停下来不去触发click1.
+  点击click me，只触发click2函数，之后会停下来不去触发click1.
 
-  - 第7节 class与style绑定
+- 第7节 class与style绑定
 
-    - 绑定HTML class
-    
-      对象语法
-      
-      ```html
-      <div v-bind:class="{ active: isActive }"></div>
-      ```
-
-      静态的class和动态的class共存
-      
-      ```html
-      <div
-        class="static"
-        v-bind:class="{ active: isActive, 'text-danger': hasError }"
-      ></div>
-      ```
-
-      数组语法
-      
-      ```html
-      <div v-bind:class="[activeClass, errorClass]"></div>
-      ```
-
-      三元运算符
-      
-      ```html
-      <div v-bind:class="[isActive ? activeClass : '', errorClass]"></div>
-      ```
-    
-    - 绑定style
-
-      ```html
-      <div 
-      :style="{color:color, fontSize:size, background: isRed ? '#FF0000' : ''}">
-        hi vue
-      </div>
-      ```
-
-  - 第8节 条件渲染
-
-    ```html
-    <div v-if="type === 'A'">
-      A
-    </div>
-    <div v-else-if="type === 'B'">
-      B
-    </div>
-    <div v-else-if="type === 'C'">
-      C
-    </div>
-    <div v-else>
-      Not A/B/C
-    </div>
-    ```
-
-    带有 v-show 的元素始终会被渲染并保留在 DOM 中。v-show 只是简单地切换元素的 CSS property display。
+  - 绑定HTML class
+  
+    对象语法
     
     ```html
-    <h1 v-show="ok">Hello!</h1>
+    <div v-bind:class="{ active: isActive }"></div>
     ```
 
-    v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好。
+    静态的class和动态的class共存
+    
+    ```html
+    <div
+      class="static"
+      v-bind:class="{ active: isActive, 'text-danger': hasError }"
+    ></div>
+    ```
 
-  - 第9节 列表渲染
+    数组语法
+    
+    ```html
+    <div v-bind:class="[activeClass, errorClass]"></div>
+    ```
 
-    用 v-for 指令基于一个数组来渲染一个列表。
+    三元运算符
+    
+    ```html
+    <div v-bind:class="[isActive ? activeClass : '', errorClass]"></div>
+    ```
+  
+  - 绑定style
 
     ```html
-    <ul id="example-1">
-      <li v-for="item in items" :key="item.message">
-        {{ item.message }}
-      </li>
-    </ul>
-    ```
-
-    ```javascript
-    var example1 = new Vue({
-      el: '#example-1',
-      data: {
-        items: [
-          { message: 'Foo' },
-          { message: 'Bar' }
-        ]
-      }
-    })
-    ```
-
-    在 v-for 块中，可以访问所有父作用域的 property。v-for 还支持一个可选的第二个参数，即当前项的索引。
-
-    ```html
-    <ul id="example-2">
-      <li v-for="(item, index) in items">
-        {{ parentMessage }} - {{ index }} - {{ item.message }}
-      </li>
-    </ul>
-    ```
-
-    ```javascript
-    new Vue({
-      el: '#v-for-object',
-      data: {
-        object: {
-          title: 'How to do lists in Vue',
-          author: 'Jane Doe',
-          publishedAt: '2016-04-10'
-        }
-      }
-    })
-    ```
-
-    为了给 Vue 一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有元素，你需要为每项提供一个唯一 key attribute：
-
-    ```html
-    <div v-for="item in items" v-bind:key="item.id">
-      <!-- 内容 -->
+    <div 
+    :style="{color:color, fontSize:size, background: isRed ? '#FF0000' : ''}">
+      hi vue
     </div>
     ```
 
-  - 第10节 事件绑定
+- 第8节 条件渲染
 
-    ```html
-    <div id="app">
-      <div id="example-1">
-        <button v-on:click="counter += 1"> 数值 :  {{ counter }} </button><br />
-        <button v-on:dblclick="greet('abc', $event)">Greet</button>
-      </div>
-    </div>
-    ```
+  ```html
+  <div v-if="type === 'A'">
+    A
+  </div>
+  <div v-else-if="type === 'B'">
+    B
+  </div>
+  <div v-else-if="type === 'C'">
+    C
+  </div>
+  <div v-else>
+    Not A/B/C
+  </div>
+  ```
 
-    ```javascript
-    var vm = new Vue({
-      el : "#app",
-      data : {
-        counter: 0,
-        name : "vue"
-      },
-      methods:{
-        greet : function (str, e) {
-          alert(str);
-          console.log(e);
-        }
+  带有 v-show 的元素始终会被渲染并保留在 DOM 中。v-show 只是简单地切换元素的 CSS property display。
+  
+  ```html
+  <h1 v-show="ok">Hello!</h1>
+  ```
+
+  v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好。
+
+- 第9节 列表渲染
+
+  用 v-for 指令基于一个数组来渲染一个列表。
+
+  ```html
+  <ul id="example-1">
+    <li v-for="item in items" :key="item.message">
+      {{ item.message }}
+    </li>
+  </ul>
+  ```
+
+  ```javascript
+  var example1 = new Vue({
+    el: '#example-1',
+    data: {
+      items: [
+        { message: 'Foo' },
+        { message: 'Bar' }
+      ]
+    }
+  })
+  ```
+
+  在 v-for 块中，可以访问所有父作用域的 property。v-for 还支持一个可选的第二个参数，即当前项的索引。
+
+  ```html
+  <ul id="example-2">
+    <li v-for="(item, index) in items">
+      {{ parentMessage }} - {{ index }} - {{ item.message }}
+    </li>
+  </ul>
+  ```
+
+  ```javascript
+  new Vue({
+    el: '#v-for-object',
+    data: {
+      object: {
+        title: 'How to do lists in Vue',
+        author: 'Jane Doe',
+        publishedAt: '2016-04-10'
       }
-    });
-    ```
+    }
+  })
+  ```
 
-    > [Difference between @click and v-on:click Vuejs
+  为了给 Vue 一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有元素，你需要为每项提供一个唯一 key attribute：
+
+  ```html
+  <div v-for="item in items" v-bind:key="item.id">
+    <!-- 内容 -->
+  </div>
+  ```
+
+- 第10节 事件绑定
+
+  ```html
+  <div id="app">
+    <div id="example-1">
+      <button v-on:click="counter += 1"> 数值 :  {{ counter }} </button><br />
+      <button v-on:dblclick="greet('abc', $event)">Greet</button>
+    </div>
+  </div>
+  ```
+
+  ```javascript
+  var vm = new Vue({
+    el : "#app",
+    data : {
+      counter: 0,
+      name : "vue"
+    },
+    methods:{
+      greet : function (str, e) {
+        alert(str);
+        console.log(e);
+      }
+    }
+  });
+  ```
+
+  > [Difference between @click and v-on:click Vuejs
 ](https://stackoverflow.com/questions/45369553/difference-between-click-and-v-onclick-vuejs)
 
-    @click 和 v-on:click 有什么区别？没有区别。
+  @click 和 v-on:click 有什么区别？没有区别。
 
-  - 第11节 表单输入绑定
+- 第11节 表单输入绑定
 
-    v-model双向绑定
+  v-model双向绑定
 
-    文本
-    
-    ```html
-    <input v-model="message" placeholder="edit me">
-    <p>Message is: {{ message }}</p>
-    ```
+  文本
+  
+  ```html
+  <input v-model="message" placeholder="edit me">
+  <p>Message is: {{ message }}</p>
+  ```
 
-    单个复选框
+  单个复选框
 
-    ```html
-    <input type="checkbox" id="checkbox" v-model="checked">
-    <label for="checkbox">{{ checked }}</label>
-    ```
+  ```html
+  <input type="checkbox" id="checkbox" v-model="checked">
+  <label for="checkbox">{{ checked }}</label>
+  ```
 
-    多个复选框
+  多个复选框
 
-    ```html
-    <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
-    <label for="jack">Jack</label>
-    <input type="checkbox" id="john" value="John" v-model="checkedNames">
-    <label for="john">John</label>
-    <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
-    <label for="mike">Mike</label>
+  ```html
+  <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+  <label for="jack">Jack</label>
+  <input type="checkbox" id="john" value="John" v-model="checkedNames">
+  <label for="john">John</label>
+  <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+  <label for="mike">Mike</label>
+  <br>
+  <span>Checked names: {{ checkedNames }}</span>
+  ```
+
+  单选按钮
+
+  ```html
+  <div id="example-4">
+    <input type="radio" id="one" value="One" v-model="picked">
+    <label for="one">One</label>
     <br>
-    <span>Checked names: {{ checkedNames }}</span>
-    ```
+    <input type="radio" id="two" value="Two" v-model="picked">
+    <label for="two">Two</label>
+    <br>
+    <span>Picked: {{ picked }}</span>
+  </div>
+  ```
 
-    单选按钮
+  通过改变data对象的属性，来设置表单元素默认值。
 
-    ```html
-    <div id="example-4">
-      <input type="radio" id="one" value="One" v-model="picked">
-      <label for="one">One</label>
-      <br>
-      <input type="radio" id="two" value="Two" v-model="picked">
-      <label for="two">Two</label>
-      <br>
-      <span>Picked: {{ picked }}</span>
-    </div>
-    ```
+- 第12节 组件基础
 
-    通过改变data对象的属性，来设置表单元素默认值。
+  ```html
+  <div id="app">
+    <button-counter title="title1 : " @clicknow="clicknow">
+      <h2>hi...h2</h2>
+    </button-counter>
+    <button-counter title="title2 : "></button-counter>
+  </div>
+  ```
 
-  - 第12节 组件基础
-
-    ```html
-    <div id="app">
-      <button-counter title="title1 : " @clicknow="clicknow">
-        <h2>hi...h2</h2>
-      </button-counter>
-      <button-counter title="title2 : "></button-counter>
-    </div>
-    ```
-
-    ```javascript
-    Vue.component('button-counter', {
-      props: ['title'],
-      data: function () {
-        return {
-          count: 0
-        }
-      },
-      template: '<div><h1>hi...</h1><button v-on:click="clickfun">{{title}} You clicked me {{ count }} times.</button><slot></slot></div>',
-      methods:{
-        clickfun : function () {
-          this.count ++;
-          this.$emit('clicknow', this.count);
-        }
+  ```javascript
+  Vue.component('button-counter', {
+    props: ['title'],
+    data: function () {
+      return {
+        count: 0
       }
-    })
-    var vm = new Vue({
-      el : "#app",
-      data : {
-        
-      },
-      methods:{
-        clicknow : function (e) {
-          console.log(e);
-        }
+    },
+    template: '<div><h1>hi...</h1><button v-on:click="clickfun">{{title}} You clicked me {{ count }} times.</button><slot></slot></div>',
+    methods:{
+      clickfun : function () {
+        this.count ++;
+        this.$emit('clicknow', this.count);
       }
-    });
-    ```
+    }
+  })
+  var vm = new Vue({
+    el : "#app",
+    data : {
+      
+    },
+    methods:{
+      clicknow : function (e) {
+        console.log(e);
+      }
+    }
+  });
+  ```
 
-    一个组件的 data 选项必须是一个函数，因此每个实例可以维护一份被返回对象的独立的拷贝。如果 Vue 没有这条规则，点击一个按钮就可能会像如下代码一样影响到其它所有实例。
+  一个组件的 data 选项必须是一个函数，因此每个实例可以维护一份被返回对象的独立的拷贝。如果 Vue 没有这条规则，点击一个按钮就可能会像如下代码一样影响到其它所有实例。
 
-    props是组件的参数，通过父组件传入。
-    
-    template只能有一个根节点，可以用`<div>`作为根节点。
+  props是组件的参数，通过父组件传入。
+  
+  template只能有一个根节点，可以用`<div>`作为根节点。
 
-    点击后，组件的$emit方法触发clicknow事件，从而调用clicknow函数。
+  点击后，组件的$emit方法触发clicknow事件，从而调用clicknow函数。
 
-  - 第13节 组件注册
+- 第13节 组件注册
 
-    组件命名：kebab-case (短横线分隔命名)、PascalCase (首字母大写命名)
+  组件命名：kebab-case (短横线分隔命名)、PascalCase (首字母大写命名)
 
-    ```html
+  ```html
+  <div id="app">
+    <button-counter></button-counter>
+    <test></test>
+  </div>
+  ```
+
+  ```javascript
+  Vue.component('button-counter', {
+    props: ['title'],
+    data: function () {
+      return {}
+    },
+    template: '<div><h1>hi...</h1></div>',
+    methods:{
+      
+    }
+  })
+  var vm = new Vue({
+    el : "#app",
+    data : {
+      
+    },
+    methods:{
+      clicknow : function (e) {
+        console.log(e);
+      }
+    },
+    components:{
+      test : {
+        template:"<h2>h2...</h2>"
+      }
+    }
+  });
+  ```
+
+  button-counter是全局注册，test是局部注册。
+
+- 第14节 单文件组件
+
+  组件test.vue：包括template, script, style三部分。
+
+  ```html
+  <template>
+    <div class="hello">
+      <h1 class="red">{{ msg }}</h1>
+    </div>
+  </template>
+
+  <script>
+  export default {
+    name: 'HelloWorld',
+    props: {
+      //msg: String
+      msg: {
+        type: String,
+        default: "test msg"
+      }
+    },
+    methods: {
+
+    },
+    data () {
+      return {
+
+      }
+    }
+  }
+  </script>
+
+  <style>
+  .red{color:red}
+  </style>
+  ```
+
+  App.vue中引入组件，利用components来局部注册。
+
+  ```html
+  <template>
     <div id="app">
-      <button-counter></button-counter>
       <test></test>
     </div>
-    ```
+  </template>
+  <script>
 
-    ```javascript
-    Vue.component('button-counter', {
-      props: ['title'],
-      data: function () {
-        return {}
-      },
-      template: '<div><h1>hi...</h1></div>',
-      methods:{
-        
-      }
-    })
-    var vm = new Vue({
-      el : "#app",
-      data : {
-        
-      },
-      methods:{
-        clicknow : function (e) {
-          console.log(e);
-        }
-      },
-      components:{
-        test : {
-          template:"<h2>h2...</h2>"
-        }
-      }
-    });
-    ```
+    import test from '@/components/test.vue'
 
-    button-counter是全局注册，test是局部注册。
-
-  - 第14节 单文件组件
-
-    组件test.vue：包括template, script, style三部分。
-
-    ```html
-    <template>
-      <div class="hello">
-        <h1 class="red">{{ msg }}</h1>
-      </div>
-    </template>
-
-    <script>
     export default {
-      name: 'HelloWorld',
-      props: {
-        //msg: String
-        msg: {
-          type: String,
-          default: "test msg"
-        }
-      },
-      methods: {
-
-      },
-      data () {
-        return {
-
-        }
-      }
+      name: 'App',
+      components: {test}
     }
-    </script>
+  </script>
 
-    <style>
-    .red{color:red}
-    </style>
-    ```
-
-    App.vue中引入组件，利用components来局部注册。
-
-    ```html
-    <template>
-      <div id="app">
-        <test></test>
-      </div>
-    </template>
-    <script>
-
-      import test from '@/components/test.vue'
-
-      export default {
-        name: 'App',
-        components: {test}
-      }
-    </script>
-
-    <style>
-      #app {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
-        /*margin-top: 10px;*/
-      }
-    </style>
-    ```
-
-- 项目初始化
-
-  - 安装脚手架工具
-
-    `npm install -g @vue/cli`
-
-  - 构建项目
-  
-    `vue init webpack projectname`
-
-  - 项目结构
-
-    - config
-      - index.js: 项目配置
-    - src
-      - components: 组件
-      - router
-        - index.js: 路由配置
-      - App.vue: 根组件
-      - main.js: 入口
-    - index.html: 首页入口
-
-    在main.js中引入路由配置router和根组件App.vue并定义app，在首页入口index.html中使用app。
-
-    在main.js中设置反向代理地址，在config/index.js中配置跨域请求。
-
-  - 代码分析
-
-    index.html
-
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <title>recommender-vue</title>
-      </head>
-      <body>
-        <div id="app"></div>
-        <!-- built files will be auto injected -->
-      </body>
-    </html>
-    ```
-
-    `<div id="app"></div>`在构建的文件会自动注入
-
-    App.vue
-
-    ```html
-    <template>
-      <div id="app">
-        <img src="./assets/logo.png">
-        <router-view/>
-      </div>
-    </template>
-
-    <script>
-    export default {
-      name: 'App'
-    }
-    </script>
-
-    <style>
+  <style>
     #app {
       font-family: 'Avenir', Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-align: center;
       color: #2c3e50;
-      margin-top: 60px;
+      /*margin-top: 10px;*/
     }
-    </style>
-    ```
-
-    `export default`: 将这个组件整体导出，之后就可以使用 import 导入组件了。
-
-    `<router-view/>`是一个容器，名字叫“路由视图”，意思是当前路由（URL）指向的内容将显示在这个容器中。
-
-    main.js
-    
-    ```javascript
-    // The Vue build version to load with the `import` command
-    // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-    import Vue from 'vue'
-    import App from './App'
-    import router from './router'
-
-    Vue.config.productionTip = false
-
-    /* eslint-disable no-new */
-    new Vue({
-      el: '#app',
-      router,
-      components: { App },
-      template: '<App/>'
-    })
-    ```
-
-    最上面 import 了几个模块，其中 vue 模块在 node_modules 中，App 即 App.vue 里定义的组件，router 即 router 文件夹里定义的路由。
-
-    Vue.config.productionTip = false, 作用是阻止vue 在启动时生成生产提示。
-
-    在这个 js 文件中，我们创建了一个 Vue 对象（实例），el 属性提供一个在页面上已存在的 DOM 元素作为 Vue 对象的挂载目标，router 代表该对象包含 Vue Router，并使用项目中定义的路由。components 表示该对象包含的 Vue 组件，template 是用一个字符串模板作为 Vue 实例的标识使用，类似于定义一个 html 标签。
-
-    > [/* eslint-disable no-new */的作用](https://blog.csdn.net/SilenceJude/article/details/81746700)
-
-    eslint-disable 的意思是完全禁用ESLint进行检测。
-
-- 其他问题
-
-  无法修改favicon
-
-  [Change favicon Vuejs?](https://stackoverflow.com/questions/53216047/change-favicon-vuejs)
-
-  [How to set favicon.ico properly on vue.js webpack project?](https://stackoverflow.com/questions/40190524/how-to-set-favicon-ico-properly-on-vue-js-webpack-project)
-
-  ```html
-  <link rel="shortcut icon" type="image/png" href="/src/assets/img/logo.png"/>`
+  </style>
   ```
 
-  For your favicon issue, you can put a favicon.ico or favicon.png into the static folder and refer in the <head> of your index.html as follows:
+#### 项目初始化
+
+- 安装脚手架工具
+
+  `npm install -g @vue/cli`
+
+- 构建项目
+
+  `vue init webpack projectname`
+
+- 项目结构
+
+  - config
+    - index.js: 项目配置
+  - src
+    - components: 组件
+    - router
+      - index.js: 路由配置
+    - App.vue: 根组件
+    - main.js: 入口
+  - index.html: 首页入口
+
+  在main.js中引入路由配置router和根组件App.vue并定义app，在首页入口index.html中使用app。
+
+  在main.js中设置反向代理地址，在config/index.js中配置跨域请求。
+
+- 代码分析
+
+  index.html
 
   ```html
-  <link rel="shortcut icon" type="image/png" href="/static/favicon.png"/>
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1.0">
+      <title>recommender-vue</title>
+    </head>
+    <body>
+      <div id="app"></div>
+      <!-- built files will be auto injected -->
+    </body>
+  </html>
   ```
+
+  `<div id="app"></div>`在构建的文件会自动注入
+
+  App.vue
+
+  ```html
+  <template>
+    <div id="app">
+      <img src="./assets/logo.png">
+      <router-view/>
+    </div>
+  </template>
+
+  <script>
+  export default {
+    name: 'App'
+  }
+  </script>
+
+  <style>
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+  }
+  </style>
+  ```
+
+  `export default`: 将这个组件整体导出，之后就可以使用 import 导入组件了。
+
+  `<router-view/>`是一个容器，名字叫“路由视图”，意思是当前路由（URL）指向的内容将显示在这个容器中。
+
+  main.js
+  
+  ```javascript
+  // The Vue build version to load with the `import` command
+  // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+  import Vue from 'vue'
+  import App from './App'
+  import router from './router'
+
+  Vue.config.productionTip = false
+
+  /* eslint-disable no-new */
+  new Vue({
+    el: '#app',
+    router,
+    components: { App },
+    template: '<App/>'
+  })
+  ```
+
+  最上面 import 了几个模块，其中 vue 模块在 node_modules 中，App 即 App.vue 里定义的组件，router 即 router 文件夹里定义的路由。
+
+  Vue.config.productionTip = false, 作用是阻止vue 在启动时生成生产提示。
+
+  在这个 js 文件中，我们创建了一个 Vue 对象（实例），el 属性提供一个在页面上已存在的 DOM 元素作为 Vue 对象的挂载目标，router 代表该对象包含 Vue Router，并使用项目中定义的路由。components 表示该对象包含的 Vue 组件，template 是用一个字符串模板作为 Vue 实例的标识使用，类似于定义一个 html 标签。
+
+  > [/* eslint-disable no-new */的作用](https://blog.csdn.net/SilenceJude/article/details/81746700)
+
+  eslint-disable 的意思是完全禁用ESLint进行检测。
+
+#### 其他问题
+
+无法修改favicon
+
+[Change favicon Vuejs?](https://stackoverflow.com/questions/53216047/change-favicon-vuejs)
+
+[How to set favicon.ico properly on vue.js webpack project?](https://stackoverflow.com/questions/40190524/how-to-set-favicon-ico-properly-on-vue-js-webpack-project)
+
+```html
+<link rel="shortcut icon" type="image/png" href="/src/assets/img/logo.png"/>`
+```
+
+For your favicon issue, you can put a favicon.ico or favicon.png into the static folder and refer in the <head> of your index.html as follows:
+
+```html
+<link rel="shortcut icon" type="image/png" href="/static/favicon.png"/>
+```
 
 ## Spring MVC
 
