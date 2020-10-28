@@ -163,6 +163,31 @@ for index, row in df.iterrows():
     row["column_name"]
 ```
 
+行选择
+
+```python
+df.loc[[row1, row2]]
+```
+
+列选择
+
+```python
+df.loc[:, ["column1", "column2"]]
+```
+
+值选择
+
+```python
+df = df.loc[df["column"] == value]
+```
+
+loc和iloc的区别
+
+> https://stackoverflow.com/questions/31593201/how-are-iloc-and-loc-different
+
+- loc gets rows (or columns) with particular labels from the index.
+- iloc gets rows (or columns) at particular positions in the index (so it only takes integers).
+
 ## C++
 
 #### argc & argv

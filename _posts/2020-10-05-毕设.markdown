@@ -1046,7 +1046,25 @@ Run/Debug Configuration里添加Tomcat.
 
 Server选项卡，On 'Update' action选Redeploy.
 
-Deployment选项卡，点＋和artifact，选recommender:war，Application context填空。
+Deployment选项卡，点＋和artifact，选recommender:war exploded，Application context填空。
+
+#### MyBatis
+
+[搭建Spring + Spring MVC + Mybatis](https://segmentfault.com/a/1190000013900758)
+
+[IDEA SpringMVC集成mybatis教程](https://blog.csdn.net/ljheee/article/details/76618762)
+
+[MyBatis](https://mybatis.org/mybatis-3/zh/sqlmap-xml.html)
+
+[spring mvc中post、get方法获取参数的几种方式](https://blog.csdn.net/zyxwvuuvwxyz/article/details/80352712)
+
+#### 日志
+
+[log4j](https://java2blog.com/spring-mvc-log4j-example/)
+
+[使用SLF4J和Logback](https://www.liaoxuefeng.com/wiki/1252599548343744/1264739155914176)
+
+[SLF4J 和 Logback 在 Maven 项目中的使用方法](https://www.jianshu.com/p/09b9b50f32ef)
 
 #### 其他问题
 

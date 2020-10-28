@@ -1137,3 +1137,11 @@ tags:
       - DATE：日期
       - TIMESTAMP：1970-2038年
     - JSON类型
+
+  - int(11)
+
+  > [MySQL Integer类型与INT(11)](https://www.cnblogs.com/polk6/p/11595107.html)
+
+  对于Integer类型括号中的数字称为字段的显示宽度。显示宽度并不影响可以存储在该列中的最大值。
+  
+  当列设置为UNSIGNED ZEROFILL时，INT(11)才有意义，其表示的意思为如果要存储的数字少于11个字符，则这些数字将在左侧补零。

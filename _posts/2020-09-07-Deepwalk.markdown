@@ -11,3 +11,97 @@ tags:
     - 学习
 ---
 
+## Deepwalk
+
+- Perozzi B, Al-Rfou R, Skiena S. DeepWalk: Online Learning of SocialRepresentations[C]//Proceedings of the 20th ACM SIGKDD International Conference onKnowledge Discovery and Data Mining. ACM, 2014: 701-710. 
+
+  - 源码 https://github.com/phanein/deepwalk
+
+  - __main__.process
+    - G = graph.load_adjacencylist，G是Graph类，继承于dict，保存节点到邻接节点的映射
+    - 如果data_size = nodes * num_walks * walk_length最大内存数据大小
+      - graph.build_deepwalk_corpus
+        - 进行number_walks次：随机打乱节点，以每个节点为起点生成长度为walk_length的随机游走序列
+          - Graph.random_walk：以alpha的概率从初始节点重新开始，否则游走到末尾节点的邻接节点
+      - Word2Vec#__init__
+        - 调用父类的构造函数BaseWordEmbeddingsModel#__init__
+          - 调用父类的构造函数BaseAny2VecModel#__init__
+          - BaseWordEmbeddingsModel#build_vocab：从一系列句子中构造单词
+          - Word2Vec#train：子类重写了train方法
+            - BaseWordEmbeddingsModel#train
+              - BaseAny2Vec#train：每个epoch循环BaseAny2Vec#_train_epoch，将workers个BaseAny2Vec#_work_loop和BaseAny2Vec#_job_producer加入线程池
+                - data_iterator就是sentences
+                - BaseAny2Vec#_work_loop
+                  - Train the model, lifting lists of data from the job_queue. 从任务队列中取数据，训练模型
+                  - 从job_queue里获取一个job，包括data_iterable, job_parameters，调用BaseAny2Vec#_do_train_job，把进展放到progress_queue里
+                    - Word2Vec#_do_train_job：子类重写了_do_train_job方法
+                      - sg是1的话，调用train_batch_sg方法（sg是1调用skip-gram；是0调用CBOW，deepwalk代码里sg是1）
+                        - Update skip-gram model by training on a sequence of sentences.
+                        - 对于每一个位置pos：随机产生一个在[0,window)间的数reduced_window，pos2为[pos-window+reduced_window,pos+window-reduced_window]中的每个数，如果pos不等于pos2，调用train_sg_pair方法
+                          - train_sg_pair
+                            - model.hs表示Hierarchical Softmax（hs如果是1，模型训练采用分层softmax；是0且negtive非0，采用负采样）
+                            - model.negative表示负采样词的个数
+                              - (layer 1: [1 * layer1_size]) l1 = context_vectors[context_index] # input word (NN input/projection layer)
+                              - (error: [1 * layer1_size]) neu1e = zeros(l1.shape)
+                              - ([1 * (k+1)]) word_indices [一个正样本，k个是负样本]
+                              - (layer 2: [(k+1) * layer1_size]) l2b = model.syn1neg[word_indices]
+                              - ([1 * (k+1)]) prod_term = dot(l1, l2b.T)
+                              - ([1 * (k+1)]) fb = sigmoid(prod_term) # propagate hidden -> output
+                              - ([1 * (k+1)]) gb = ([1, k个0] - fb) * alpha # 误差梯度向量*学习率
+                              - model.syn1neg[word_indices] += outer(gb, l1) #学习隐藏层，outer是两个向量的外积
+                              - neu1e += dot(gb, l2b) # 保存误差
+                              - l1 += neu1e * lock_factor  # learn input -> hidden (mutates model.wv.syn0[word2.index], if that is l1)
+                              - 解释：syn0相当于w1，syn1neg([1*layer1_size])相当于w2，l1是syn0[context_index]，l2b^T([(k+1)*layer1_size])是syn1neg[word_indices(1+k)]，sigmoid(l1 l2b^T)是目标函数，与[1, k个0]计算差值作为梯度
+                - BaseAny2Vec#_job_producer
+                  - Fill jobs queue using the input `data_iterator`. 利用数据填充任务队列
+                  - 遍历data_iterator，也就是sentences：判断当前的sentence是否可以放入已存在的job_batch，如果可以放到当前job_batch；否则把job_batch和job_params放到job_queue中，更新下一个job的学习率，把sentence放到当前job_batch
+    - 否则
+      - walks.write_walks_to_disk
+      - walks.WalksCorpus
+      - Skipgram#__init__
+
+## Word2Vec
+
+- Mikolov, T., Sutskever, I., Chen, K., Corrado, G.S., & Dean, J. (2013). Distributed Representations of Words and Phrases and their Compositionality. ArXiv, abs/1310.4546.
+  - word2vec
+  - skip-gram模型的架构分为三层：输入层 (w(t))、投影层、输出层 (w(t-2), w(t-1), w(t+1), w(t+2))。训练目标学习词向量表示，使得词向量表示善于预测周围的词。
+  - skip-gram模型的目标是最大化平均对数概率 1/T \sum_{t=1}^T \sum_{-c<=j<=c, j!=0} \log p(w_{t+j}|w_t)（公式1）
+  - p(w_{t+j}|w_t)=p(w_O|w_I)=exp(v'_{w_O}^T v_{w_I}) / \sum_{w=1}^W exp(v'_w^T v_{w_I})（公式2），其中v_w是词w的“输入”向量表示，v'_w是词w的“输出”向量表示。这个公式不现实，因为梯度计算的时间复杂度与单词个数W成比例。
+  - 负采样的目标：\log sigmoid(v'_{w_O}^T v_{w_I}) + \sum_{i=1}^k E_{w_i ~ P_n(w)} [\log sigmoid(-v'_{w_i}^T v_{w_I})]（公式4）
+  - 博客
+    - https://blog.csdn.net/huacha__/article/details/84068653
+    - https://www.leiphone.com/news/201812/2o1E1Xh53PAfoXgD.html
+    - https://towardsdatascience.com/an-implementation-guide-to-word2vec-using-numpy-and-google-sheets-13445eebd281
+    - https://docs.google.com/spreadsheets/d/1mgf82Ue7MmQixMm2ZqnT1oWUucj6pEcd2wDs_JgHmco/edit#gid=0
+    - https://github.com/DerekChia/word2vec_numpy
+    - To implement Word2Vec, there are two flavors to choose from — Continuous Bag-Of-Words (CBOW) or continuous Skip-gram (SG). In short, CBOW attempts to guess the output (target word) from its neighbouring words (context words) whereas continuous Skip-Gram guesses the context words from a target word.
+    - Word2Vec is based on distributional hypothesis where the context for each word is in its nearby words. Hence, by looking at its neighbouring words, we can attempt to predict the target word.
+    - Skip-gram: works well with small amount of the training data, represents well even rare words or phrases
+    - CBOW: several times faster to train than the skip-gram, slightly better accuracy for the frequent words
+    - since Skip-gram learns to predict the context words from a given word, in case where two words (one appearing infrequently and the other more frequently) are placed side-by-side, both will have the same treatment when it comes to minimising loss since each word will be treated as both the target word and context word. Comparing that to CBOW, the infrequent word will only be part of a collection of context words used to predict the target word. Therefore, the model will assign the infrequent word a low probability.
+    - Numpy实现
+      - word2vec#__init__: self.n是词嵌入向量的尺寸
+      - word2vec#generate_training_data: 生成训练数据 [target, [context]]
+      - word2vec#train
+
+        - 对epoch循环，对training_data循环：
+          - word2vec#forward_pass: 前向传递，w_t是目标词的one-hot向量，乘w1得到隐藏层h，乘w2得到输出层u，经过softmax得到0和1之间的y_pred
+          > we start training our first epoch using the first training example by passing in w_t which represents the one-hot vector for target word to theforward_pass function. In the forward_pass function, we perform a dot product between w1 and w_t to produce h(Line 24). Then, we perform another dot product using w2 and h to produce the output layer u(Line 26). Lastly, we run u through softmax to force each element to the range of 0 and 1 to give us the probabilities for prediction (Line 28) before returning the vector for predictiony_pred, hidden layer h and output layer u.
+          - EI: 误差，计算y_pred与w_c中的每个上下文词计算差异并求和。
+          > Error — With y_pred, h and u, we proceed to calculate the error for this particular set of target and context words. This is done by summing up the difference between y_pred and each of the context words inw_c.
+          - word2vec#backprop: w1=w1-(lr*dl_dw1), w2=w2-(lr*lr_dw2). 更新权重，减去权重的导数乘学习率。
+          > Backpropagation — Next, we use the backpropagation function, backprop, to calculate the amount of adjustment we need to alter the weights using the function backprop by passing in error EI, hidden layer h and vector for target word w_t.
+          >
+          > To update the weights, we multiply the weights to be adjusted (dl_dw1 and dl_dw2) with learning rate and then subtract it from the current weights (w1 and w2).
+          - loss: 公式2
+          > Loss — Lastly, we compute the overall loss after finishing each training sample according to the loss function. Take note that the loss function comprises of 2 parts. The first part is the negative of the sum for all the elements in the output layer (before softmax). The second part takes the number of the context words and multiplies the log of sum for all elements (after exponential) in the output layer.
+
+## Doc2Vec
+
+- Le Q, Mikolov T. Distributed Representations of Sentences and Documents[C]//Proceedings of the 31st International Conference on International Conference on Machine Learning. 2014, 32: 1188-1196.
+  - doc2vec
+  - Gensim https://radimrehurek.com/gensim/models/doc2vec.html
+  - Doc2Vec.TaggedLineDocument: Document tags are constructed automatically from the document line number (each document gets a unique integer tag).
+  - Doc2Vec.__init__
+    - Doc2Vec.build_vocab: Build vocabulary from a sequence of documents
+    - Doc2Vec.train
