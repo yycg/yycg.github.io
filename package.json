@@ -26,6 +26,6 @@
     },
     "dependencies": {
         "crypto-js": "^4.0.0",
-        "marked": "^1.1.1"
+        "marked": "^2.0.0"
     }
 }
