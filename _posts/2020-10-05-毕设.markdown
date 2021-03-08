@@ -827,6 +827,8 @@ tags:
 
   eslint-disable 的意思是完全禁用ESLint进行检测。
 
+#### 项目
+
 #### 其他问题
 
 无法修改favicon
@@ -1050,22 +1052,61 @@ Deployment选项卡，点＋和artifact，选recommender:war exploded，Applicat
 
 #### MyBatis
 
-[搭建Spring + Spring MVC + Mybatis](https://segmentfault.com/a/1190000013900758)
+> [搭建Spring + Spring MVC + Mybatis](https://segmentfault.com/a/1190000013900758)
 
-[IDEA SpringMVC集成mybatis教程](https://blog.csdn.net/ljheee/article/details/76618762)
+> [IDEA SpringMVC集成mybatis教程](https://blog.csdn.net/ljheee/article/details/76618762)
 
-[MyBatis](https://mybatis.org/mybatis-3/zh/sqlmap-xml.html)
+> [MyBatis](https://mybatis.org/mybatis-3/zh/sqlmap-xml.html)
 
-[spring mvc中post、get方法获取参数的几种方式](https://blog.csdn.net/zyxwvuuvwxyz/article/details/80352712)
+> [spring mvc中post、get方法获取参数的几种方式](https://blog.csdn.net/zyxwvuuvwxyz/article/details/80352712)
 
 #### 日志
 
-[log4j](https://java2blog.com/spring-mvc-log4j-example/)
+> [log4j](https://java2blog.com/spring-mvc-log4j-example/)
 
-[使用SLF4J和Logback](https://www.liaoxuefeng.com/wiki/1252599548343744/1264739155914176)
+> [使用SLF4J和Logback](https://www.liaoxuefeng.com/wiki/1252599548343744/1264739155914176)
 
-[SLF4J 和 Logback 在 Maven 项目中的使用方法](https://www.jianshu.com/p/09b9b50f32ef)
+> [SLF4J 和 Logback 在 Maven 项目中的使用方法](https://www.jianshu.com/p/09b9b50f32ef)
 
 #### 其他问题
 
-[Tomcat启动乱码](https://blog.csdn.net/u014234260/article/details/93995380)
+> [Tomcat启动乱码](https://blog.csdn.net/u014234260/article/details/93995380)
+
+## 数据库
+
+#### MySQL
+
+> [mysql导入导出sql文件](https://www.cnblogs.com/yuwensong/p/3955834.html)
+
+for i in "event" "eventuser" "relation" "user" "web_event"; do for j in "shanghai_2018" "shanghai_2017" "shanghai"; do echo "sudo mysql douban_$j < douban_"$j"_"$i".sql"; done; done
+
+for i in "event" "eventuser" "relation" "user" "web_event"; do for j in "shanghai_2018" "shanghai_2017" "shanghai"; do sudo mysql douban_$j < douban_"$j"_"$i".sql; done; done
+
+CREATE USER 'douban_readonly'@'%' IDENTIFIED BY 'douban_readonly';
+GRANT SELECT ON *.* TO 'douban_readonly'@'%'
+CREATE USER 'douban'@'%' IDENTIFIED BY 'douban_mysql_817';
+GRANT ALL PRIVILEGES ON*.* TO 'douban'@'%'
+
+/etc/mysql/mysql.conf.d/mysqld.cnf
+bind-address            = 0.0.0.0
+
+/etc/init.d/mysql restart
+(sudo service mysql restart)
+
+#### PostgreSQL
+
+> [PostgreSQL](https://www.runoob.com/postgresql/linux-install-postgresql.html)
+> [postgresql 导出和导入数据库](https://www.cnblogs.com/tommy-huang/p/9372160.html)
+> [如何设置PostgreSQL允许被远程访问](http://lazybios.com/2016/11/how-to-make-postgreSQL-can-be-accessed-from-remote-client/)
+
+#### Linux
+
+端口映射
+
+ssh -NvL 8889:127.0.0.1:8888 sjy2018@10.105.240.25
+
+杀死进程
+
+> [Linux kill包含关键字所有进程](https://blog.csdn.net/Post_Yuan/article/details/78527789)
+
+ps aux|grep cockroach|awk '{print $2}'|xargs kill -9

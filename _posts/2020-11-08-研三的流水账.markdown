@@ -1,0 +1,15 @@
+---
+layout:     post
+title:      "研三的流水账"
+subtitle:   "On n'est jamais content la ou on est. -Le petit prince"
+date:       2020-11-08 12:00:00
+author:     "盈盈冲哥"
+header-img: "img/life-is-beautiful.jpg"
+catalog: true
+tags:
+    - 生活
+---
+
+## 读书
+
+致命的“隐遁”，即为希望。所谓希望，就是对下辈子生活的希望，应当“对得起”才行，抑或是自欺欺人：不是为生活本身而生活，而是为某个伟大的理念而生活，让理念超越生活，使生活变得崇高，给生活注入意义，任理念背叛生活。————西西弗神话 P83
