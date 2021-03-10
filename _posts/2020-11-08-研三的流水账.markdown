@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "研三的流水账"
-subtitle:   "On n'est jamais content la ou on est. -Le petit prince"
+subtitle:   "On n'est jamais content là où on est. -Le petit prince"
 date:       2020-11-08 12:00:00
 author:     "盈盈冲哥"
 header-img: "img/life-is-beautiful.jpg"
