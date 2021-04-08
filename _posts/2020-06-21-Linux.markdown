@@ -4,7 +4,7 @@ title:      "Linux"
 subtitle:   ""
 date:       2020-06-21 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/yyy-25.jpg"
+header-img: "img/my-brilliant-friend.jpg"
 mathjax: true
 catalog: true
 tags:

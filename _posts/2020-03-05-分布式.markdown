@@ -4,7 +4,7 @@ title:      "分布式"
 subtitle:   ""
 date:       2020-03-05 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/yyy-5.jpg"
+header-img: "img/my-brilliant-friend.jpg"
 mathjax: true
 catalog: true
 tags:

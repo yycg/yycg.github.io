@@ -4,7 +4,7 @@ title:      "编程语言"
 subtitle:   ""
 date:       2020-09-16 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/yyy-29.jpg"
+header-img: "img/my-brilliant-friend.jpg"
 mathjax: true
 catalog: true
 tags:

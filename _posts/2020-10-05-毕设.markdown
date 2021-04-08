@@ -4,7 +4,7 @@ title:      "毕设"
 subtitle:   ""
 date:       2020-10-05 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/yyy-30.jpg"
+header-img: "img/my-brilliant-friend.jpg"
 mathjax: true
 catalog: true
 tags:
@@ -847,6 +847,14 @@ For your favicon issue, you can put a favicon.ico or favicon.png into the static
 <link rel="shortcut icon" type="image/png" href="/static/favicon.png"/>
 ```
 
+#### AntDesign
+
+> [ant.design.vue中table的使用说明](https://blog.csdn.net/weixin_44051815/article/details/90049091)
+
+column中dataIndex, key表示数据的字段，scopedSlots: { customRender: 'action' }表示customRender 对应table中的插槽名。
+
+<span slot="action" slot-scope="record">中，slot="action" 表示插槽名，slot-scope="record"表示该插槽内部利用record能获取到的该行的数据，例如{{ record.name }}。
+
 ## Spring MVC
 
 > [IDEA 新建 Spring MVC 工程项目与 SpringMVC 运行流程](https://blog.csdn.net/ajianyingxiaoqinghan/article/details/80727200)
@@ -1067,6 +1075,30 @@ Deployment选项卡，点＋和artifact，选recommender:war exploded，Applicat
 > [使用SLF4J和Logback](https://www.liaoxuefeng.com/wiki/1252599548343744/1264739155914176)
 
 > [SLF4J 和 Logback 在 Maven 项目中的使用方法](https://www.jianshu.com/p/09b9b50f32ef)
+
+#### Shiro
+
+> [Vue + Spring Boot 项目实战（十三）：使用 Shiro 实现用户信息加密与登录认证](https://learner.blog.csdn.net/article/details/102690035)
+
+> [shiro和Spring Mvc集成教程](https://blog.csdn.net/wqc19920906/article/details/81347049)
+
+> [Shiro学习（三）整合springmvc项目](http://blog.perass.com/blog/post/micktiger/shiro4)
+
+> [解决 spring-test 出现 Failed to load ApplicationContext 的异常](https://www.cnblogs.com/kinome/p/9628830.html)
+
+#### JUnit
+
+> [Spring中使用单元测试SpringTest](https://www.jianshu.com/p/993a1731f566)
+
+> [SpringMVC下的JUnit4单元测试](https://www.jianshu.com/p/8d0f7201b445)
+
+#### MyBatis generator
+
+> [SpringBoot使用Mybatis-Generator](https://www.jianshu.com/p/a8bfc14a3534)
+
+> [mybatis-generator installed 却无法在maven 的Plugins显示怎么办](https://blog.csdn.net/zx03070723/article/details/83537322)
+
+> [使用MyBatisGenerator生成代码报错The specified target project directory .....does not exist](https://blog.csdn.net/supreme000/article/details/96142362)
 
 #### 其他问题
 

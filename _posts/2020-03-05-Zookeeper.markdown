@@ -4,7 +4,7 @@ title:      "Zookeeper"
 subtitle:   ""
 date:       2020-03-05 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/yyy-23.jpg"
+header-img: "img/my-brilliant-friend.jpg"
 mathjax: true
 catalog: true
 tags:

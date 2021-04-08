@@ -4,7 +4,7 @@ title:      "总结"
 subtitle:   ""
 date:       2020-07-05 12:00:00
 author:     "盈盈冲哥"
-header-img: "img/yyy-27.jpg"
+header-img: "img/my-brilliant-friend.jpg"
 mathjax: true
 catalog: true
 tags:
